@@ -1,0 +1,8 @@
+{
+  "name": "Serein",
+  "short_name": "Serein",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#E6F4F1",
+  "theme_color": "#5BC2B4"
+}
