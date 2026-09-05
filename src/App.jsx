@@ -372,7 +372,7 @@ const TRANSLATIONS = {
     exportBackup: "Sauvegarde complète",
     exportPrint: "Imprimer / Enregistrer en PDF",
     comingSoonTitle: "À venir sur la vraie appli",
-    comingSoonText: "Pas encore disponible, mais prévu : verrouillage par Face ID ou code à l'ouverture, et des rappels avant chaque échéance (facture, dette, abonnement) — pas seulement un affichage dans le calendrier.",
+    comingSoonText: "Ce prototype ne peut pas encore le faire, mais c'est prévu pour la version déployée : verrouillage par Face ID ou code à l'ouverture, et des rappels avant chaque échéance (facture, dette, abonnement) — pas seulement un affichage dans le calendrier. Les notifications demandent un vrai serveur, qu'un artefact ne peut pas fournir.",
     privacyPolicy: "Politique de confidentialité",
     privacyPolicyBody: "Voici où en sont réellement tes données.\n\nCE QUE NOUS COLLECTONS\nUniquement ce que tu entres toi-même : prénom, dettes, projets, abonnements, factures, revenus, investissements, et la composition de ton foyer si tu la renseignes — plus ton adresse courriel pour la connexion.\n\nOÙ C'EST STOCKÉ\nTes données sont hébergées par Supabase, dans une base sécurisée, accessible uniquement par toi grâce à ton compte. La connexion se fait par lien envoyé à ton courriel, sans mot de passe à retenir.\n\nCE QUE NOUS NE FAISONS PAS\nNous ne vendons ni ne partageons tes données à des fins publicitaires. Aucune publicité dans l'application. Aucun suivi analytique caché.\n\nTES DROITS DÈS MAINTENANT\nTu peux exporter toutes tes données à tout moment (CSV, sauvegarde complète) juste au-dessus dans ces réglages, te déconnecter, ou réinitialiser complètement l'application.\n\nPOUR LA SUITE\nUne politique de confidentialité complète et conforme à la loi sera publiée séparément et remplacera ce résumé.",
     privacyPolicyClose: "Fermer",
@@ -633,7 +633,7 @@ const TRANSLATIONS = {
     exportBackup: "Full backup",
     exportPrint: "Print / Save as PDF",
     comingSoonTitle: "Coming to the real app",
-    comingSoonText: "Not available yet, but planned: Face ID or passcode lock on opening, and reminders before each due date (bill, debt, subscription) — not just a passive display in the calendar.",
+    comingSoonText: "This prototype can't do this yet, but it's planned for the deployed version: Face ID or passcode lock on opening, and reminders before each due date (bill, debt, subscription) — not just a passive display in the calendar. Notifications require a real server, which an artifact can't provide.",
     privacyPolicy: "Privacy Policy",
     privacyPolicyBody: "Here's where your data actually stands.\n\nWHAT WE COLLECT\nOnly what you enter yourself: first name, debts, projects, subscriptions, bills, income, investments, and your household composition if you fill it in — plus your email for sign-in.\n\nWHERE IT'S STORED\nYour data is hosted by Supabase, in a secure database, accessible only by you through your account. Sign-in happens via a link sent to your email, no password to remember.\n\nWHAT WE DON'T DO\nWe never sell or share your data for advertising purposes. No ads in the app. No hidden analytics tracking.\n\nYOUR RIGHTS RIGHT NOW\nYou can export all your data at any time (CSV, full backup) just above in these settings, sign out, or fully reset the app.\n\nWHAT'S NEXT\nA complete, legally compliant privacy policy will be published separately and will replace this summary.",
     privacyPolicyClose: "Close",
@@ -834,11 +834,11 @@ function csvSection(title, headers, rows) {
 
 function buildFullCSV(state) {
   const sections = [];
-  sections.push(csvSection("DETTES", ["Titre", "Montant total", "Payé", "Restant", "Devise", "Taux d'intérêt (%)", "Mode", "Échéance / Fin", "Fréquence", "Concerne"],
-    state.debts.map((d) => [d.title, d.amount, d.paid, d.amount - d.paid, d.currency || state.currency, d.interestRate ?? "", d.paymentMode, d.paymentMode === "unique" ? d.dueDate : d.endDate, d.frequency || "", ownerLabel(d.owner, state)])
+  sections.push(csvSection("DETTES", ["Titre", "Montant total", "Payé", "Restant", "Devise", "Taux d'intérêt (%)", "Mode", "Échéance / Fin", "Fréquence", "Où l'argent est mis de côté", "Où c'est débité", "Concerne"],
+    state.debts.map((d) => [d.title, d.amount, d.paid, d.amount - d.paid, d.currency || state.currency, d.interestRate ?? "", d.paymentMode, d.paymentMode === "unique" ? d.dueDate : d.endDate, d.frequency || "", d.holdingAccount || "", d.chargeAccount || "", ownerLabel(d.owner, state)])
   ));
-  sections.push(csvSection("PROJETS", ["Titre", "Objectif", "Épargné", "Devise", "Terme", "Date de fin", "Fréquence", "Concerne"],
-    state.projects.map((p) => [p.title, p.target, p.saved, p.currency || state.currency, p.term, p.endDate, p.frequency, ownerLabel(p.owner, state)])
+  sections.push(csvSection("PROJETS", ["Titre", "Objectif", "Épargné", "Devise", "Terme", "Date de fin", "Fréquence", "Où l'argent est mis de côté", "Concerne"],
+    state.projects.map((p) => [p.title, p.target, p.saved, p.currency || state.currency, p.term, p.endDate, p.frequency, p.holdingAccount || "", ownerLabel(p.owner, state)])
   ));
   sections.push(csvSection("ABONNEMENTS", ["Titre", "Montant", "Devise", "Périodicité", "Jour/Date", "Concerne"],
     state.subscriptions.map((s) => [s.title, s.amount, s.currency || state.currency, s.period, s.startDate || s.day, ownerLabel(s.owner, state)])
@@ -2236,13 +2236,15 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
     frequency: editItem.frequency || "mensuel",
     owner: editItem.owner || "commun",
     currency: editItem.currency || state.currency,
-  } : { title: "", icon: DEBT_ICONS[0], amount: "", remainingAmount: "", interestRate: "", paymentMode: "recurrent", dueDate: getToday(), startDate: getToday(), endDateMode: "date", endDate: "", durationMonths: "", frequency: "mensuel", owner: "commun", currency: state.currency });
+    holdingAccount: editItem.holdingAccount || "",
+    chargeAccount: editItem.chargeAccount || "",
+  } : { title: "", icon: DEBT_ICONS[0], amount: "", remainingAmount: "", interestRate: "", paymentMode: "recurrent", dueDate: getToday(), startDate: getToday(), endDateMode: "date", endDate: "", durationMonths: "", frequency: "mensuel", owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "" });
   const canSubmit = f.title && f.amount && (f.paymentMode === "unique" ? f.dueDate : (f.endDateMode === "date" ? f.endDate : f.durationMonths));
   const submit = () => {
     const total = Number(f.amount);
     const remaining = f.remainingAmount !== "" ? Number(f.remainingAmount) : total;
     const paid = Math.max(0, Math.min(total, total - remaining));
-    const base = { title: f.title, icon: f.icon, amount: total, paid, owner: f.owner, currency: f.currency, paymentMode: f.paymentMode, interestRate: f.interestRate !== "" ? Number(f.interestRate) : null };
+    const base = { title: f.title, icon: f.icon, amount: total, paid, owner: f.owner, currency: f.currency, paymentMode: f.paymentMode, interestRate: f.interestRate !== "" ? Number(f.interestRate) : null, holdingAccount: f.holdingAccount, chargeAccount: f.chargeAccount };
     const resolvedEndDate = f.endDateMode === "date" ? f.endDate : addMonthsFromToday(f.durationMonths);
     const item = f.paymentMode === "unique"
       ? { ...base, dueDate: f.dueDate, startDate: undefined, endDate: undefined, frequency: undefined }
@@ -2251,7 +2253,7 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
       onSave(editItem.id, item);
     } else {
       onAdd(item);
-      setF({ title: "", icon: DEBT_ICONS[0], amount: "", remainingAmount: "", interestRate: "", paymentMode: "recurrent", dueDate: getToday(), startDate: getToday(), endDateMode: "date", endDate: "", durationMonths: "", frequency: "mensuel", owner: "commun", currency: state.currency });
+      setF({ title: "", icon: DEBT_ICONS[0], amount: "", remainingAmount: "", interestRate: "", paymentMode: "recurrent", dueDate: getToday(), startDate: getToday(), endDateMode: "date", endDate: "", durationMonths: "", frequency: "mensuel", owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "" });
     }
   };
   useImperativeHandle(ref, () => ({ commit: () => { if (canSubmit) submit(); } }));
@@ -2333,6 +2335,14 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
             </Field>
           </div>
         )}
+        <div className="p-3 rounded-lg bg-slate-50 mb-3">
+          <Field label={t(lang, "fieldHoldingAccount")}>
+            <input className={inputCls} value={f.holdingAccount} onChange={(e) => setF({ ...f, holdingAccount: e.target.value })} placeholder={t(lang, "fieldHoldingAccountPlaceholder")} />
+          </Field>
+          <Field label={t(lang, "fieldChargeAccount")}>
+            <input className={inputCls} value={f.chargeAccount} onChange={(e) => setF({ ...f, chargeAccount: e.target.value })} placeholder={t(lang, "fieldChargeAccountPlaceholder")} />
+          </Field>
+        </div>
         <OwnerSelect theme={theme} state={state} value={f.owner} onChange={(v) => setF({ ...f, owner: v })} />
       </StepShell>
       {!hideList && (
@@ -2361,7 +2371,8 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
     owner: editItem.owner || "commun",
     frequency: editItem.frequency || "mensuel",
     currency: editItem.currency || state.currency,
-  } : { title: "", icon: PROJECT_ICONS[0], amount: "", startDate: getToday(), endDate: "", term: "court", owner: "commun", frequency: "mensuel", currency: state.currency });
+    holdingAccount: editItem.holdingAccount || "",
+  } : { title: "", icon: PROJECT_ICONS[0], amount: "", startDate: getToday(), endDate: "", term: "court", owner: "commun", frequency: "mensuel", currency: state.currency, holdingAccount: "" });
   const [termTouched, setTermTouched] = useState(!!editItem);
   const canSubmit = f.title && f.amount && f.startDate && f.endDate;
 
@@ -2372,12 +2383,12 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
   }, [f.startDate, f.endDate, termTouched]);
 
   const submit = () => {
-    const item = { title: f.title, icon: f.icon, target: Number(f.amount), term: f.term, owner: f.owner, currency: f.currency, startDate: f.startDate, endDate: f.endDate, frequency: f.frequency };
+    const item = { title: f.title, icon: f.icon, target: Number(f.amount), term: f.term, owner: f.owner, currency: f.currency, startDate: f.startDate, endDate: f.endDate, frequency: f.frequency, holdingAccount: f.holdingAccount };
     if (isEdit) {
       onSave(editItem.id, item);
     } else {
       onAdd({ ...item, saved: 0 });
-      setF({ title: "", icon: PROJECT_ICONS[0], amount: "", startDate: getToday(), endDate: "", term: "court", owner: "commun", frequency: "mensuel", currency: state.currency });
+      setF({ title: "", icon: PROJECT_ICONS[0], amount: "", startDate: getToday(), endDate: "", term: "court", owner: "commun", frequency: "mensuel", currency: state.currency, holdingAccount: "" });
       setTermTouched(false);
     }
   };
@@ -2431,6 +2442,9 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
               </button>
             ))}
           </div>
+        </Field>
+        <Field label={t(lang, "fieldHoldingAccount")}>
+          <input className={inputCls} value={f.holdingAccount} onChange={(e) => setF({ ...f, holdingAccount: e.target.value })} placeholder={t(lang, "fieldHoldingAccountPlaceholder")} />
         </Field>
         <OwnerSelect theme={theme} state={state} value={f.owner} onChange={(v) => setF({ ...f, owner: v })} />
       </StepShell>
@@ -3402,6 +3416,7 @@ function DebtsTab({ theme, state, setState, onGoToAide }) {
                       {d.paymentMode === "unique"
                         ? `Échéance : ${d.dueDate}`
                         : `~${money(currentInstallment, d.currency || state.currency)} / ${freqLabel(d.frequency)} · jusqu'au ${d.endDate}`}
+                      {(d.holdingAccount || d.chargeAccount) && ` · ${[d.holdingAccount, d.chargeAccount].filter(Boolean).join(" → ")}`}
                     </p>
                   </div>
                 </div>
@@ -3614,6 +3629,7 @@ function ProjectsTab({ theme, state, setState }) {
                     </h3>
                     <p className="text-xs text-slate-400">
                       {termInfo?.label || p.term} · ~{money(projectInstallment(p), p.currency || state.currency)} / {freqLabel(p.frequency)} · jusqu'au {p.endDate}
+                      {p.holdingAccount && ` · ${p.holdingAccount}`}
                     </p>
                   </div>
                 </div>
