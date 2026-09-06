@@ -4641,7 +4641,11 @@ export default function App() {
         if (!found && i < 5) await new Promise((r) => setTimeout(r, 700));
       }
       if (cancelled) return;
-      setState(found ? found.data : defaultState);
+      // Fusionne avec l'état par défaut : si le compte a été créé avant l'ajout d'une
+      // fonctionnalité (ex. le journal de dépenses), le champ correspondant serait
+      // manquant dans les anciennes données sauvegardées — cette fusion lui donne une
+      // valeur par défaut sûre au lieu de faire planter l'appli.
+      setState(found ? { ...defaultState, ...found.data } : defaultState);
       setLoadDone(true);
     })();
     return () => { cancelled = true; };
