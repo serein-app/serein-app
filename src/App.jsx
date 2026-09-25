@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo, forwardRef, useImperativeHandle, useRef } from "react";
-import { supabase } from "./supabaseClient";
 import {
   Calendar as CalendarIcon,
   Wallet,
@@ -32,6 +31,8 @@ import {
   Printer,
   ShieldCheck,
   ReceiptText,
+  Copy,
+  Share2,
 } from "lucide-react";
 import {
   LineChart,
@@ -237,6 +238,7 @@ const TRANSLATIONS = {
     benefit3Title: "Adaptée à ta situation",
     benefit3Text: "Étudiant, couple, parent, aidant proche… contrairement à la plupart des autres apps, Serein s'adapte à toi et sait qui doit quoi à qui.",
     skipBenefits: "Passer l'introduction",
+    stepOf: "Étape {n} sur {total}",
     languageHint: "Modifiable à tout moment dans les réglages.",
     signupTitle: "Créer ton compte",
     signupHint: "Pour que tes données te suivent d'un appareil à l'autre.",
@@ -366,6 +368,7 @@ const TRANSLATIONS = {
     goalReachedTitle: "Objectif atteint ! 🎉",
     goalReachedMessage: "« {title} » est financé à 100 % — {amount} mis de côté. Tu peux passer à la suite.",
     continueBtn2: "Continuer",
+    shareAchievement: "Partager cette réussite",
     yourDataTitle: "Tes données",
     yourDataHint: "Tu peux repartir avec tes données à tout moment — aucune obligation de rester si tu changes d'avis.",
     exportCSV: "CSV",
@@ -374,11 +377,14 @@ const TRANSLATIONS = {
     comingSoonTitle: "À venir sur la vraie appli",
     comingSoonText: "Ce prototype ne peut pas encore le faire, mais c'est prévu pour la version déployée : verrouillage par Face ID ou code à l'ouverture, et des rappels avant chaque échéance (facture, dette, abonnement) — pas seulement un affichage dans le calendrier. Les notifications demandent un vrai serveur, qu'un artefact ne peut pas fournir.",
     privacyPolicy: "Politique de confidentialité",
-    privacyPolicyBody: "Voici où en sont réellement tes données.\n\nCE QUE NOUS COLLECTONS\nUniquement ce que tu entres toi-même : prénom, dettes, projets, abonnements, factures, revenus, investissements, et la composition de ton foyer si tu la renseignes — plus ton adresse courriel pour la connexion.\n\nOÙ C'EST STOCKÉ\nTes données sont hébergées par Supabase, dans une base sécurisée, accessible uniquement par toi grâce à ton compte. La connexion se fait par lien envoyé à ton courriel, sans mot de passe à retenir.\n\nCE QUE NOUS NE FAISONS PAS\nNous ne vendons ni ne partageons tes données à des fins publicitaires. Aucune publicité dans l'application. Aucun suivi analytique caché.\n\nTES DROITS DÈS MAINTENANT\nTu peux exporter toutes tes données à tout moment (CSV, sauvegarde complète) juste au-dessus dans ces réglages, te déconnecter, ou réinitialiser complètement l'application.\n\nPOUR LA SUITE\nUne politique de confidentialité complète et conforme à la loi sera publiée séparément et remplacera ce résumé.",
+    privacyPolicyBody: "Ceci est une version de test de Serein — voici où en sont réellement tes données pendant cette phase.\n\nCE QUE NOUS COLLECTONS\nUniquement ce que tu entres toi-même : prénom, dettes, projets, abonnements, factures, revenus, investissements, et la composition de ton foyer si tu la renseignes.\n\nOÙ C'EST STOCKÉ\nDans cette version de test, tes données restent stockées localement, liées à ton navigateur — il n'y a pas encore de compte réel ni de serveur central. L'écran d'inscription (e-mail/Google) est une maquette qui ne crée rien.\n\nCE QUE NOUS NE FAISONS PAS\nNous ne vendons ni ne partageons tes données à des fins publicitaires. Aucune publicité dans l'application. Aucun suivi analytique caché.\n\nTES DROITS DÈS MAINTENANT\nTu peux exporter toutes tes données à tout moment (CSV, sauvegarde complète) juste au-dessus dans ces réglages, ou réinitialiser complètement l'application.\n\nPOUR LA SUITE\nUne fois l'application réellement déployée (comptes, serveur), une politique de confidentialité complète et conforme à la loi sera publiée et remplacera ce texte.",
     privacyPolicyClose: "Fermer",
     remainingToRepay: "Reste à rembourser",
     savedWord: "épargné",
     goalWord: "Objectif",
+    remainingToSave: "Reste à épargner",
+    viewHistory: "Voir l'historique",
+    perPaycheckHint: "≈ {amount} à mettre de côté à chaque paie (tu es payé aux {freq}).",
     freqMonthly: "Mensuel",
     freqWeekly: "Hebdomadaire",
     freqBiweekly: "Bi-hebdo",
@@ -420,6 +426,8 @@ const TRANSLATIONS = {
     fieldInvestmentType: "Type",
     fieldInvestmentCurrency: "Devise de cet investissement",
     fieldItemCurrency: "Devise de cet élément",
+    showAdvanced: "Options avancées (devise, comptes...)",
+    hideAdvanced: "Masquer les options avancées",
     fieldHoldingAccount: "Où tu mets l'argent de côté — optionnel",
     fieldHoldingAccountPlaceholder: "Ex : Compte chèque, Compte épargne",
     fieldChargeAccount: "Où tu es débité — optionnel",
@@ -440,6 +448,11 @@ const TRANSLATIONS = {
     thisMonthSpending: "Dépenses du mois",
     noExpensesThisMonth: "Aucune dépense enregistrée ce mois-ci.",
     spentOnCategory: "Tu as dépensé {amount} en {category} ce mois-ci.",
+    newCategory: "Nouvelle",
+    newCategoryPlaceholder: "Nom de la catégorie",
+    newCategoryNeed: "Besoin",
+    newCategoryWant: "Envie",
+    newCategoryConfirm: "Créer cette catégorie",
     fieldCurrentValue: "Valeur actuelle",
     investmentEditNote: "Pour changer la valeur, utilise « Mettre à jour » sur la carte de l'investissement — ça garde l'historique intact.",
     recapTitle: "C'est prêt",
@@ -498,6 +511,7 @@ const TRANSLATIONS = {
     benefit3Title: "Adapted to your situation",
     benefit3Text: "Student, couple, parent, caregiver… unlike most other apps, Serein adapts to you and knows who owes what to whom.",
     skipBenefits: "Skip the intro",
+    stepOf: "Step {n} of {total}",
     languageHint: "Changeable anytime in settings.",
     signupTitle: "Create your account",
     signupHint: "So your data follows you from device to device.",
@@ -627,6 +641,7 @@ const TRANSLATIONS = {
     goalReachedTitle: "Goal reached! 🎉",
     goalReachedMessage: "\u00ab {title} \u00bb is 100% funded — {amount} saved. You can move on to the next thing.",
     continueBtn2: "Continue",
+    shareAchievement: "Share this milestone",
     yourDataTitle: "Your data",
     yourDataHint: "You can take your data with you at any time — no obligation to stay if you change your mind.",
     exportCSV: "CSV",
@@ -635,11 +650,14 @@ const TRANSLATIONS = {
     comingSoonTitle: "Coming to the real app",
     comingSoonText: "This prototype can't do this yet, but it's planned for the deployed version: Face ID or passcode lock on opening, and reminders before each due date (bill, debt, subscription) — not just a passive display in the calendar. Notifications require a real server, which an artifact can't provide.",
     privacyPolicy: "Privacy Policy",
-    privacyPolicyBody: "Here's where your data actually stands.\n\nWHAT WE COLLECT\nOnly what you enter yourself: first name, debts, projects, subscriptions, bills, income, investments, and your household composition if you fill it in — plus your email for sign-in.\n\nWHERE IT'S STORED\nYour data is hosted by Supabase, in a secure database, accessible only by you through your account. Sign-in happens via a link sent to your email, no password to remember.\n\nWHAT WE DON'T DO\nWe never sell or share your data for advertising purposes. No ads in the app. No hidden analytics tracking.\n\nYOUR RIGHTS RIGHT NOW\nYou can export all your data at any time (CSV, full backup) just above in these settings, sign out, or fully reset the app.\n\nWHAT'S NEXT\nA complete, legally compliant privacy policy will be published separately and will replace this summary.",
+    privacyPolicyBody: "This is a test version of Serein — here's where your data actually stands during this phase.\n\nWHAT WE COLLECT\nOnly what you enter yourself: first name, debts, projects, subscriptions, bills, income, investments, and your household composition if you fill it in.\n\nWHERE IT'S STORED\nIn this test version, your data stays stored locally, tied to your browser — there's no real account or central server yet. The sign-up screen (email/Google) is a mockup that creates nothing.\n\nWHAT WE DON'T DO\nWe never sell or share your data for advertising purposes. No ads in the app. No hidden analytics tracking.\n\nYOUR RIGHTS RIGHT NOW\nYou can export all your data at any time (CSV, full backup) just above in these settings, or fully reset the app.\n\nWHAT'S NEXT\nOnce the app is actually deployed (accounts, server), a complete, legally compliant privacy policy will be published and will replace this text.",
     privacyPolicyClose: "Close",
     remainingToRepay: "Remaining to repay",
     savedWord: "saved",
     goalWord: "Goal",
+    remainingToSave: "Remaining to save",
+    viewHistory: "View history",
+    perPaycheckHint: "≈ {amount} to set aside from each paycheck (you're paid every {freq}).",
     freqMonthly: "Monthly",
     freqWeekly: "Weekly",
     freqBiweekly: "Bi-weekly",
@@ -681,6 +699,8 @@ const TRANSLATIONS = {
     fieldInvestmentType: "Type",
     fieldInvestmentCurrency: "This investment's currency",
     fieldItemCurrency: "This item's currency",
+    showAdvanced: "Advanced options (currency, accounts...)",
+    hideAdvanced: "Hide advanced options",
     fieldHoldingAccount: "Where you set the money aside — optional",
     fieldHoldingAccountPlaceholder: "E.g. Chequing account, Savings account",
     fieldChargeAccount: "Where it's charged — optional",
@@ -701,6 +721,11 @@ const TRANSLATIONS = {
     thisMonthSpending: "This month's spending",
     noExpensesThisMonth: "No expenses logged yet this month.",
     spentOnCategory: "You've spent {amount} on {category} this month.",
+    newCategory: "New",
+    newCategoryPlaceholder: "Category name",
+    newCategoryNeed: "Need",
+    newCategoryWant: "Want",
+    newCategoryConfirm: "Create this category",
     fieldCurrentValue: "Current value",
     investmentEditNote: "To change the value, use \"Update\" on the investment's card — that keeps the history intact.",
     recapTitle: "All set",
@@ -783,6 +808,7 @@ const defaultState = {
   exchangeRates: null,
   exchangeRatesError: false,
   expenses: [],
+  expenseCategories: [],
 };
 
 // Ajoute (ou met à jour si même jour) un point d'historique — évite les doublons
@@ -849,8 +875,8 @@ function buildFullCSV(state) {
   sections.push(csvSection("REVENUS", ["Libellé", "Montant", "Devise", "Fréquence", "Date", "Concerne"],
     state.paydays.map((p) => [p.title, p.amount, p.currency || state.currency, p.frequency, p.startDate, ownerLabel(p.owner, state)])
   ));
-  sections.push(csvSection("INVESTISSEMENTS", ["Titre", "Type", "Valeur", "Devise", "Concerne"],
-    state.investments.map((i) => [i.title, i.type, i.value, i.currency || state.currency, ownerLabel(i.owner, state)])
+  sections.push(csvSection("INVESTISSEMENTS", ["Titre", "Type", "Valeur", "Total versé", "Gain/Perte", "Devise", "Concerne"],
+    state.investments.map((i) => [i.title, i.type, i.value, i.contributed ?? i.value, i.value - (i.contributed ?? i.value), i.currency || state.currency, ownerLabel(i.owner, state)])
   ));
   return sections.join("\n\n");
 }
@@ -1104,6 +1130,26 @@ function Field({ label, children }) {
   );
 }
 
+// Regroupe les champs facultatifs (devise, comptes...) derrière un lien replié par défaut —
+// pour qu'un ajout simple (ex. "Netflix, 15,99 $/mois") reste rapide, sans mur de champs.
+function AdvancedSection({ theme, lang, children }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="mb-3">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center justify-center gap-1.5 text-sm font-medium w-full py-2.5 rounded-lg"
+        style={{ backgroundColor: theme.soft, color: theme.primary }}
+      >
+        <ChevronRight size={15} className={open ? "rotate-90" : ""} style={{ transition: "transform 0.15s" }} />
+        {open ? t(lang, "hideAdvanced") : t(lang, "showAdvanced")}
+      </button>
+      {open && <div className="mt-3">{children}</div>}
+    </div>
+  );
+}
+
 const inputCls =
   "w-full h-11 rounded-lg border border-slate-300 bg-white text-slate-900 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1";
 
@@ -1241,6 +1287,35 @@ function OwnerFilterBar({ theme, state, value, onChange }) {
   );
 }
 
+// Petit message de confirmation après une action rapide (épargner, paiement, mise à jour),
+// avec un bouton "Annuler" pendant quelques secondes — pour rassurer sans forcer un clic
+// de confirmation avant coup, ce qui ralentirait ces actions volontairement rapides.
+function Toast({ toast, onDismiss }) {
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(onDismiss, 5000);
+    return () => clearTimeout(t);
+  }, [toast, onDismiss]);
+
+  if (!toast) return null;
+  return (
+    <div className="fixed bottom-20 left-4 right-4 z-40 flex justify-center">
+      <div className="bg-slate-800 text-white text-sm rounded-full shadow-lg px-4 py-2.5 flex items-center gap-3 max-w-md">
+        <Check size={15} className="shrink-0" style={{ color: "#5BC2B4" }} />
+        <span className="flex-1">{toast.message}</span>
+        {toast.onUndo && (
+          <button
+            onClick={() => { toast.onUndo(); onDismiss(); }}
+            className="font-medium underline shrink-0"
+          >
+            Annuler
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function BottomSheet({ title, onClose, children }) {
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -1271,7 +1346,98 @@ function BottomSheet({ title, onClose, children }) {
 // abonnements, factures et revenus, accessibles depuis le "+" du Calendrier.
 // Écran de célébration — apparaît au moment précis où une dette passe à zéro ou un
 // objectif d'épargne est atteint. Sobre et chaleureux, pas de confettis criards.
-function CelebrationOverlay({ theme, icon, title, message, onClose, lang }) {
+// Génère une image carrée à partager (réseaux sociaux, messagerie) — volontairement sobre :
+// pas de montant précis (ni vantardise, ni malaise pour qui la reçoit), juste le fait d'avoir
+// atteint l'objectif. Dessiné directement en canvas, sans dépendance externe.
+function generateShareCard(theme, { icon, headline, subtitle }) {
+  return new Promise((resolve) => {
+    const size = 1080;
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+
+    // Fond doux, dégradé discret dans les couleurs du thème
+    const gradient = ctx.createLinearGradient(0, 0, size, size);
+    gradient.addColorStop(0, theme.soft);
+    gradient.addColorStop(1, "#ffffff");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+
+    // Cercle avec l'icône
+    ctx.beginPath();
+    ctx.arc(size / 2, 380, 130, 0, Math.PI * 2);
+    ctx.fillStyle = theme.primary;
+    ctx.globalAlpha = 0.15;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.font = "140px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(icon, size / 2, 390);
+
+    // Titre
+    ctx.fillStyle = theme.text;
+    ctx.font = "600 64px sans-serif";
+    ctx.fillText(headline, size / 2, 580);
+
+    // Sous-titre (nom de l'élément, sans montant)
+    ctx.fillStyle = "#64748b";
+    ctx.font = "44px sans-serif";
+    const maxWidth = size - 160;
+    wrapCanvasText(ctx, subtitle, size / 2, 660, maxWidth, 56);
+
+    // Marque en bas
+    ctx.fillStyle = theme.primary;
+    ctx.font = "600 40px sans-serif";
+    ctx.fillText("Serein", size / 2, size - 100);
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "28px sans-serif";
+    ctx.fillText("Des finances enfin sous contrôle", size / 2, size - 55);
+
+    canvas.toBlob((blob) => resolve(blob), "image/png");
+  });
+}
+
+// Petit utilitaire pour retourner à la ligne dans un canvas (pas géré nativement)
+function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(" ");
+  let line = "";
+  let curY = y;
+  for (const word of words) {
+    const test = line ? `${line} ${word}` : word;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      ctx.fillText(line, x, curY);
+      line = word;
+      curY += lineHeight;
+    } else {
+      line = test;
+    }
+  }
+  ctx.fillText(line, x, curY);
+}
+
+async function shareCard(theme, { icon, headline, subtitle }) {
+  const blob = await generateShareCard(theme, { icon, headline, subtitle });
+  if (!blob) return;
+  const file = new File([blob], "serein.png", { type: "image/png" });
+  if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], title: "Serein" });
+      return;
+    } catch {
+      // annulé ou échoué — on retombe sur le téléchargement
+    }
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "serein.png";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function CelebrationOverlay({ theme, icon, title, message, shareData, onClose, lang }) {
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60] p-6" onClick={onClose}>
       <div
@@ -1290,6 +1456,15 @@ function CelebrationOverlay({ theme, icon, title, message, onClose, lang }) {
         </div>
         <h2 className="text-lg font-semibold mb-2" style={{ color: theme.text }}>{title}</h2>
         <p className="text-sm text-slate-500 mb-5 leading-relaxed">{message}</p>
+        {shareData && (
+          <button
+            onClick={() => shareCard(theme, shareData)}
+            className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border mb-2 flex items-center justify-center gap-2"
+            style={{ borderColor: theme.primary, color: theme.primary }}
+          >
+            <Share2 size={16} /> {t(lang, "shareAchievement")}
+          </button>
+        )}
         <button
           onClick={onClose}
           className="w-full text-sm font-medium text-white px-4 py-2.5 rounded-lg"
@@ -1305,6 +1480,7 @@ function CelebrationOverlay({ theme, icon, title, message, onClose, lang }) {
 function ManageListSheet({ sheetTitle, theme, state, setState, field, StepComp, stepExtraProps, renderRow, onClose }) {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [duplicating, setDuplicating] = useState(null);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("recent");
   const items = state[field];
@@ -1336,7 +1512,7 @@ function ManageListSheet({ sheetTitle, theme, state, setState, field, StepComp, 
       {!showForm && (
         <>
           <button
-            onClick={() => { setEditing(null); setShowForm(true); }}
+            onClick={() => { setEditing(null); setDuplicating(null); setShowForm(true); }}
             className="mb-3 flex items-center gap-1 text-sm font-medium px-3 py-2 rounded-lg text-white"
             style={{ backgroundColor: theme.primary }}
           >
@@ -1378,7 +1554,8 @@ function ManageListSheet({ sheetTitle, theme, state, setState, field, StepComp, 
                 <li key={x.id} className="flex items-center justify-between gap-2 bg-slate-50 rounded-lg px-3 py-2 text-sm">
                   <span className="min-w-0 break-words">{renderRow(x)}</span>
                   <span className="flex items-center gap-1 shrink-0">
-                    <button onClick={() => { setEditing(x); setShowForm(true); }} className="text-slate-400 hover:text-slate-700 p-1"><Pencil size={14} /></button>
+                    <button onClick={() => { setEditing(null); setDuplicating(x); setShowForm(true); }} className="text-slate-400 hover:text-slate-700 p-1" title="Dupliquer"><Copy size={14} /></button>
+                    <button onClick={() => { setEditing(x); setDuplicating(null); setShowForm(true); }} className="text-slate-400 hover:text-slate-700 p-1"><Pencil size={14} /></button>
                     <ConfirmDeleteButton onConfirm={() => removeItem(x.id)} size={14} />
                   </span>
                 </li>
@@ -1389,7 +1566,7 @@ function ManageListSheet({ sheetTitle, theme, state, setState, field, StepComp, 
       )}
       {showForm && (
         <div>
-          <button onClick={() => { setShowForm(false); setEditing(null); }} className="text-xs mb-3" style={{ color: theme.primary }}>
+          <button onClick={() => { setShowForm(false); setEditing(null); setDuplicating(null); }} className="text-xs mb-3" style={{ color: theme.primary }}>
             ← Retour à la liste
           </button>
           <StepComp
@@ -1397,6 +1574,7 @@ function ManageListSheet({ sheetTitle, theme, state, setState, field, StepComp, 
             state={state}
             items={items}
             editItem={editing}
+            duplicateFrom={duplicating}
             onAdd={addItem}
             onSave={saveItem}
             onRemove={removeItem}
@@ -1436,7 +1614,7 @@ function Onboarding({ state, setState, onFinish }) {
   const lang = state.language || "fr";
 
   const steps = useMemo(() => {
-    const s = ["welcome", "benefit1", "benefit2", "benefit3", "language", "prenom", "theme", "situation"];
+    const s = ["welcome", "benefit1", "benefit2", "benefit3", "language", "signup", "prenom", "theme", "situation"];
     if (state.profileType === "autre") s.push("autre-people");
     s.push("currency");
     if (state.profileType === "couple") s.push("household");
@@ -1524,6 +1702,9 @@ function Onboarding({ state, setState, onFinish }) {
       </div>
       <div className="flex-1 flex items-center justify-center p-5">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6">
+          {current !== "recap" && (
+            <p className="text-xs text-slate-400 mb-3">{t(lang, "stepOf").replace("{n}", step + 1).replace("{total}", total)}</p>
+          )}
           {current === "welcome" && <WelcomeStep theme={theme} lang={lang} />}
           {current === "benefit1" && <BenefitStep theme={theme} icon={CalendarIcon} title={t(lang, "benefit1Title")} text={t(lang, "benefit1Text")} />}
           {current === "benefit2" && <BenefitStep theme={theme} icon={Target} title={t(lang, "benefit2Title")} text={t(lang, "benefit2Text")} />}
@@ -1531,6 +1712,7 @@ function Onboarding({ state, setState, onFinish }) {
           {current === "language" && (
             <LanguageStep theme={theme} value={lang} onPick={(code) => setState((s) => ({ ...s, language: code }))} />
           )}
+          {current === "signup" && <SignupStep lang={lang} />}
           {current === "prenom" && <PrenomStep value={state.userName} onChange={(v) => setState((s) => ({ ...s, userName: v }))} lang={lang} />}
           {current === "situation" && (
             <SituationStep
@@ -1687,7 +1869,7 @@ function Onboarding({ state, setState, onFinish }) {
             </button>
           )}
 
-          {!returnToRecap && step > steps.indexOf("currency") && current !== "recap" && (
+          {!returnToRecap && step > steps.indexOf("situation") && current !== "recap" && (
             <button
               onClick={() => { commitCurrentStep(); setReturnToRecap(false); setStep(steps.indexOf("recap")); }}
               className="w-full text-center text-xs text-slate-400 mt-3 underline"
@@ -1749,6 +1931,34 @@ function LanguageStep({ theme, value, onPick }) {
           );
         })}
       </div>
+    </div>
+  );
+}
+
+function SignupStep({ lang }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  return (
+    <div>
+      <h2 className="text-lg font-semibold mb-1">{t(lang, "signupTitle")}</h2>
+      <p className="text-sm text-slate-500 mb-4">{t(lang, "signupDemoNote")}</p>
+      <button
+        type="button"
+        className="w-full flex items-center justify-center gap-2 border border-slate-300 rounded-lg h-11 mb-4 text-sm font-medium text-slate-700"
+      >
+        {t(lang, "signupGoogle")}
+      </button>
+      <div className="flex items-center gap-2 mb-4">
+        <div className="flex-1 h-px bg-slate-200" />
+        <span className="text-xs text-slate-400">{t(lang, "signupOr")}</span>
+        <div className="flex-1 h-px bg-slate-200" />
+      </div>
+      <Field label={t(lang, "signupEmail")}>
+        <input type="email" className={inputCls} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="toi@exemple.com" />
+      </Field>
+      <Field label={t(lang, "signupPassword")}>
+        <input type="password" className={inputCls} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+      </Field>
     </div>
   );
 }
@@ -1936,8 +2146,14 @@ const EXPENSE_CATEGORIES = [
   { id: "shopping", icon: "🛍️", type: "envie", fr: "Shopping", en: "Shopping" },
   { id: "autre", icon: "📦", type: "envie", fr: "Autre", en: "Other" },
 ];
-function expenseCategoryLabel(catId, lang) {
-  const cat = EXPENSE_CATEGORIES.find((c) => c.id === catId);
+// Fusionne les 7 catégories intégrées avec celles que la personne a créées elle-même —
+// ces dernières n'ont qu'un seul libellé (pas de fr/en séparés, puisqu'elle l'a tapé elle-même).
+function allExpenseCategories(state) {
+  const custom = (state.expenseCategories || []).map((c) => ({ ...c, fr: c.label, en: c.label }));
+  return [...EXPENSE_CATEGORIES, ...custom];
+}
+function expenseCategoryLabel(catId, lang, state) {
+  const cat = allExpenseCategories(state).find((c) => c.id === catId);
   if (!cat) return catId;
   return lang === "en" ? cat.en : cat.fr;
 }
@@ -2218,27 +2434,31 @@ function freqOptions(lang, ids) {
   return ids.map((id) => ({ id, label: t(lang, FREQ_KEY[id] || id) }));
 }
 
-const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, onSave, onRemove, editItem, hideList }, ref) {
+const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList }, ref) {
   const lang = state.language || "fr";
   const isEdit = !!editItem;
-  const [f, setF] = useState(() => editItem ? {
-    title: editItem.title,
-    icon: editItem.icon || DEBT_ICONS[0],
-    amount: String(editItem.amount),
-    remainingAmount: String(editItem.amount - editItem.paid),
-    interestRate: editItem.interestRate != null ? String(editItem.interestRate) : "",
-    paymentMode: editItem.paymentMode,
-    dueDate: editItem.dueDate || getToday(),
-    startDate: editItem.startDate || getToday(),
-    endDateMode: "date",
-    endDate: editItem.endDate || "",
-    durationMonths: "",
-    frequency: editItem.frequency || "mensuel",
-    owner: editItem.owner || "commun",
-    currency: editItem.currency || state.currency,
-    holdingAccount: editItem.holdingAccount || "",
-    chargeAccount: editItem.chargeAccount || "",
-  } : { title: "", icon: DEBT_ICONS[0], amount: "", remainingAmount: "", interestRate: "", paymentMode: "recurrent", dueDate: getToday(), startDate: getToday(), endDateMode: "date", endDate: "", durationMonths: "", frequency: "mensuel", owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "" });
+  const [f, setF] = useState(() => {
+    const src = editItem || duplicateFrom;
+    if (!src) return { title: "", icon: DEBT_ICONS[0], amount: "", remainingAmount: "", interestRate: "", paymentMode: "recurrent", dueDate: getToday(), startDate: getToday(), endDateMode: "date", endDate: "", durationMonths: "", frequency: "mensuel", owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "" };
+    return {
+      title: editItem ? src.title : "",
+      icon: src.icon || DEBT_ICONS[0],
+      amount: editItem ? String(src.amount) : "",
+      remainingAmount: editItem ? String(src.amount - src.paid) : "",
+      interestRate: src.interestRate != null ? String(src.interestRate) : "",
+      paymentMode: src.paymentMode,
+      dueDate: src.dueDate || getToday(),
+      startDate: src.startDate || getToday(),
+      endDateMode: "date",
+      endDate: src.endDate || "",
+      durationMonths: "",
+      frequency: src.frequency || "mensuel",
+      owner: src.owner || "commun",
+      currency: src.currency || state.currency,
+      holdingAccount: src.holdingAccount || "",
+      chargeAccount: src.chargeAccount || "",
+    };
+  });
   const canSubmit = f.title && f.amount && (f.paymentMode === "unique" ? f.dueDate : (f.endDateMode === "date" ? f.endDate : f.durationMonths));
   const submit = () => {
     const total = Number(f.amount);
@@ -2265,11 +2485,6 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
         </Field>
         <Field label={t(lang, "fieldIcon")}>
           <IconPicker theme={theme} value={f.icon} onChange={(v) => setF({ ...f, icon: v })} options={DEBT_ICONS} lang={lang} />
-        </Field>
-        <Field label={t(lang, "fieldItemCurrency")}>
-          <select className={selectCls} value={f.currency} onChange={(e) => setF({ ...f, currency: e.target.value })}>
-            {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
-          </select>
         </Field>
 
         <div className="p-3 rounded-lg bg-slate-50 mb-3">
@@ -2335,15 +2550,20 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
             </Field>
           </div>
         )}
-        <div className="p-3 rounded-lg bg-slate-50 mb-3">
+        <OwnerSelect theme={theme} state={state} value={f.owner} onChange={(v) => setF({ ...f, owner: v })} />
+        <AdvancedSection theme={theme} lang={lang}>
+          <Field label={t(lang, "fieldItemCurrency")}>
+            <select className={selectCls} value={f.currency} onChange={(e) => setF({ ...f, currency: e.target.value })}>
+              {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
+            </select>
+          </Field>
           <Field label={t(lang, "fieldHoldingAccount")}>
             <input className={inputCls} value={f.holdingAccount} onChange={(e) => setF({ ...f, holdingAccount: e.target.value })} placeholder={t(lang, "fieldHoldingAccountPlaceholder")} />
           </Field>
           <Field label={t(lang, "fieldChargeAccount")}>
             <input className={inputCls} value={f.chargeAccount} onChange={(e) => setF({ ...f, chargeAccount: e.target.value })} placeholder={t(lang, "fieldChargeAccountPlaceholder")} />
           </Field>
-        </div>
-        <OwnerSelect theme={theme} state={state} value={f.owner} onChange={(v) => setF({ ...f, owner: v })} />
+        </AdvancedSection>
       </StepShell>
       {!hideList && (
         <ListPreview
@@ -2358,21 +2578,25 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
   );
 });
 
-const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onAdd, onSave, onRemove, editItem, hideList }, ref) {
+const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList }, ref) {
   const lang = state.language || "fr";
   const isEdit = !!editItem;
-  const [f, setF] = useState(() => editItem ? {
-    title: editItem.title,
-    icon: editItem.icon || PROJECT_ICONS[0],
-    amount: String(editItem.target),
-    startDate: editItem.startDate || getToday(),
-    endDate: editItem.endDate || "",
-    term: editItem.term,
-    owner: editItem.owner || "commun",
-    frequency: editItem.frequency || "mensuel",
-    currency: editItem.currency || state.currency,
-    holdingAccount: editItem.holdingAccount || "",
-  } : { title: "", icon: PROJECT_ICONS[0], amount: "", startDate: getToday(), endDate: "", term: "court", owner: "commun", frequency: "mensuel", currency: state.currency, holdingAccount: "" });
+  const [f, setF] = useState(() => {
+    const src = editItem || duplicateFrom;
+    if (!src) return { title: "", icon: PROJECT_ICONS[0], amount: "", startDate: getToday(), endDate: "", term: "court", owner: "commun", frequency: "mensuel", currency: state.currency, holdingAccount: "" };
+    return {
+      title: editItem ? src.title : "",
+      icon: src.icon || PROJECT_ICONS[0],
+      amount: editItem ? String(src.target) : "",
+      startDate: src.startDate || getToday(),
+      endDate: src.endDate || "",
+      term: src.term,
+      owner: src.owner || "commun",
+      frequency: src.frequency || "mensuel",
+      currency: src.currency || state.currency,
+      holdingAccount: src.holdingAccount || "",
+    };
+  });
   const [termTouched, setTermTouched] = useState(!!editItem);
   const canSubmit = f.title && f.amount && f.startDate && f.endDate;
 
@@ -2401,11 +2625,6 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
         </Field>
         <Field label={t(lang, "fieldIcon")}>
           <IconPicker theme={theme} value={f.icon} onChange={(v) => setF({ ...f, icon: v })} options={PROJECT_ICONS} lang={lang} />
-        </Field>
-        <Field label={t(lang, "fieldItemCurrency")}>
-          <select className={selectCls} value={f.currency} onChange={(e) => setF({ ...f, currency: e.target.value })}>
-            {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
-          </select>
         </Field>
         <Field label={`${t(lang, "fieldProjectAmount")} (${f.currency})`}>
           <input type="number" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
@@ -2443,10 +2662,17 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
             ))}
           </div>
         </Field>
-        <Field label={t(lang, "fieldHoldingAccount")}>
-          <input className={inputCls} value={f.holdingAccount} onChange={(e) => setF({ ...f, holdingAccount: e.target.value })} placeholder={t(lang, "fieldHoldingAccountPlaceholder")} />
-        </Field>
         <OwnerSelect theme={theme} state={state} value={f.owner} onChange={(v) => setF({ ...f, owner: v })} />
+        <AdvancedSection theme={theme} lang={lang}>
+          <Field label={t(lang, "fieldItemCurrency")}>
+            <select className={selectCls} value={f.currency} onChange={(e) => setF({ ...f, currency: e.target.value })}>
+              {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
+            </select>
+          </Field>
+          <Field label={t(lang, "fieldHoldingAccount")}>
+            <input className={inputCls} value={f.holdingAccount} onChange={(e) => setF({ ...f, holdingAccount: e.target.value })} placeholder={t(lang, "fieldHoldingAccountPlaceholder")} />
+          </Field>
+        </AdvancedSection>
       </StepShell>
       {!hideList && (
         <ListPreview items={items} onRemove={onRemove} render={(p) => `${p.title} — ${money(p.target, p.currency || state.currency)} — jusqu'au ${p.endDate}`} />
@@ -2455,24 +2681,35 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
   );
 });
 
-const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, hint, items, onAdd, onSave, onRemove, editItem, hideList, showEssentialToggle }, ref) {
+const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, hint, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList, showEssentialToggle }, ref) {
   const lang = state.language || "fr";
   const isEdit = !!editItem;
-  const [f, setF] = useState(() => editItem ? {
-    title: editItem.title,
-    day: editItem.day != null ? String(editItem.day) : "",
-    amount: String(editItem.amount),
-    period: editItem.period,
-    month: editItem.month != null ? String(editItem.month) : "1",
-    startDate: editItem.startDate || getToday(),
-    owner: editItem.owner || "commun",
-    currency: editItem.currency || state.currency,
-    holdingAccount: editItem.holdingAccount || "",
-    chargeAccount: editItem.chargeAccount || "",
-    essential: editItem.essential || false,
-  } : { title: "", day: "", amount: "", period: "mensuel", month: "1", startDate: getToday(), owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "", essential: false });
+  const [f, setF] = useState(() => {
+    const src = editItem || duplicateFrom;
+    if (!src) return { title: "", day: "", amount: "", period: "mensuel", month: "1", startDate: getToday(), owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "", essential: false };
+    return {
+      title: editItem ? src.title : "",
+      day: src.day != null ? String(src.day) : "",
+      amount: editItem ? String(src.amount) : "",
+      period: src.period,
+      month: src.month != null ? String(src.month) : "1",
+      startDate: src.startDate || getToday(),
+      owner: src.owner || "commun",
+      currency: src.currency || state.currency,
+      holdingAccount: src.holdingAccount || "",
+      chargeAccount: src.chargeAccount || "",
+      essential: src.essential || false,
+    };
+  });
   const usesStartDate = ["hebdomadaire", "bi-hebdomadaire", "bimestriel"].includes(f.period);
   const canSubmit = f.title && f.amount && (usesStartDate ? f.startDate : f.day);
+  // Combien mettre de côté à chaque paie, basé sur ta vraie fréquence de revenu — utile pour
+  // les personnes payées aux 2 semaines qui préfèrent répartir une grosse facture (loyer...)
+  // sur chaque paie plutôt que de tout prendre d'un coup.
+  const payFrequency = state.paydays[0]?.frequency;
+  const perPaycheckAmount = f.amount && payFrequency && payFrequency !== f.period
+    ? monthlyEquivalent(Number(f.amount), f.period) / periodsPerMonth(payFrequency)
+    : null;
   const submit = () => {
     const base = { title: f.title, amount: Number(f.amount), period: f.period, owner: f.owner, currency: f.currency, holdingAccount: f.holdingAccount, chargeAccount: f.chargeAccount, essential: f.essential };
     const item = usesStartDate
@@ -2492,23 +2729,16 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
         <Field label={t(lang, "fieldTitle")}>
           <input className={inputCls} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
         </Field>
-        {showEssentialToggle && (
-          <label className="flex items-start gap-2 mb-3 p-3 rounded-lg bg-slate-50 text-sm cursor-pointer">
-            <input type="checkbox" className="mt-0.5" checked={f.essential} onChange={(e) => setF({ ...f, essential: e.target.checked })} />
-            <span>
-              <span className="block font-medium">{t(lang, "fieldEssential")}</span>
-              <span className="block text-xs text-slate-400">{t(lang, "fieldEssentialHint")}</span>
-            </span>
-          </label>
-        )}
-        <Field label={t(lang, "fieldItemCurrency")}>
-          <select className={selectCls} value={f.currency} onChange={(e) => setF({ ...f, currency: e.target.value })}>
-            {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
-          </select>
-        </Field>
         <Field label={`${t(lang, "fieldAmount")} (${f.currency})`}>
           <input type="number" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
         </Field>
+        {perPaycheckAmount != null && (
+          <p className="text-xs text-slate-400 -mt-2 mb-3">
+            {t(lang, "perPaycheckHint")
+              .replace("{amount}", money(perPaycheckAmount, f.currency))
+              .replace("{freq}", freqLabel(payFrequency))}
+          </p>
+        )}
         <Field label={t(lang, "fieldFrequency")}>
           <FreqButtons
             theme={theme}
@@ -2533,15 +2763,29 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
             </select>
           </Field>
         )}
-        <div className="p-3 rounded-lg bg-slate-50 mb-3">
+        <OwnerSelect theme={theme} state={state} value={f.owner} onChange={(v) => setF({ ...f, owner: v })} />
+        <AdvancedSection theme={theme} lang={lang}>
+          {showEssentialToggle && (
+            <label className="flex items-start gap-2 mb-3 p-3 rounded-lg bg-slate-50 text-sm cursor-pointer">
+              <input type="checkbox" className="mt-0.5" checked={f.essential} onChange={(e) => setF({ ...f, essential: e.target.checked })} />
+              <span>
+                <span className="block font-medium">{t(lang, "fieldEssential")}</span>
+                <span className="block text-xs text-slate-400">{t(lang, "fieldEssentialHint")}</span>
+              </span>
+            </label>
+          )}
+          <Field label={t(lang, "fieldItemCurrency")}>
+            <select className={selectCls} value={f.currency} onChange={(e) => setF({ ...f, currency: e.target.value })}>
+              {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
+            </select>
+          </Field>
           <Field label={t(lang, "fieldHoldingAccount")}>
             <input className={inputCls} value={f.holdingAccount} onChange={(e) => setF({ ...f, holdingAccount: e.target.value })} placeholder={t(lang, "fieldHoldingAccountPlaceholder")} />
           </Field>
           <Field label={t(lang, "fieldChargeAccount")}>
             <input className={inputCls} value={f.chargeAccount} onChange={(e) => setF({ ...f, chargeAccount: e.target.value })} placeholder={t(lang, "fieldChargeAccountPlaceholder")} />
           </Field>
-        </div>
-        <OwnerSelect theme={theme} state={state} value={f.owner} onChange={(v) => setF({ ...f, owner: v })} />
+        </AdvancedSection>
       </StepShell>
       {!hideList && (
         <ListPreview
@@ -2556,12 +2800,22 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
   );
 });
 
-const PaydaysStep = forwardRef(function PaydaysStep({ theme, state, items, onAdd, onSave, onRemove, editItem, hideList }, ref) {
+const PaydaysStep = forwardRef(function PaydaysStep({ theme, state, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList }, ref) {
   const lang = state.language || "fr";
   const isEdit = !!editItem;
-  const [f, setF] = useState(() => editItem ? {
-    title: editItem.title, amount: String(editItem.amount), frequency: editItem.frequency, startDate: editItem.startDate || getToday(), owner: editItem.owner || "commun", currency: editItem.currency || state.currency, depositAccount: editItem.depositAccount || "",
-  } : { title: "Salaire", amount: "", frequency: "mensuel", startDate: getToday(), owner: "commun", currency: state.currency, depositAccount: "" });
+  const [f, setF] = useState(() => {
+    const src = editItem || duplicateFrom;
+    if (!src) return { title: "Salaire", amount: "", frequency: "mensuel", startDate: getToday(), owner: "commun", currency: state.currency, depositAccount: "" };
+    return {
+      title: editItem ? src.title : "Salaire",
+      amount: editItem ? String(src.amount) : "",
+      frequency: src.frequency,
+      startDate: src.startDate || getToday(),
+      owner: src.owner || "commun",
+      currency: src.currency || state.currency,
+      depositAccount: src.depositAccount || "",
+    };
+  });
   const canSubmit = f.amount && f.startDate;
   const submit = () => {
     const item = { title: f.title || "Paie", amount: Number(f.amount), frequency: f.frequency, startDate: f.startDate, owner: f.owner, currency: f.currency, depositAccount: f.depositAccount };
@@ -2579,11 +2833,6 @@ const PaydaysStep = forwardRef(function PaydaysStep({ theme, state, items, onAdd
         <Field label={t(lang, "fieldLabel")}>
           <input className={inputCls} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
         </Field>
-        <Field label={t(lang, "fieldItemCurrency")}>
-          <select className={selectCls} value={f.currency} onChange={(e) => setF({ ...f, currency: e.target.value })}>
-            {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
-          </select>
-        </Field>
         <Field label={`${t(lang, "fieldNetAmount")} (${f.currency})`}>
           <input type="number" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
         </Field>
@@ -2598,10 +2847,17 @@ const PaydaysStep = forwardRef(function PaydaysStep({ theme, state, items, onAdd
         <Field label={t(lang, "fieldNextPayday")}>
           <input type="date" className={selectCls} style={dateInputStyle} value={f.startDate} onChange={(e) => setF({ ...f, startDate: e.target.value })} />
         </Field>
-        <Field label={t(lang, "fieldDepositAccount")}>
-          <input className={inputCls} value={f.depositAccount} onChange={(e) => setF({ ...f, depositAccount: e.target.value })} placeholder={t(lang, "fieldDepositAccountPlaceholder")} />
-        </Field>
         <OwnerSelect theme={theme} state={state} value={f.owner} onChange={(v) => setF({ ...f, owner: v })} />
+        <AdvancedSection theme={theme} lang={lang}>
+          <Field label={t(lang, "fieldItemCurrency")}>
+            <select className={selectCls} value={f.currency} onChange={(e) => setF({ ...f, currency: e.target.value })}>
+              {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
+            </select>
+          </Field>
+          <Field label={t(lang, "fieldDepositAccount")}>
+            <input className={inputCls} value={f.depositAccount} onChange={(e) => setF({ ...f, depositAccount: e.target.value })} placeholder={t(lang, "fieldDepositAccountPlaceholder")} />
+          </Field>
+        </AdvancedSection>
       </StepShell>
       {!hideList && (
         <ListPreview items={items} onRemove={onRemove} render={(x) => `${x.title} — ${money(x.amount, state.currency)} — ${x.frequency} — ${x.startDate}`} />
@@ -2610,12 +2866,15 @@ const PaydaysStep = forwardRef(function PaydaysStep({ theme, state, items, onAdd
   );
 });
 
-const ExpenseStep = forwardRef(function ExpenseStep({ theme, state, items, onAdd, onSave, onRemove, editItem, hideList }, ref) {
+const ExpenseStep = forwardRef(function ExpenseStep({ theme, state, items, onAdd, onSave, onRemove, editItem, hideList, onAddCategory }, ref) {
   const lang = state.language || "fr";
   const isEdit = !!editItem;
   const [f, setF] = useState(() => editItem ? {
     amount: String(editItem.amount), category: editItem.category, date: editItem.date || getToday(), note: editItem.note || "", owner: editItem.owner || "commun", currency: editItem.currency || state.currency,
   } : { amount: "", category: "epicerie", date: getToday(), note: "", owner: "commun", currency: state.currency });
+  const [addingCategory, setAddingCategory] = useState(false);
+  const [newCat, setNewCat] = useState({ label: "", icon: "🏷️", type: "envie" });
+  const categories = allExpenseCategories(state);
   const canSubmit = f.amount && f.category;
   const submit = () => {
     const item = { amount: Number(f.amount), category: f.category, date: f.date, note: f.note, owner: f.owner, currency: f.currency };
@@ -2626,17 +2885,25 @@ const ExpenseStep = forwardRef(function ExpenseStep({ theme, state, items, onAdd
       setF({ amount: "", category: "epicerie", date: getToday(), note: "", owner: "commun", currency: state.currency });
     }
   };
+  const submitNewCategory = () => {
+    if (!newCat.label.trim()) return;
+    const id = `custom-${uid()}`;
+    onAddCategory({ id, icon: newCat.icon || "🏷️", type: newCat.type, label: newCat.label.trim() });
+    setF({ ...f, category: id });
+    setAddingCategory(false);
+    setNewCat({ label: "", icon: "🏷️", type: "envie" });
+  };
   useImperativeHandle(ref, () => ({ commit: () => { if (canSubmit) submit(); } }));
   return (
     <div>
       <StepShell title={t(lang, "expensesTitle")} hint={t(lang, "expensesHint")} theme={theme} canSubmit={canSubmit} onSubmit={submit} buttonLabel={isEdit ? t(lang, "saveChanges") : undefined} lang={lang}>
         <Field label={t(lang, "fieldExpenseCategory")}>
           <div className="grid grid-cols-4 gap-2 mb-3">
-            {EXPENSE_CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <button
                 type="button"
                 key={cat.id}
-                onClick={() => setF({ ...f, category: cat.id })}
+                onClick={() => { setF({ ...f, category: cat.id }); setAddingCategory(false); }}
                 className="flex flex-col items-center gap-1 rounded-lg border p-2 text-[11px]"
                 style={{
                   borderColor: f.category === cat.id ? theme.primary : "#e2e8f0",
@@ -2647,7 +2914,52 @@ const ExpenseStep = forwardRef(function ExpenseStep({ theme, state, items, onAdd
                 <span className="text-center leading-tight">{lang === "en" ? cat.en : cat.fr}</span>
               </button>
             ))}
+            <button
+              type="button"
+              onClick={() => setAddingCategory((v) => !v)}
+              className="flex flex-col items-center gap-1 rounded-lg border border-dashed p-2 text-[11px] text-slate-400"
+              style={{ borderColor: addingCategory ? theme.primary : "#cbd5e1" }}
+            >
+              <Plus size={18} />
+              <span className="text-center leading-tight">{t(lang, "newCategory")}</span>
+            </button>
           </div>
+          {addingCategory && (
+            <div className="p-3 rounded-lg bg-slate-50 mb-3 space-y-2">
+              <div className="flex gap-2">
+                <input
+                  className={`${inputCls} w-16 text-center text-lg shrink-0`}
+                  maxLength={8}
+                  value={newCat.icon}
+                  onChange={(e) => setNewCat({ ...newCat, icon: e.target.value })}
+                />
+                <input
+                  className={`${inputCls} flex-1`}
+                  placeholder={t(lang, "newCategoryPlaceholder")}
+                  value={newCat.label}
+                  onChange={(e) => setNewCat({ ...newCat, label: e.target.value })}
+                />
+              </div>
+              <FreqButtons
+                theme={theme}
+                value={newCat.type}
+                onChange={(v) => setNewCat({ ...newCat, type: v })}
+                options={[
+                  { id: "besoin", label: t(lang, "newCategoryNeed") },
+                  { id: "envie", label: t(lang, "newCategoryWant") },
+                ]}
+              />
+              <button
+                type="button"
+                onClick={submitNewCategory}
+                disabled={!newCat.label.trim()}
+                className="w-full text-sm font-medium text-white px-3 py-2 rounded-lg disabled:opacity-40"
+                style={{ backgroundColor: theme.primary }}
+              >
+                {t(lang, "newCategoryConfirm")}
+              </button>
+            </div>
+          )}
         </Field>
         <Field label={t(lang, "fieldItemCurrency")}>
           <select className={selectCls} value={f.currency} onChange={(e) => setF({ ...f, currency: e.target.value })}>
@@ -2669,25 +2981,33 @@ const ExpenseStep = forwardRef(function ExpenseStep({ theme, state, items, onAdd
         <ListPreview
           items={items}
           onRemove={onRemove}
-          render={(x) => `${EXPENSE_CATEGORIES.find((c) => c.id === x.category)?.icon || ""} ${expenseCategoryLabel(x.category, lang)} — ${money(x.amount, x.currency || state.currency)} — ${x.date}`}
+          render={(x) => `${categories.find((c) => c.id === x.category)?.icon || ""} ${expenseCategoryLabel(x.category, lang, state)} — ${money(x.amount, x.currency || state.currency)} — ${x.date}`}
         />
       )}
     </div>
   );
 });
 
-const InvestmentsStep = forwardRef(function InvestmentsStep({ theme, state, items, onAdd, onSave, onRemove, editItem, hideList }, ref) {
+const InvestmentsStep = forwardRef(function InvestmentsStep({ theme, state, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList }, ref) {
   const lang = state.language || "fr";
   const isEdit = !!editItem;
-  const [f, setF] = useState(() => editItem ? {
-    title: editItem.title, type: editItem.type, value: String(editItem.value), owner: editItem.owner || "commun", currency: editItem.currency || state.currency,
-  } : { title: "", type: "Bourse", value: "", owner: "commun", currency: state.currency });
+  const [f, setF] = useState(() => {
+    const src = editItem || duplicateFrom;
+    if (!src) return { title: "", type: "Bourse", value: "", owner: "commun", currency: state.currency };
+    return {
+      title: editItem ? src.title : "",
+      type: src.type,
+      value: editItem ? String(src.value) : "",
+      owner: src.owner || "commun",
+      currency: src.currency || state.currency,
+    };
+  });
   const canSubmit = isEdit ? f.title : (f.title && f.value);
   const submit = () => {
     if (isEdit) {
       onSave(editItem.id, { title: f.title, type: f.type, owner: f.owner, currency: f.currency });
     } else {
-      onAdd({ title: f.title, type: f.type, value: Number(f.value), owner: f.owner, currency: f.currency, history: [{ date: getToday(), value: Number(f.value) }] });
+      onAdd({ title: f.title, type: f.type, value: Number(f.value), contributed: Number(f.value), owner: f.owner, currency: f.currency, history: [{ date: getToday(), value: Number(f.value) }] });
       setF({ title: "", type: "Bourse", value: "", owner: "commun", currency: state.currency });
     }
   };
@@ -2707,11 +3027,6 @@ const InvestmentsStep = forwardRef(function InvestmentsStep({ theme, state, item
             <option>Autre</option>
           </select>
         </Field>
-        <Field label={t(lang, "fieldInvestmentCurrency")}>
-          <select className={selectCls} value={f.currency} onChange={(e) => setF({ ...f, currency: e.target.value })}>
-            {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
-          </select>
-        </Field>
         {!isEdit && (
           <Field label={`${t(lang, "fieldCurrentValue")} (${f.currency})`}>
             <input type="number" className={inputCls} value={f.value} onChange={(e) => setF({ ...f, value: e.target.value })} />
@@ -2721,6 +3036,13 @@ const InvestmentsStep = forwardRef(function InvestmentsStep({ theme, state, item
           <p className="text-xs text-slate-400 mb-3">{t(lang, "investmentEditNote")}</p>
         )}
         <OwnerSelect theme={theme} state={state} value={f.owner} onChange={(v) => setF({ ...f, owner: v })} />
+        <AdvancedSection theme={theme} lang={lang}>
+          <Field label={t(lang, "fieldInvestmentCurrency")}>
+            <select className={selectCls} value={f.currency} onChange={(e) => setF({ ...f, currency: e.target.value })}>
+              {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
+            </select>
+          </Field>
+        </AdvancedSection>
       </StepShell>
       {!hideList && (
         <ListPreview items={items} onRemove={onRemove} render={(x) => `${x.title} (${x.type}) — ${money(x.value, x.currency || state.currency)}`} />
@@ -3044,6 +3366,8 @@ function CalendarTab({ theme, state, setState }) {
           if (!d) return <div key={i} />;
           const evs = eventsForDay(d);
           const isSelected = selectedDay === d;
+          const now = new Date();
+          const isToday = d === now.getDate() && cursor.m === now.getMonth() && cursor.y === now.getFullYear();
           return (
             <button
               key={i}
@@ -3052,7 +3376,8 @@ function CalendarTab({ theme, state, setState }) {
               style={{
                 backgroundColor: isSelected ? theme.primary : evs.length ? theme.soft : "white",
                 color: isSelected ? "white" : theme.text,
-                border: "1px solid #f1f5f9",
+                border: isToday && !isSelected ? `2px solid ${theme.primary}` : "1px solid #f1f5f9",
+                fontWeight: isToday ? 700 : 400,
               }}
             >
               <span>{d}</span>
@@ -3204,7 +3529,8 @@ function CalendarTab({ theme, state, setState }) {
           setState={setState}
           field="expenses"
           StepComp={ExpenseStep}
-          renderRow={(x) => `${EXPENSE_CATEGORIES.find((c) => c.id === x.category)?.icon || ""} ${expenseCategoryLabel(x.category, lang)} — ${money(x.amount, x.currency || state.currency)} — ${x.date}`}
+          stepExtraProps={{ onAddCategory: (cat) => setState((s) => ({ ...s, expenseCategories: [...(s.expenseCategories || []), cat] })) }}
+          renderRow={(x) => `${allExpenseCategories(state).find((c) => c.id === x.category)?.icon || ""} ${expenseCategoryLabel(x.category, lang, state)} — ${money(x.amount, x.currency || state.currency)} — ${x.date}`}
           onClose={() => setAddMode(null)}
         />
       )}
@@ -3247,13 +3573,14 @@ function GoalResult({ d, goalMonths, disponible, theme, currency }) {
   );
 }
 
-function DebtsTab({ theme, state, setState, onGoToAide }) {
+function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
   const lang = state.language || "fr";
   const [payInput, setPayInput] = useState({});
   const [goalInput, setGoalInput] = useState({});
   const [ownerFilter, setOwnerFilter] = useState("all");
   const [showAddDebt, setShowAddDebt] = useState(false);
   const [editingDebt, setEditingDebt] = useState(null);
+  const [duplicatingDebt, setDuplicatingDebt] = useState(null);
   const [celebratingDebt, setCelebratingDebt] = useState(null);
 
   const totalDebtRemaining = (debts) => debts.reduce((a, d) => a + (d.amount - d.paid), 0);
@@ -3281,18 +3608,24 @@ function DebtsTab({ theme, state, setState, onGoToAide }) {
   const registerPayment = (id) => {
     const amt = Number(payInput[id]);
     if (!amt) return;
+    const previousState = state;
+    let reachedGoal = false;
     setState((s) => {
       const newDebts = s.debts.map((d) => {
         if (d.id !== id) return d;
         const newPaid = Math.min(d.amount, d.paid + amt);
         if (d.paid < d.amount && newPaid >= d.amount) {
           setCelebratingDebt(d);
+          reachedGoal = true;
         }
         return { ...d, paid: newPaid };
       });
       return { ...s, debts: newDebts, debtsHistory: pushHistoryPoint(s.debtsHistory, totalDebtRemaining(newDebts)) };
     });
     setPayInput((p) => ({ ...p, [id]: "" }));
+    if (!reachedGoal && showToast) {
+      showToast(`Paiement de ${money(amt, state.currency)} enregistré`, () => setState(previousState));
+    }
   };
 
   const setGoal = (id) => {
@@ -3421,6 +3754,7 @@ function DebtsTab({ theme, state, setState, onGoToAide }) {
                   </div>
                 </div>
                 <span className="flex items-center gap-1 shrink-0">
+                  <button onClick={() => setDuplicatingDebt(d)} className="text-slate-300 hover:text-slate-600 p-1" title="Dupliquer"><Copy size={15} /></button>
                   <button onClick={() => setEditingDebt(d)} className="text-slate-300 hover:text-slate-600 p-1"><Pencil size={15} /></button>
                   <ConfirmDeleteButton onConfirm={() => removeDebt(d.id)} />
                 </span>
@@ -3493,12 +3827,19 @@ function DebtsTab({ theme, state, setState, onGoToAide }) {
         </BottomSheet>
       )}
 
+      {duplicatingDebt && (
+        <BottomSheet title="Dupliquer la dette" onClose={() => setDuplicatingDebt(null)}>
+          <DebtsStep theme={theme} state={state} items={state.debts} duplicateFrom={duplicatingDebt} onAdd={(item) => { addDebtItem(item); setDuplicatingDebt(null); }} onRemove={() => {}} hideList />
+        </BottomSheet>
+      )}
+
       {celebratingDebt && (
         <CelebrationOverlay
           theme={theme}
           icon={celebratingDebt.icon || DEBT_ICONS[0]}
           title={t(lang, "debtPaidOffTitle")}
           message={t(lang, "debtPaidOffMessage").replace("{title}", celebratingDebt.title).replace("{amount}", money(celebratingDebt.amount, state.currency))}
+          shareData={{ icon: celebratingDebt.icon || DEBT_ICONS[0], headline: lang === "en" ? "Debt paid off!" : "Dette remboursée !", subtitle: celebratingDebt.title }}
           onClose={() => setCelebratingDebt(null)}
           lang={lang}
         />
@@ -3510,20 +3851,22 @@ function DebtsTab({ theme, state, setState, onGoToAide }) {
 // ---------------------------------------------------------------------------
 // Projets (enveloppes)
 // ---------------------------------------------------------------------------
-function ProjectsTab({ theme, state, setState }) {
+function ProjectsTab({ theme, state, setState, showToast }) {
   const lang = state.language || "fr";
   const [filter, setFilter] = useState("tous");
   const [ownerFilter, setOwnerFilter] = useState("all");
   const [saveInput, setSaveInput] = useState({});
   const [showAddProject, setShowAddProject] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
+  const [duplicatingProject, setDuplicatingProject] = useState(null);
+  const [expandedHistory, setExpandedHistory] = useState({});
   const [celebratingProject, setCelebratingProject] = useState(null);
 
   const totalProjectSaved = (projects) => projects.reduce((a, p) => a + p.saved, 0);
 
   const addProjectItem = (item) => {
     setState((s) => {
-      const newProjects = [...s.projects, { id: uid(), ...item }];
+      const newProjects = [...s.projects, { id: uid(), history: [], ...item }];
       return { ...s, projects: newProjects, projectsHistory: pushHistoryPoint(s.projectsHistory, totalProjectSaved(newProjects)) };
     });
     setShowAddProject(false);
@@ -3541,21 +3884,28 @@ function ProjectsTab({ theme, state, setState }) {
     return { ...s, projects: newProjects, projectsHistory: pushHistoryPoint(s.projectsHistory, totalProjectSaved(newProjects)) };
   });
 
-  const registerSaving = (id) => {
+  const registerSaving = (id, direction = 1) => {
     const amt = Number(saveInput[id]);
     if (!amt) return;
+    const previousState = state;
+    let reachedGoal = false;
     setState((s) => {
       const newProjects = s.projects.map((p) => {
         if (p.id !== id) return p;
-        const newSaved = Math.min(p.target, p.saved + amt);
-        if (p.saved < p.target && newSaved >= p.target) {
+        const newSaved = Math.max(0, Math.min(p.target, p.saved + amt * direction));
+        if (direction > 0 && p.saved < p.target && newSaved >= p.target) {
           setCelebratingProject(p);
+          reachedGoal = true;
         }
-        return { ...p, saved: newSaved };
+        const entry = { date: getToday(), amount: amt * direction, saved: newSaved };
+        return { ...p, saved: newSaved, history: [...(p.history || []), entry] };
       });
       return { ...s, projects: newProjects, projectsHistory: pushHistoryPoint(s.projectsHistory, totalProjectSaved(newProjects)) };
     });
     setSaveInput((v) => ({ ...v, [id]: "" }));
+    if (!reachedGoal && showToast) {
+      showToast(direction > 0 ? `${money(amt, state.currency)} ajouté à l'épargne` : `${money(amt, state.currency)} retiré de l'épargne`, () => setState(previousState));
+    }
   };
 
   const byTerm = filter === "tous" ? state.projects : state.projects.filter((p) => p.term === filter);
@@ -3634,6 +3984,7 @@ function ProjectsTab({ theme, state, setState }) {
                   </div>
                 </div>
                 <span className="flex items-center gap-1 shrink-0">
+                  <button onClick={() => setDuplicatingProject(p)} className="text-slate-300 hover:text-slate-600 p-1" title="Dupliquer"><Copy size={15} /></button>
                   <button onClick={() => setEditingProject(p)} className="text-slate-300 hover:text-slate-600 p-1"><Pencil size={15} /></button>
                   <ConfirmDeleteButton onConfirm={() => removeProject(p.id)} />
                 </span>
@@ -3643,6 +3994,36 @@ function ProjectsTab({ theme, state, setState }) {
                 <span>{money(p.saved, p.currency || state.currency)} {t(lang, "savedWord")}</span>
                 <span>{t(lang, "goalWord")} {money(p.target, p.currency || state.currency)}</span>
               </div>
+              {p.saved < p.target && (
+                <p className="text-xs font-medium mt-1" style={{ color: theme.accent }}>
+                  {t(lang, "remainingToSave")} : {money(p.target - p.saved, p.currency || state.currency)}
+                </p>
+              )}
+              {(p.history || []).length > 0 && (
+                <div className="mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setExpandedHistory((v) => ({ ...v, [p.id]: !v[p.id] }))}
+                    className="flex items-center gap-1 text-xs font-medium"
+                    style={{ color: theme.primary }}
+                  >
+                    <ChevronRight size={12} className={expandedHistory[p.id] ? "rotate-90" : ""} style={{ transition: "transform 0.15s" }} />
+                    {t(lang, "viewHistory")} ({p.history.length})
+                  </button>
+                  {expandedHistory[p.id] && (
+                    <ul className="mt-2 space-y-1 max-h-40 overflow-y-auto">
+                      {[...p.history].reverse().map((h, idx) => (
+                        <li key={idx} className="flex justify-between text-xs px-2 py-1 rounded bg-slate-50">
+                          <span className="text-slate-400">{h.date}</span>
+                          <span className="font-medium" style={{ color: h.amount >= 0 ? "#16A34A" : theme.danger }}>
+                            {h.amount >= 0 ? "+" : ""}{money(h.amount, p.currency || state.currency)}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
               <div className="flex gap-2 mt-3">
                 <input
                   type="number"
@@ -3652,13 +4033,23 @@ function ProjectsTab({ theme, state, setState }) {
                   onChange={(e) => setSaveInput((v) => ({ ...v, [p.id]: e.target.value }))}
                 />
                 <button
-                  onClick={() => registerSaving(p.id)}
+                  onClick={() => registerSaving(p.id, 1)}
                   className="text-xs font-medium px-3 py-1.5 rounded-lg text-white"
                   style={{ backgroundColor: theme.secondary }}
                 >
                   Épargner
                 </button>
+                <button
+                  onClick={() => registerSaving(p.id, -1)}
+                  className="text-xs font-medium px-3 py-1.5 rounded-lg border"
+                  style={{ borderColor: theme.secondary, color: theme.secondary }}
+                >
+                  Retirer
+                </button>
               </div>
+              <p className="text-[11px] text-slate-400 mt-1.5">
+                Utilisé une partie de l'épargne pour un achat lié à ce projet (ex. hôtel réservé à l'avance) ? Utilise « Retirer » pour ajuster le montant réel restant de côté.
+              </p>
             </div>
           );
         })}
@@ -3676,12 +4067,19 @@ function ProjectsTab({ theme, state, setState }) {
         </BottomSheet>
       )}
 
+      {duplicatingProject && (
+        <BottomSheet title="Dupliquer le projet" onClose={() => setDuplicatingProject(null)}>
+          <ProjectsStep theme={theme} state={state} items={state.projects} duplicateFrom={duplicatingProject} onAdd={(item) => { addProjectItem(item); setDuplicatingProject(null); }} onRemove={() => {}} hideList />
+        </BottomSheet>
+      )}
+
       {celebratingProject && (
         <CelebrationOverlay
           theme={theme}
           icon={celebratingProject.icon || PROJECT_ICONS[0]}
           title={t(lang, "goalReachedTitle")}
           message={t(lang, "goalReachedMessage").replace("{title}", celebratingProject.title).replace("{amount}", money(celebratingProject.target, state.currency))}
+          shareData={{ icon: celebratingProject.icon || PROJECT_ICONS[0], headline: lang === "en" ? "Goal reached!" : "Objectif atteint !", subtitle: celebratingProject.title }}
           onClose={() => setCelebratingProject(null)}
           lang={lang}
         />
@@ -3693,15 +4091,17 @@ function ProjectsTab({ theme, state, setState }) {
 // ---------------------------------------------------------------------------
 // Investissements (+ Comptes enfants)
 // ---------------------------------------------------------------------------
-function InvestmentsTab({ theme, state, setState }) {
+function InvestmentsTab({ theme, state, setState, showToast }) {
   const lang = state.language || "fr";
   const [updateInput, setUpdateInput] = useState({});
+  const [contribInput, setContribInput] = useState({});
   const [childUpdateInput, setChildUpdateInput] = useState({});
   const [ownerFilter, setOwnerFilter] = useState("all");
   const [showAddInvestment, setShowAddInvestment] = useState(false);
   const [showAddChildAccount, setShowAddChildAccount] = useState(false);
   const [newChildAccount, setNewChildAccount] = useState({ childId: "", title: "REEE", balance: "" });
   const [editingInvestment, setEditingInvestment] = useState(null);
+  const [duplicatingInvestment, setDuplicatingInvestment] = useState(null);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("recent");
 
@@ -3719,6 +4119,8 @@ function InvestmentsTab({ theme, state, setState }) {
   const updateValue = (id) => {
     const val = Number(updateInput[id]);
     if (!val && val !== 0) return;
+    const previousState = state;
+    const inv = state.investments.find((i) => i.id === id);
     setState((s) => ({
       ...s,
       investments: s.investments.map((inv) =>
@@ -3728,6 +4130,36 @@ function InvestmentsTab({ theme, state, setState }) {
       ),
     }));
     setUpdateInput((v) => ({ ...v, [id]: "" }));
+    if (showToast) {
+      showToast(`Valeur mise à jour : ${money(val, inv?.currency || state.currency)}`, () => setState(previousState));
+    }
+  };
+
+  // Un versement ajoute de l'argent (le tien) — contrairement à "Mettre à jour", qui reflète
+  // un changement dû au marché. On garde les deux séparés pour pouvoir calculer le vrai gain
+  // (valeur actuelle moins tout ce que tu as toi-même versé), pas un mélange des deux.
+  const addContribution = (id) => {
+    const amt = Number(contribInput[id]);
+    if (!amt) return;
+    const previousState = state;
+    const inv = state.investments.find((i) => i.id === id);
+    setState((s) => ({
+      ...s,
+      investments: s.investments.map((inv) =>
+        inv.id === id
+          ? {
+              ...inv,
+              value: inv.value + amt,
+              contributed: (inv.contributed ?? inv.value) + amt,
+              history: [...inv.history, { date: getToday(), value: inv.value + amt }],
+            }
+          : inv
+      ),
+    }));
+    setContribInput((v) => ({ ...v, [id]: "" }));
+    if (showToast) {
+      showToast(`Versement de ${money(amt, inv?.currency || state.currency)} ajouté`, () => setState(previousState));
+    }
   };
 
   const openAddChildAccount = () => {
@@ -3850,7 +4282,20 @@ function InvestmentsTab({ theme, state, setState }) {
               </div>
               <div className="text-right shrink-0">
                 <p className="font-semibold text-sm" style={{ color: theme.primary }}>{money(inv.value, inv.currency || state.currency)}</p>
+                {(() => {
+                  const contributed = inv.contributed ?? inv.value;
+                  const gain = inv.value - contributed;
+                  if (contributed <= 0 || Math.abs(gain) < 0.01) return null;
+                  const gainPct = (gain / contributed) * 100;
+                  const positive = gain >= 0;
+                  return (
+                    <p className="text-[11px] font-medium" style={{ color: positive ? "#16A34A" : theme.danger }}>
+                      {positive ? "+" : ""}{money(gain, inv.currency || state.currency)} ({positive ? "+" : ""}{gainPct.toFixed(1)}%)
+                    </p>
+                  );
+                })()}
                 <span className="flex items-center gap-1 mt-1">
+                  <button onClick={() => setDuplicatingInvestment(inv)} className="text-slate-300 hover:text-slate-600 p-1" title="Dupliquer"><Copy size={14} /></button>
                   <button onClick={() => setEditingInvestment(inv)} className="text-slate-300 hover:text-slate-600 p-1"><Pencil size={14} /></button>
                   <ConfirmDeleteButton onConfirm={() => removeInvestment(inv.id)} size={14} />
                 </span>
@@ -3876,7 +4321,25 @@ function InvestmentsTab({ theme, state, setState }) {
             <div className="flex gap-2 mt-3">
               <input
                 type="number"
-                placeholder={`Nouvelle valeur (${inv.currency || state.currency})`}
+                placeholder={`Versement (${inv.currency || state.currency})`}
+                className="flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
+                value={contribInput[inv.id] || ""}
+                onChange={(e) => setContribInput((v) => ({ ...v, [inv.id]: e.target.value }))}
+              />
+              <button
+                onClick={() => addContribution(inv.id)}
+                className="text-xs font-medium px-3 py-1.5 rounded-lg text-white"
+                style={{ backgroundColor: theme.secondary }}
+              >
+                + Versement
+              </button>
+            </div>
+            <p className="text-[11px] text-slate-400 mt-1">Tu as ajouté de ton argent ? Utilise ceci — ça s'ajoute à la valeur actuelle.</p>
+
+            <div className="flex gap-2 mt-3">
+              <input
+                type="number"
+                placeholder={`Nouvelle valeur totale (${inv.currency || state.currency})`}
                 className="flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
                 value={updateInput[inv.id] || ""}
                 onChange={(e) => setUpdateInput((v) => ({ ...v, [inv.id]: e.target.value }))}
@@ -3889,6 +4352,7 @@ function InvestmentsTab({ theme, state, setState }) {
                 Mettre à jour
               </button>
             </div>
+            <p className="text-[11px] text-slate-400 mt-1">Le marché a bougé (gain ou perte) ? Entre la valeur totale actuelle de ton compte.</p>
           </div>
         ))}
       </div>
@@ -3968,6 +4432,12 @@ function InvestmentsTab({ theme, state, setState }) {
       {editingInvestment && (
         <BottomSheet title="Modifier l'investissement" onClose={() => setEditingInvestment(null)}>
           <InvestmentsStep theme={theme} state={state} items={state.investments} editItem={editingInvestment} onSave={saveInvestmentItem} onAdd={() => {}} onRemove={() => {}} hideList />
+        </BottomSheet>
+      )}
+
+      {duplicatingInvestment && (
+        <BottomSheet title="Dupliquer l'investissement" onClose={() => setDuplicatingInvestment(null)}>
+          <InvestmentsStep theme={theme} state={state} items={state.investments} duplicateFrom={duplicatingInvestment} onAdd={(item) => { addInvestmentItem(item); setDuplicatingInvestment(null); }} onRemove={() => {}} hideList />
         </BottomSheet>
       )}
 
@@ -4249,13 +4719,6 @@ function SettingsPanel({ theme, state, setState, onClose, onReset }) {
             {t(lang, "resetAllData")}
           </button>
         )}
-
-        <button
-          onClick={() => supabase.auth.signOut()}
-          className="w-full text-sm text-slate-500 border border-slate-200 rounded-lg py-2 mt-2"
-        >
-          Se déconnecter
-        </button>
         </div>
       </div>
       </div>
@@ -4352,8 +4815,8 @@ function AideTab({ theme, state }) {
     thisMonthExpenses.forEach((e) => {
       totals[e.category] = (totals[e.category] || 0) + toMainCurrency(e.amount, e.currency || state.currency, state);
     });
-    return EXPENSE_CATEGORIES.map((cat) => ({ ...cat, total: totals[cat.id] || 0 })).filter((c) => c.total > 0);
-  }, [state.expenses, state.currency, state.exchangeRates]);
+    return allExpenseCategories(state).map((cat) => ({ ...cat, total: totals[cat.id] || 0 })).filter((c) => c.total > 0);
+  }, [state.expenses, state.currency, state.exchangeRates, state.expenseCategories]);
   const expensesBesoin = expensesByCategory.filter((c) => c.type === "besoin").reduce((a, c) => a + c.total, 0);
   const expensesEnvie = expensesByCategory.filter((c) => c.type === "envie").reduce((a, c) => a + c.total, 0);
 
@@ -4531,193 +4994,37 @@ function AideTab({ theme, state }) {
 // ---------------------------------------------------------------------------
 // App principale
 // ---------------------------------------------------------------------------
-function LoginScreen() {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const sendLink = async () => {
-    if (!email) return;
-    setLoading(true);
-    setError("");
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: window.location.origin },
-    });
-    setLoading(false);
-    if (error) setError(error.message);
-    else setSent(true);
-  };
-
-  return (
-    <div className="min-h-screen flex items-center justify-center p-5" style={{ backgroundColor: "#E6F4F1" }}>
-      <GlobalStyles />
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6">
-        <div className="w-12 h-12 rounded-xl overflow-hidden mb-4">
-          <img src={LOGO_SEREIN} alt="Serein" className="w-full h-full object-cover" />
-        </div>
-        <h1 className="text-xl font-semibold mb-2">Serein</h1>
-        {sent ? (
-          <p className="text-sm text-slate-600 leading-relaxed">
-            Un lien de connexion a été envoyé à <strong>{email}</strong>. Ouvre-le depuis cet appareil pour te connecter.
-          </p>
-        ) : (
-          <>
-            <p className="text-sm text-slate-500 mb-4">
-              Entre ton e-mail — tu recevras un lien pour te connecter, sans mot de passe.
-            </p>
-            <input
-              type="email"
-              className={inputCls}
-              placeholder="toi@exemple.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && sendLink()}
-            />
-            {error && <p className="text-xs text-red-500 mt-2">{error}</p>}
-            <button
-              onClick={sendLink}
-              disabled={!email || loading}
-              className="mt-4 w-full text-sm font-medium text-white px-4 py-2.5 rounded-lg disabled:opacity-40"
-              style={{ backgroundColor: "#5BC2B4" }}
-            >
-              {loading ? "Envoi…" : "Recevoir mon lien de connexion"}
-            </button>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
 export default function App() {
   const [state, setState] = useState(null);
   const [tab, setTab] = useState("calendar");
+  const [toast, setToast] = useState(null);
+  const showToast = (message, onUndo) => setToast({ message, onUndo });
   const [showSettings, setShowSettings] = useState(false);
   const [splashDone, setSplashDone] = useState(false);
-  const [session, setSession] = useState(undefined); // undefined = pas encore vérifié, null = pas connecté
-  const [loadDone, setLoadDone] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setSplashDone(true), 1500);
     return () => clearTimeout(t);
   }, []);
 
-  // Vérifie si l'utilisateur est déjà connecté, et écoute les changements (connexion/déconnexion)
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => setSession(session));
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => setSession(session));
-    return () => listener.subscription.unsubscribe();
-  }, []);
-
-  // Charge les données de CET utilisateur depuis Supabase une fois connecté.
-  // Juste après une connexion par lien magique, la session peut mettre un instant à être
-  // pleinement reconnue par Supabase — une première lecture peut donc sembler "vide" alors
-  // que les données existent bien. On réessaie automatiquement avant de conclure qu'il n'y a
-  // vraiment rien, pour ne jamais écraser par erreur de vraies données avec un état neuf.
-  useEffect(() => {
-    if (!session) return;
-    let cancelled = false;
-    setLoadDone(false);
     (async () => {
-      const attempt = async () => {
-        const { data, error } = await supabase
-          .from("app_state")
-          .select("data")
-          .eq("user_id", session.user.id)
-          .maybeSingle();
-        if (error) throw error;
-        return data;
-      };
-      let found = null;
-      for (let i = 0; i < 6 && !cancelled; i++) {
-        try {
-          found = await attempt();
-          if (found) break;
-        } catch {
-          // on réessaie
-        }
-        if (!found && i < 5) await new Promise((r) => setTimeout(r, 700));
+      try {
+        const res = await window.storage.get("app-state");
+        // Fusionne avec l'état par défaut : si des données ont été sauvegardées avant
+        // l'ajout d'une fonctionnalité, le champ correspondant serait manquant — cette
+        // fusion lui donne une valeur par défaut sûre au lieu de faire planter l'appli.
+        setState(res ? { ...defaultState, ...JSON.parse(res.value) } : defaultState);
+      } catch {
+        setState(defaultState);
       }
-      if (cancelled) return;
-      // Fusionne avec l'état par défaut : si le compte a été créé avant l'ajout d'une
-      // fonctionnalité (ex. le journal de dépenses), le champ correspondant serait
-      // manquant dans les anciennes données sauvegardées — cette fusion lui donne une
-      // valeur par défaut sûre au lieu de faire planter l'appli.
-      setState(found ? { ...defaultState, ...found.data } : defaultState);
-      setLoadDone(true);
     })();
-    return () => { cancelled = true; };
-  }, [session]);
-
-  // Sauvegarde à chaque changement, dans la ligne propre à cet utilisateur — mais jamais
-  // tant que le chargement initial n'est pas terminé, pour ne jamais risquer d'écraser de
-  // vraies données par un état neuf pas encore confirmé comme légitime.
-  //
-  // Deux renforcements contre la perte de données en fermant l'appli :
-  // 1. On "debounce" (regroupe) les sauvegardes pour éviter des dizaines de requêtes qui se
-  //    chevauchent quand on tape vite, la dernière pouvant se faire couper par les précédentes.
-  // 2. Si la page se ferme ou passe en arrière-plan AVANT que la sauvegarde en attente parte,
-  //    on force son envoi immédiatement avec `keepalive: true` — une option du navigateur qui
-  //    garantit que la requête continue même après la fermeture de l'onglet.
-  const latestStateRef = useRef(state);
-  const latestSessionRef = useRef(session);
-  const saveTimerRef = useRef(null);
-  const [saveStatus, setSaveStatus] = useState("idle"); // idle | saving | saved | error
-  latestStateRef.current = state;
-  latestSessionRef.current = session;
-
-  const flushSave = (stateToSave, sessionToUse) => {
-    if (!stateToSave || !sessionToUse) return;
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    fetch(`${supabaseUrl}/rest/v1/app_state`, {
-      method: "POST",
-      keepalive: true,
-      headers: {
-        "Content-Type": "application/json",
-        apikey: supabaseAnonKey,
-        Authorization: `Bearer ${sessionToUse.access_token}`,
-        Prefer: "resolution=merge-duplicates",
-      },
-      body: JSON.stringify({ user_id: sessionToUse.user.id, data: stateToSave, updated_at: new Date().toISOString() }),
-    }).catch(() => {});
-  };
-
-  useEffect(() => {
-    if (!state || !session || !loadDone) return;
-    setSaveStatus("saving");
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => {
-      supabase
-        .from("app_state")
-        .upsert({ user_id: session.user.id, data: state, updated_at: new Date().toISOString() })
-        .then(({ error }) => setSaveStatus(error ? "error" : "saved"))
-        .catch(() => setSaveStatus("error"));
-    }, 600);
-    return () => clearTimeout(saveTimerRef.current);
-  }, [state, session, loadDone]);
-
-  // Filet de sécurité : si l'onglet se ferme ou passe en arrière-plan pendant qu'une
-  // sauvegarde est en attente (ou vient de partir), on force l'envoi immédiat.
-  useEffect(() => {
-    const handleFlush = () => {
-      if (saveTimerRef.current) {
-        clearTimeout(saveTimerRef.current);
-        flushSave(latestStateRef.current, latestSessionRef.current);
-      }
-    };
-    const handleVisibility = () => {
-      if (document.hidden) handleFlush();
-    };
-    document.addEventListener("visibilitychange", handleVisibility);
-    window.addEventListener("pagehide", handleFlush);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibility);
-      window.removeEventListener("pagehide", handleFlush);
-    };
   }, []);
+
+  useEffect(() => {
+    if (!state) return;
+    window.storage.set("app-state", JSON.stringify(state)).catch(() => {});
+  }, [state]);
 
   // Récupère les taux de change réels, une fois par jour ou quand la devise principale change.
   // Échec silencieux : si l'appel réseau est bloqué (ex. aperçu artefact) ou hors-ligne, on
@@ -4740,15 +5047,7 @@ export default function App() {
     return () => { cancelled = true; };
   }, [state && state.currency]);
 
-  if (session === undefined || !splashDone) {
-    return <SplashScreen />;
-  }
-
-  if (session === null) {
-    return <LoginScreen />;
-  }
-
-  if (!state) {
+  if (!state || !splashDone) {
     return <SplashScreen />;
   }
 
@@ -4789,28 +5088,18 @@ export default function App() {
             {profileLabel && <p className="text-xs text-slate-400">{profileLabel} · {state.currency}</p>}
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          {saveStatus === "saving" && (
-            <span className="text-[10px] text-slate-400 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse" /> Enregistrement…
-            </span>
-          )}
-          {saveStatus === "error" && (
-            <span className="text-[10px] text-red-500 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500" /> Non enregistré
-            </span>
-          )}
-          <button onClick={() => setShowSettings(true)} className="p-2 rounded-lg bg-white shadow-sm">
-            <Settings size={18} style={{ color: theme.primary }} />
-          </button>
-        </div>
+        <button onClick={() => setShowSettings(true)} className="p-2 rounded-lg bg-white shadow-sm">
+          <Settings size={18} style={{ color: theme.primary }} />
+        </button>
       </div>
 
       {tab === "calendar" && <CalendarTab theme={theme} state={state} setState={setState} />}
-      {tab === "debts" && <DebtsTab theme={theme} state={state} setState={setState} onGoToAide={() => setTab("aide")} />}
-      {tab === "projects" && <ProjectsTab theme={theme} state={state} setState={setState} />}
-      {tab === "investments" && <InvestmentsTab theme={theme} state={state} setState={setState} />}
+      {tab === "debts" && <DebtsTab theme={theme} state={state} setState={setState} onGoToAide={() => setTab("aide")} showToast={showToast} />}
+      {tab === "projects" && <ProjectsTab theme={theme} state={state} setState={setState} showToast={showToast} />}
+      {tab === "investments" && <InvestmentsTab theme={theme} state={state} setState={setState} showToast={showToast} />}
       {tab === "aide" && <AideTab theme={theme} state={state} />}
+
+      <Toast toast={toast} onDismiss={() => setToast(null)} />
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 flex justify-around py-2">
         {tabs.map((t) => {
