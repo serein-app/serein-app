@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, forwardRef, useImperativeHandle, useRef } from "react";
+import { supabase } from "./supabaseClient";
 import {
   Calendar as CalendarIcon,
   Wallet,
@@ -32,6 +33,7 @@ import {
   ShieldCheck,
   ReceiptText,
   Copy,
+  Camera,
   Share2,
 } from "lucide-react";
 import {
@@ -369,6 +371,16 @@ const TRANSLATIONS = {
     goalReachedMessage: "« {title} » est financé à 100 % — {amount} mis de côté. Tu peux passer à la suite.",
     continueBtn2: "Continuer",
     shareAchievement: "Partager cette réussite",
+    scanReceiptTitle: "Scanner une photo",
+    scanReceiptDesc: "Prends en photo un reçu ou un relevé — l'IA trie par catégorie",
+    scanReceiptHint: "Prends en photo un reçu, ou une capture d'écran de ton relevé bancaire — l'IA va essayer d'en extraire les dépenses et de les classer par catégorie.",
+    scanReceiptButton: "Prendre ou choisir une photo",
+    scanReceiptAnalyzing: "Analyse de la photo en cours…",
+    scanReceiptError: "L'analyse a échoué — vérifie ta connexion et réessaie, ou ajoute la dépense manuellement.",
+    scanReceiptEmpty: "Aucune dépense reconnue sur cette photo. Essaie une photo plus nette ou plus proche.",
+    scanReceiptRetry: "Réessayer avec une autre photo",
+    scanReceiptReviewHint: "Vérifie ce que l'IA a trouvé avant d'enregistrer — décoche ou corrige ce qui ne va pas.",
+    scanReceiptConfirm: "Ajouter {n} dépense(s)",
     yourDataTitle: "Tes données",
     yourDataHint: "Tu peux repartir avec tes données à tout moment — aucune obligation de rester si tu changes d'avis.",
     exportCSV: "CSV",
@@ -377,14 +389,11 @@ const TRANSLATIONS = {
     comingSoonTitle: "À venir sur la vraie appli",
     comingSoonText: "Ce prototype ne peut pas encore le faire, mais c'est prévu pour la version déployée : verrouillage par Face ID ou code à l'ouverture, et des rappels avant chaque échéance (facture, dette, abonnement) — pas seulement un affichage dans le calendrier. Les notifications demandent un vrai serveur, qu'un artefact ne peut pas fournir.",
     privacyPolicy: "Politique de confidentialité",
-    privacyPolicyBody: "Ceci est une version de test de Serein — voici où en sont réellement tes données pendant cette phase.\n\nCE QUE NOUS COLLECTONS\nUniquement ce que tu entres toi-même : prénom, dettes, projets, abonnements, factures, revenus, investissements, et la composition de ton foyer si tu la renseignes.\n\nOÙ C'EST STOCKÉ\nDans cette version de test, tes données restent stockées localement, liées à ton navigateur — il n'y a pas encore de compte réel ni de serveur central. L'écran d'inscription (e-mail/Google) est une maquette qui ne crée rien.\n\nCE QUE NOUS NE FAISONS PAS\nNous ne vendons ni ne partageons tes données à des fins publicitaires. Aucune publicité dans l'application. Aucun suivi analytique caché.\n\nTES DROITS DÈS MAINTENANT\nTu peux exporter toutes tes données à tout moment (CSV, sauvegarde complète) juste au-dessus dans ces réglages, ou réinitialiser complètement l'application.\n\nPOUR LA SUITE\nUne fois l'application réellement déployée (comptes, serveur), une politique de confidentialité complète et conforme à la loi sera publiée et remplacera ce texte.",
+    privacyPolicyBody: "Voici où en sont réellement tes données.\n\nCE QUE NOUS COLLECTONS\nUniquement ce que tu entres toi-même : prénom, dettes, projets, abonnements, factures, revenus, investissements, et la composition de ton foyer si tu la renseignes — plus ton adresse courriel pour la connexion.\n\nOÙ C'EST STOCKÉ\nTes données sont hébergées par Supabase, dans une base sécurisée, accessible uniquement par toi grâce à ton compte. La connexion se fait par lien envoyé à ton courriel, sans mot de passe à retenir.\n\nCE QUE NOUS NE FAISONS PAS\nNous ne vendons ni ne partageons tes données à des fins publicitaires. Aucune publicité dans l'application. Aucun suivi analytique caché.\n\nTES DROITS DÈS MAINTENANT\nTu peux exporter toutes tes données à tout moment (CSV, sauvegarde complète) juste au-dessus dans ces réglages, te déconnecter, ou réinitialiser complètement l'application.\n\nPOUR LA SUITE\nUne politique de confidentialité complète et conforme à la loi sera publiée séparément et remplacera ce résumé.",
     privacyPolicyClose: "Fermer",
     remainingToRepay: "Reste à rembourser",
     savedWord: "épargné",
     goalWord: "Objectif",
-    remainingToSave: "Reste à épargner",
-    viewHistory: "Voir l'historique",
-    perPaycheckHint: "≈ {amount} à mettre de côté à chaque paie (tu es payé aux {freq}).",
     freqMonthly: "Mensuel",
     freqWeekly: "Hebdomadaire",
     freqBiweekly: "Bi-hebdo",
@@ -642,6 +651,16 @@ const TRANSLATIONS = {
     goalReachedMessage: "\u00ab {title} \u00bb is 100% funded — {amount} saved. You can move on to the next thing.",
     continueBtn2: "Continue",
     shareAchievement: "Share this milestone",
+    scanReceiptTitle: "Scan a photo",
+    scanReceiptDesc: "Snap a receipt or statement — AI sorts it by category",
+    scanReceiptHint: "Take a photo of a receipt, or a screenshot of your bank statement — the AI will try to extract the expenses and sort them by category.",
+    scanReceiptButton: "Take or choose a photo",
+    scanReceiptAnalyzing: "Analyzing the photo…",
+    scanReceiptError: "The analysis failed — check your connection and try again, or add the expense manually.",
+    scanReceiptEmpty: "No expenses recognized in this photo. Try a clearer or closer photo.",
+    scanReceiptRetry: "Try another photo",
+    scanReceiptReviewHint: "Check what the AI found before saving — uncheck or fix anything that's wrong.",
+    scanReceiptConfirm: "Add {n} expense(s)",
     yourDataTitle: "Your data",
     yourDataHint: "You can take your data with you at any time — no obligation to stay if you change your mind.",
     exportCSV: "CSV",
@@ -650,14 +669,11 @@ const TRANSLATIONS = {
     comingSoonTitle: "Coming to the real app",
     comingSoonText: "This prototype can't do this yet, but it's planned for the deployed version: Face ID or passcode lock on opening, and reminders before each due date (bill, debt, subscription) — not just a passive display in the calendar. Notifications require a real server, which an artifact can't provide.",
     privacyPolicy: "Privacy Policy",
-    privacyPolicyBody: "This is a test version of Serein — here's where your data actually stands during this phase.\n\nWHAT WE COLLECT\nOnly what you enter yourself: first name, debts, projects, subscriptions, bills, income, investments, and your household composition if you fill it in.\n\nWHERE IT'S STORED\nIn this test version, your data stays stored locally, tied to your browser — there's no real account or central server yet. The sign-up screen (email/Google) is a mockup that creates nothing.\n\nWHAT WE DON'T DO\nWe never sell or share your data for advertising purposes. No ads in the app. No hidden analytics tracking.\n\nYOUR RIGHTS RIGHT NOW\nYou can export all your data at any time (CSV, full backup) just above in these settings, or fully reset the app.\n\nWHAT'S NEXT\nOnce the app is actually deployed (accounts, server), a complete, legally compliant privacy policy will be published and will replace this text.",
+    privacyPolicyBody: "Here's where your data actually stands.\n\nWHAT WE COLLECT\nOnly what you enter yourself: first name, debts, projects, subscriptions, bills, income, investments, and your household composition if you fill it in — plus your email for sign-in.\n\nWHERE IT'S STORED\nYour data is hosted by Supabase, in a secure database, accessible only by you through your account. Sign-in happens via a link sent to your email, no password to remember.\n\nWHAT WE DON'T DO\nWe never sell or share your data for advertising purposes. No ads in the app. No hidden analytics tracking.\n\nYOUR RIGHTS RIGHT NOW\nYou can export all your data at any time (CSV, full backup) just above in these settings, sign out, or fully reset the app.\n\nWHAT'S NEXT\nA complete, legally compliant privacy policy will be published separately and will replace this summary.",
     privacyPolicyClose: "Close",
     remainingToRepay: "Remaining to repay",
     savedWord: "saved",
     goalWord: "Goal",
-    remainingToSave: "Remaining to save",
-    viewHistory: "View history",
-    perPaycheckHint: "≈ {amount} to set aside from each paycheck (you're paid every {freq}).",
     freqMonthly: "Monthly",
     freqWeekly: "Weekly",
     freqBiweekly: "Bi-weekly",
@@ -1614,7 +1630,7 @@ function Onboarding({ state, setState, onFinish }) {
   const lang = state.language || "fr";
 
   const steps = useMemo(() => {
-    const s = ["welcome", "benefit1", "benefit2", "benefit3", "language", "signup", "prenom", "theme", "situation"];
+    const s = ["welcome", "benefit1", "benefit2", "benefit3", "language", "prenom", "theme", "situation"];
     if (state.profileType === "autre") s.push("autre-people");
     s.push("currency");
     if (state.profileType === "couple") s.push("household");
@@ -1712,7 +1728,6 @@ function Onboarding({ state, setState, onFinish }) {
           {current === "language" && (
             <LanguageStep theme={theme} value={lang} onPick={(code) => setState((s) => ({ ...s, language: code }))} />
           )}
-          {current === "signup" && <SignupStep lang={lang} />}
           {current === "prenom" && <PrenomStep value={state.userName} onChange={(v) => setState((s) => ({ ...s, userName: v }))} lang={lang} />}
           {current === "situation" && (
             <SituationStep
@@ -1931,34 +1946,6 @@ function LanguageStep({ theme, value, onPick }) {
           );
         })}
       </div>
-    </div>
-  );
-}
-
-function SignupStep({ lang }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  return (
-    <div>
-      <h2 className="text-lg font-semibold mb-1">{t(lang, "signupTitle")}</h2>
-      <p className="text-sm text-slate-500 mb-4">{t(lang, "signupDemoNote")}</p>
-      <button
-        type="button"
-        className="w-full flex items-center justify-center gap-2 border border-slate-300 rounded-lg h-11 mb-4 text-sm font-medium text-slate-700"
-      >
-        {t(lang, "signupGoogle")}
-      </button>
-      <div className="flex items-center gap-2 mb-4">
-        <div className="flex-1 h-px bg-slate-200" />
-        <span className="text-xs text-slate-400">{t(lang, "signupOr")}</span>
-        <div className="flex-1 h-px bg-slate-200" />
-      </div>
-      <Field label={t(lang, "signupEmail")}>
-        <input type="email" className={inputCls} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="toi@exemple.com" />
-      </Field>
-      <Field label={t(lang, "signupPassword")}>
-        <input type="password" className={inputCls} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
-      </Field>
     </div>
   );
 }
@@ -2703,13 +2690,6 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
   });
   const usesStartDate = ["hebdomadaire", "bi-hebdomadaire", "bimestriel"].includes(f.period);
   const canSubmit = f.title && f.amount && (usesStartDate ? f.startDate : f.day);
-  // Combien mettre de côté à chaque paie, basé sur ta vraie fréquence de revenu — utile pour
-  // les personnes payées aux 2 semaines qui préfèrent répartir une grosse facture (loyer...)
-  // sur chaque paie plutôt que de tout prendre d'un coup.
-  const payFrequency = state.paydays[0]?.frequency;
-  const perPaycheckAmount = f.amount && payFrequency && payFrequency !== f.period
-    ? monthlyEquivalent(Number(f.amount), f.period) / periodsPerMonth(payFrequency)
-    : null;
   const submit = () => {
     const base = { title: f.title, amount: Number(f.amount), period: f.period, owner: f.owner, currency: f.currency, holdingAccount: f.holdingAccount, chargeAccount: f.chargeAccount, essential: f.essential };
     const item = usesStartDate
@@ -2732,13 +2712,6 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
         <Field label={`${t(lang, "fieldAmount")} (${f.currency})`}>
           <input type="number" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
         </Field>
-        {perPaycheckAmount != null && (
-          <p className="text-xs text-slate-400 -mt-2 mb-3">
-            {t(lang, "perPaycheckHint")
-              .replace("{amount}", money(perPaycheckAmount, f.currency))
-              .replace("{freq}", freqLabel(payFrequency))}
-          </p>
-        )}
         <Field label={t(lang, "fieldFrequency")}>
           <FreqButtons
             theme={theme}
@@ -2988,6 +2961,144 @@ const ExpenseStep = forwardRef(function ExpenseStep({ theme, state, items, onAdd
   );
 });
 
+// Envoie une photo à la fonction serveur pour analyse par IA, puis laisse vérifier/corriger
+// avant d'enregistrer quoi que ce soit — l'IA peut se tromper, la personne garde le dernier mot.
+function ReceiptScanner({ theme, state, onAddExpenses, lang }) {
+  const [image, setImage] = useState(null);
+  const [status, setStatus] = useState("idle"); // idle | analyzing | review | empty | error
+  const [detected, setDetected] = useState([]);
+  const [errorMsg, setErrorMsg] = useState("");
+  const fileInputRef = useRef(null);
+
+  const handleFile = (file) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const dataUrl = reader.result;
+      const base64 = dataUrl.split(",")[1];
+      const mediaType = file.type || "image/jpeg";
+      setImage({ previewUrl: dataUrl });
+      setStatus("analyzing");
+      setErrorMsg("");
+      try {
+        const { data, error } = await supabase.functions.invoke("analyze-receipt", {
+          body: { imageBase64: base64, mediaType },
+        });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+        const items = (data?.expenses || []).map((e) => ({ ...e, included: true }));
+        setDetected(items);
+        setStatus(items.length ? "review" : "empty");
+      } catch {
+        setErrorMsg(t(lang, "scanReceiptError"));
+        setStatus("error");
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const toggleIncluded = (idx) => setDetected((d) => d.map((item, i) => (i === idx ? { ...item, included: !item.included } : item)));
+  const updateField = (idx, field, value) => setDetected((d) => d.map((item, i) => (i === idx ? { ...item, [field]: value } : item)));
+
+  const confirm = () => {
+    const toAdd = detected
+      .filter((d) => d.included)
+      .map((d) => ({ amount: Number(d.amount), category: d.category, date: d.date || getToday(), note: d.description || "", owner: "commun", currency: state.currency }));
+    onAddExpenses(toAdd);
+  };
+
+  if (status === "idle") {
+    return (
+      <div>
+        <p className="text-sm text-slate-500 mb-4">{t(lang, "scanReceiptHint")}</p>
+        <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="w-full flex flex-col items-center gap-2 py-8 rounded-xl border-2 border-dashed"
+          style={{ borderColor: theme.primary, color: theme.primary }}
+        >
+          <Camera size={28} />
+          <span className="text-sm font-medium">{t(lang, "scanReceiptButton")}</span>
+        </button>
+      </div>
+    );
+  }
+
+  if (status === "analyzing") {
+    return (
+      <div className="text-center py-8">
+        {image?.previewUrl && <img src={image.previewUrl} alt="" className="w-32 h-32 object-cover rounded-lg mx-auto mb-4 opacity-50" />}
+        <p className="text-sm text-slate-500">{t(lang, "scanReceiptAnalyzing")}</p>
+      </div>
+    );
+  }
+
+  if (status === "error" || status === "empty") {
+    return (
+      <div className="text-center py-6">
+        <p className="text-sm mb-4" style={{ color: status === "error" ? "#ef4444" : "#64748b" }}>
+          {status === "error" ? errorMsg : t(lang, "scanReceiptEmpty")}
+        </p>
+        <button onClick={() => setStatus("idle")} className="text-sm font-medium underline" style={{ color: theme.primary }}>
+          {t(lang, "scanReceiptRetry")}
+        </button>
+      </div>
+    );
+  }
+
+  const includedCount = detected.filter((d) => d.included).length;
+  return (
+    <div>
+      <p className="text-sm text-slate-500 mb-3">{t(lang, "scanReceiptReviewHint")}</p>
+      <div className="space-y-2 mb-4">
+        {detected.map((item, idx) => (
+          <div
+            key={idx}
+            className="p-3 rounded-lg border"
+            style={{ borderColor: item.included ? theme.primary : "#e2e8f0", backgroundColor: item.included ? theme.soft : "white" }}
+          >
+            <div className="flex items-start gap-2">
+              <input type="checkbox" checked={item.included} onChange={() => toggleIncluded(idx)} className="mt-1 shrink-0" />
+              <div className="flex-1 min-w-0">
+                <input
+                  className="w-full text-sm font-medium bg-transparent border-b border-transparent focus:border-slate-300 outline-none mb-1"
+                  value={item.description}
+                  onChange={(e) => updateField(idx, "description", e.target.value)}
+                />
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    className="w-24 text-sm rounded border border-slate-200 px-2 py-1"
+                    value={item.amount}
+                    onChange={(e) => updateField(idx, "amount", e.target.value)}
+                  />
+                  <select
+                    className="flex-1 text-sm rounded border border-slate-200 px-2 py-1"
+                    value={item.category}
+                    onChange={(e) => updateField(idx, "category", e.target.value)}
+                  >
+                    {allExpenseCategories(state).map((c) => (
+                      <option key={c.id} value={c.id}>{c.icon} {lang === "en" ? c.en : c.fr}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <button
+        onClick={confirm}
+        disabled={!includedCount}
+        className="w-full text-sm font-medium text-white px-4 py-2.5 rounded-lg disabled:opacity-40"
+        style={{ backgroundColor: theme.primary }}
+      >
+        {t(lang, "scanReceiptConfirm").replace("{n}", includedCount)}
+      </button>
+    </div>
+  );
+}
+
 const InvestmentsStep = forwardRef(function InvestmentsStep({ theme, state, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList }, ref) {
   const lang = state.language || "fr";
   const isEdit = !!editItem;
@@ -3093,7 +3204,7 @@ function RecapStep({ theme, state, onEdit }) {
 // ---------------------------------------------------------------------------
 // Calendrier
 // ---------------------------------------------------------------------------
-function CalendarTab({ theme, state, setState }) {
+function CalendarTab({ theme, state, setState, showToast }) {
   const lang = state.language || "fr";
   const [cursor, setCursor] = useState(() => {
     const d = new Date();
@@ -3366,8 +3477,6 @@ function CalendarTab({ theme, state, setState }) {
           if (!d) return <div key={i} />;
           const evs = eventsForDay(d);
           const isSelected = selectedDay === d;
-          const now = new Date();
-          const isToday = d === now.getDate() && cursor.m === now.getMonth() && cursor.y === now.getFullYear();
           return (
             <button
               key={i}
@@ -3376,8 +3485,7 @@ function CalendarTab({ theme, state, setState }) {
               style={{
                 backgroundColor: isSelected ? theme.primary : evs.length ? theme.soft : "white",
                 color: isSelected ? "white" : theme.text,
-                border: isToday && !isSelected ? `2px solid ${theme.primary}` : "1px solid #f1f5f9",
-                fontWeight: isToday ? 700 : 400,
+                border: "1px solid #f1f5f9",
               }}
             >
               <span>{d}</span>
@@ -3476,7 +3584,34 @@ function CalendarTab({ theme, state, setState }) {
                 <span className="block text-xs text-slate-400">{t(lang, "manageExpensesDesc")}</span>
               </span>
             </button>
+            <button
+              onClick={() => { setShowAddMenu(false); setAddMode("scan"); }}
+              className="w-full flex items-center gap-3 p-3 rounded-lg border border-slate-200 text-left hover:bg-slate-50"
+            >
+              <span className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#8B5CF61A" }}>
+                <Camera size={16} style={{ color: "#8B5CF6" }} />
+              </span>
+              <span>
+                <span className="block text-sm font-medium">{t(lang, "scanReceiptTitle")}</span>
+                <span className="block text-xs text-slate-400">{t(lang, "scanReceiptDesc")}</span>
+              </span>
+            </button>
           </div>
+        </BottomSheet>
+      )}
+
+      {addMode === "scan" && (
+        <BottomSheet title={t(lang, "scanReceiptTitle")} onClose={() => setAddMode(null)}>
+          <ReceiptScanner
+            theme={theme}
+            state={state}
+            onAddExpenses={(items) => {
+              setState((s) => ({ ...s, expenses: [...s.expenses, ...items.map((it) => ({ id: uid(), ...it }))] }));
+              setAddMode(null);
+              if (showToast) showToast(`${items.length} dépense${items.length > 1 ? "s" : ""} ajoutée${items.length > 1 ? "s" : ""}`, null);
+            }}
+            lang={lang}
+          />
         </BottomSheet>
       )}
 
@@ -3708,7 +3843,7 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={state.debtsHistory}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="date" tick={{ fontSize: 9 }} tickFormatter={(d) => d.slice(5)} />
+                <XAxis dataKey="date" tick={{ fontSize: 9 }} tickFormatter={(d) => (typeof d === "string" ? d.slice(5) : "")} />
                 <YAxis tick={{ fontSize: 9 }} width={40} />
                 <Tooltip formatter={(v) => money(v, state.currency)} />
                 <Line type="monotone" dataKey="total" stroke={theme.danger} strokeWidth={2} dot={{ r: 2 }} />
@@ -3859,14 +3994,13 @@ function ProjectsTab({ theme, state, setState, showToast }) {
   const [showAddProject, setShowAddProject] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [duplicatingProject, setDuplicatingProject] = useState(null);
-  const [expandedHistory, setExpandedHistory] = useState({});
   const [celebratingProject, setCelebratingProject] = useState(null);
 
   const totalProjectSaved = (projects) => projects.reduce((a, p) => a + p.saved, 0);
 
   const addProjectItem = (item) => {
     setState((s) => {
-      const newProjects = [...s.projects, { id: uid(), history: [], ...item }];
+      const newProjects = [...s.projects, { id: uid(), ...item }];
       return { ...s, projects: newProjects, projectsHistory: pushHistoryPoint(s.projectsHistory, totalProjectSaved(newProjects)) };
     });
     setShowAddProject(false);
@@ -3897,8 +4031,7 @@ function ProjectsTab({ theme, state, setState, showToast }) {
           setCelebratingProject(p);
           reachedGoal = true;
         }
-        const entry = { date: getToday(), amount: amt * direction, saved: newSaved };
-        return { ...p, saved: newSaved, history: [...(p.history || []), entry] };
+        return { ...p, saved: newSaved };
       });
       return { ...s, projects: newProjects, projectsHistory: pushHistoryPoint(s.projectsHistory, totalProjectSaved(newProjects)) };
     });
@@ -3948,7 +4081,7 @@ function ProjectsTab({ theme, state, setState, showToast }) {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={state.projectsHistory}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="date" tick={{ fontSize: 9 }} tickFormatter={(d) => d.slice(5)} />
+                <XAxis dataKey="date" tick={{ fontSize: 9 }} tickFormatter={(d) => (typeof d === "string" ? d.slice(5) : "")} />
                 <YAxis tick={{ fontSize: 9 }} width={40} />
                 <Tooltip formatter={(v) => money(v, state.currency)} />
                 <Line type="monotone" dataKey="total" stroke={theme.accent} strokeWidth={2} dot={{ r: 2 }} />
@@ -3994,36 +4127,6 @@ function ProjectsTab({ theme, state, setState, showToast }) {
                 <span>{money(p.saved, p.currency || state.currency)} {t(lang, "savedWord")}</span>
                 <span>{t(lang, "goalWord")} {money(p.target, p.currency || state.currency)}</span>
               </div>
-              {p.saved < p.target && (
-                <p className="text-xs font-medium mt-1" style={{ color: theme.accent }}>
-                  {t(lang, "remainingToSave")} : {money(p.target - p.saved, p.currency || state.currency)}
-                </p>
-              )}
-              {(p.history || []).length > 0 && (
-                <div className="mt-2">
-                  <button
-                    type="button"
-                    onClick={() => setExpandedHistory((v) => ({ ...v, [p.id]: !v[p.id] }))}
-                    className="flex items-center gap-1 text-xs font-medium"
-                    style={{ color: theme.primary }}
-                  >
-                    <ChevronRight size={12} className={expandedHistory[p.id] ? "rotate-90" : ""} style={{ transition: "transform 0.15s" }} />
-                    {t(lang, "viewHistory")} ({p.history.length})
-                  </button>
-                  {expandedHistory[p.id] && (
-                    <ul className="mt-2 space-y-1 max-h-40 overflow-y-auto">
-                      {[...p.history].reverse().map((h, idx) => (
-                        <li key={idx} className="flex justify-between text-xs px-2 py-1 rounded bg-slate-50">
-                          <span className="text-slate-400">{h.date}</span>
-                          <span className="font-medium" style={{ color: h.amount >= 0 ? "#16A34A" : theme.danger }}>
-                            {h.amount >= 0 ? "+" : ""}{money(h.amount, p.currency || state.currency)}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              )}
               <div className="flex gap-2 mt-3">
                 <input
                   type="number"
@@ -4307,7 +4410,7 @@ function InvestmentsTab({ theme, state, setState, showToast }) {
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={inv.history}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                    <XAxis dataKey="date" tick={{ fontSize: 9 }} tickFormatter={(d) => d.slice(5)} />
+                    <XAxis dataKey="date" tick={{ fontSize: 9 }} tickFormatter={(d) => (typeof d === "string" ? d.slice(5) : "")} />
                     <YAxis tick={{ fontSize: 9 }} width={40} />
                     <Tooltip formatter={(v) => money(v, inv.currency || state.currency)} labelFormatter={(l) => l} />
                     <Line type="monotone" dataKey="value" stroke={theme.secondary} strokeWidth={2} dot={{ r: 2 }} />
@@ -4391,7 +4494,7 @@ function InvestmentsTab({ theme, state, setState, showToast }) {
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={c.account.history}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                        <XAxis dataKey="date" tick={{ fontSize: 9 }} tickFormatter={(d) => d.slice(5)} />
+                        <XAxis dataKey="date" tick={{ fontSize: 9 }} tickFormatter={(d) => (typeof d === "string" ? d.slice(5) : "")} />
                         <YAxis tick={{ fontSize: 9 }} width={40} />
                         <Tooltip formatter={(v) => money(v, state.currency)} />
                         <Line type="monotone" dataKey="value" stroke={theme.primary} strokeWidth={2} dot={{ r: 2 }} />
@@ -4719,6 +4822,13 @@ function SettingsPanel({ theme, state, setState, onClose, onReset }) {
             {t(lang, "resetAllData")}
           </button>
         )}
+
+        <button
+          onClick={() => supabase.auth.signOut()}
+          className="w-full text-sm text-slate-500 border border-slate-200 rounded-lg py-2 mt-2"
+        >
+          Se déconnecter
+        </button>
         </div>
       </div>
       </div>
@@ -4994,37 +5104,195 @@ function AideTab({ theme, state }) {
 // ---------------------------------------------------------------------------
 // App principale
 // ---------------------------------------------------------------------------
-export default function App() {
+function LoginScreen() {
+  const [email, setEmail] = useState("");
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const sendLink = async () => {
+    if (!email) return;
+    setLoading(true);
+    setError("");
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: window.location.origin },
+    });
+    setLoading(false);
+    if (error) setError(error.message);
+    else setSent(true);
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-5" style={{ backgroundColor: "#E6F4F1" }}>
+      <GlobalStyles />
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6">
+        <div className="w-12 h-12 rounded-xl overflow-hidden mb-4">
+          <img src={LOGO_SEREIN} alt="Serein" className="w-full h-full object-cover" />
+        </div>
+        <h1 className="text-xl font-semibold mb-2">Serein</h1>
+        {sent ? (
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Un lien de connexion a été envoyé à <strong>{email}</strong>. Ouvre-le depuis cet appareil pour te connecter.
+          </p>
+        ) : (
+          <>
+            <p className="text-sm text-slate-500 mb-4">
+              Entre ton e-mail — tu recevras un lien pour te connecter, sans mot de passe.
+            </p>
+            <input
+              type="email"
+              className={inputCls}
+              placeholder="toi@exemple.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && sendLink()}
+            />
+            {error && <p className="text-xs text-red-500 mt-2">{error}</p>}
+            <button
+              onClick={sendLink}
+              disabled={!email || loading}
+              className="mt-4 w-full text-sm font-medium text-white px-4 py-2.5 rounded-lg disabled:opacity-40"
+              style={{ backgroundColor: "#5BC2B4" }}
+            >
+              {loading ? "Envoi…" : "Recevoir mon lien de connexion"}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SereinApp() {
   const [state, setState] = useState(null);
   const [tab, setTab] = useState("calendar");
   const [toast, setToast] = useState(null);
   const showToast = (message, onUndo) => setToast({ message, onUndo });
   const [showSettings, setShowSettings] = useState(false);
   const [splashDone, setSplashDone] = useState(false);
+  const [session, setSession] = useState(undefined); // undefined = pas encore vérifié, null = pas connecté
+  const [loadDone, setLoadDone] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setSplashDone(true), 1500);
     return () => clearTimeout(t);
   }, []);
 
+  // Vérifie si l'utilisateur est déjà connecté, et écoute les changements (connexion/déconnexion)
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await window.storage.get("app-state");
-        // Fusionne avec l'état par défaut : si des données ont été sauvegardées avant
-        // l'ajout d'une fonctionnalité, le champ correspondant serait manquant — cette
-        // fusion lui donne une valeur par défaut sûre au lieu de faire planter l'appli.
-        setState(res ? { ...defaultState, ...JSON.parse(res.value) } : defaultState);
-      } catch {
-        setState(defaultState);
-      }
-    })();
+    supabase.auth.getSession().then(({ data: { session } }) => setSession(session));
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => setSession(session));
+    return () => listener.subscription.unsubscribe();
   }, []);
 
+  // Charge les données de CET utilisateur depuis Supabase une fois connecté.
+  // Juste après une connexion par lien magique, la session peut mettre un instant à être
+  // pleinement reconnue par Supabase — une première lecture peut donc sembler "vide" alors
+  // que les données existent bien. On réessaie automatiquement avant de conclure qu'il n'y a
+  // vraiment rien, pour ne jamais écraser par erreur de vraies données avec un état neuf.
   useEffect(() => {
-    if (!state) return;
-    window.storage.set("app-state", JSON.stringify(state)).catch(() => {});
-  }, [state]);
+    if (!session) return;
+    let cancelled = false;
+    setLoadDone(false);
+    (async () => {
+      const attempt = async () => {
+        const { data, error } = await supabase
+          .from("app_state")
+          .select("data")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
+        if (error) throw error;
+        return data;
+      };
+      let found = null;
+      for (let i = 0; i < 6 && !cancelled; i++) {
+        try {
+          found = await attempt();
+          if (found) break;
+        } catch {
+          // on réessaie
+        }
+        if (!found && i < 5) await new Promise((r) => setTimeout(r, 700));
+      }
+      if (cancelled) return;
+      // Fusionne avec l'état par défaut : si le compte a été créé avant l'ajout d'une
+      // fonctionnalité (ex. le journal de dépenses), le champ correspondant serait
+      // manquant dans les anciennes données sauvegardées — cette fusion lui donne une
+      // valeur par défaut sûre au lieu de faire planter l'appli.
+      setState(found ? { ...defaultState, ...found.data } : defaultState);
+      setLoadDone(true);
+    })();
+    return () => { cancelled = true; };
+  }, [session]);
+
+  // Sauvegarde à chaque changement, dans la ligne propre à cet utilisateur — mais jamais
+  // tant que le chargement initial n'est pas terminé, pour ne jamais risquer d'écraser de
+  // vraies données par un état neuf pas encore confirmé comme légitime.
+  //
+  // Deux renforcements contre la perte de données en fermant l'appli :
+  // 1. On "debounce" (regroupe) les sauvegardes pour éviter des dizaines de requêtes qui se
+  //    chevauchent quand on tape vite, la dernière pouvant se faire couper par les précédentes.
+  // 2. Si la page se ferme ou passe en arrière-plan AVANT que la sauvegarde en attente parte,
+  //    on force son envoi immédiatement avec `keepalive: true` — une option du navigateur qui
+  //    garantit que la requête continue même après la fermeture de l'onglet.
+  const latestStateRef = useRef(state);
+  const latestSessionRef = useRef(session);
+  const saveTimerRef = useRef(null);
+  const [saveStatus, setSaveStatus] = useState("idle"); // idle | saving | saved | error
+  latestStateRef.current = state;
+  latestSessionRef.current = session;
+
+  const flushSave = (stateToSave, sessionToUse) => {
+    if (!stateToSave || !sessionToUse) return;
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    fetch(`${supabaseUrl}/rest/v1/app_state`, {
+      method: "POST",
+      keepalive: true,
+      headers: {
+        "Content-Type": "application/json",
+        apikey: supabaseAnonKey,
+        Authorization: `Bearer ${sessionToUse.access_token}`,
+        Prefer: "resolution=merge-duplicates",
+      },
+      body: JSON.stringify({ user_id: sessionToUse.user.id, data: stateToSave, updated_at: new Date().toISOString() }),
+    }).catch(() => {});
+  };
+
+  useEffect(() => {
+    if (!state || !session || !loadDone) return;
+    setSaveStatus("saving");
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      supabase
+        .from("app_state")
+        .upsert({ user_id: session.user.id, data: state, updated_at: new Date().toISOString() })
+        .then(({ error }) => setSaveStatus(error ? "error" : "saved"))
+        .catch(() => setSaveStatus("error"));
+    }, 600);
+    return () => clearTimeout(saveTimerRef.current);
+  }, [state, session, loadDone]);
+
+  // Filet de sécurité : si l'onglet se ferme ou passe en arrière-plan pendant qu'une
+  // sauvegarde est en attente (ou vient de partir), on force l'envoi immédiat.
+  useEffect(() => {
+    const handleFlush = () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+        flushSave(latestStateRef.current, latestSessionRef.current);
+      }
+    };
+    const handleVisibility = () => {
+      if (document.hidden) handleFlush();
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("pagehide", handleFlush);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("pagehide", handleFlush);
+    };
+  }, []);
 
   // Récupère les taux de change réels, une fois par jour ou quand la devise principale change.
   // Échec silencieux : si l'appel réseau est bloqué (ex. aperçu artefact) ou hors-ligne, on
@@ -5047,7 +5315,15 @@ export default function App() {
     return () => { cancelled = true; };
   }, [state && state.currency]);
 
-  if (!state || !splashDone) {
+  if (session === undefined || !splashDone) {
+    return <SplashScreen />;
+  }
+
+  if (session === null) {
+    return <LoginScreen />;
+  }
+
+  if (!state) {
     return <SplashScreen />;
   }
 
@@ -5088,12 +5364,24 @@ export default function App() {
             {profileLabel && <p className="text-xs text-slate-400">{profileLabel} · {state.currency}</p>}
           </div>
         </div>
-        <button onClick={() => setShowSettings(true)} className="p-2 rounded-lg bg-white shadow-sm">
-          <Settings size={18} style={{ color: theme.primary }} />
-        </button>
+        <div className="flex items-center gap-2">
+          {saveStatus === "saving" && (
+            <span className="text-[10px] text-slate-400 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse" /> Enregistrement…
+            </span>
+          )}
+          {saveStatus === "error" && (
+            <span className="text-[10px] text-red-500 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500" /> Non enregistré
+            </span>
+          )}
+          <button onClick={() => setShowSettings(true)} className="p-2 rounded-lg bg-white shadow-sm">
+            <Settings size={18} style={{ color: theme.primary }} />
+          </button>
+        </div>
       </div>
 
-      {tab === "calendar" && <CalendarTab theme={theme} state={state} setState={setState} />}
+      {tab === "calendar" && <CalendarTab theme={theme} state={state} setState={setState} showToast={showToast} />}
       {tab === "debts" && <DebtsTab theme={theme} state={state} setState={setState} onGoToAide={() => setTab("aide")} showToast={showToast} />}
       {tab === "projects" && <ProjectsTab theme={theme} state={state} setState={setState} showToast={showToast} />}
       {tab === "investments" && <InvestmentsTab theme={theme} state={state} setState={setState} showToast={showToast} />}
@@ -5127,5 +5415,94 @@ export default function App() {
         />
       )}
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Filet de sécurité : si un composant plante au rendu (données inattendues,
+// bug de librairie, etc.), on affiche un écran de récupération au lieu d'un
+// écran blanc permanent. Les données ne sont pas touchées : elles restent
+// sauvegardées sur Supabase, seul l'affichage a un souci.
+// ---------------------------------------------------------------------------
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, info) {
+    console.error("Serein — erreur de rendu capturée :", error, info?.componentStack);
+  }
+  handleReload = () => {
+    window.location.reload();
+  };
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div
+          style={{
+            minHeight: "100vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 24,
+            background: "#F7F5F2",
+            fontFamily: "system-ui, -apple-system, sans-serif",
+          }}
+        >
+          <div style={{ maxWidth: 380, textAlign: "center" }}>
+            <p style={{ fontSize: 32, marginBottom: 8 }}>😌</p>
+            <h1 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8, color: "#1F2937" }}>
+              Un petit pépin est survenu
+            </h1>
+            <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 20, lineHeight: 1.5 }}>
+              Tes données restent en sécurité sur le serveur. Essaie de recharger la page —
+              si le problème persiste, garde une capture de ce message et fais-le nous savoir.
+            </p>
+            <button
+              onClick={this.handleReload}
+              style={{
+                padding: "10px 24px",
+                borderRadius: 999,
+                background: "#1F2937",
+                color: "white",
+                border: "none",
+                fontSize: 14,
+                cursor: "pointer",
+              }}
+            >
+              Recharger l'application
+            </button>
+            {this.state.error && (
+              <pre
+                style={{
+                  marginTop: 20,
+                  textAlign: "left",
+                  fontSize: 10,
+                  color: "#94A3B8",
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
+                  maxHeight: 160,
+                  overflow: "auto",
+                }}
+              >
+                {String((this.state.error && this.state.error.message) || this.state.error)}
+              </pre>
+            )}
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+export default function App() {
+  return (
+    <ErrorBoundary>
+      <SereinApp />
+    </ErrorBoundary>
   );
 }
