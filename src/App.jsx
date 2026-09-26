@@ -394,6 +394,10 @@ const TRANSLATIONS = {
     remainingToRepay: "Reste à rembourser",
     remainingToSave: "Reste à épargner",
     viewHistory: "Voir l'historique",
+    perPaycheckHint: "≈ {amount} à mettre de côté à chaque paie (tu es payé aux {freq}).",
+    customSplitToggle: "Personnaliser le montant de chaque paie",
+    paycheckLabel: "Paie {n}",
+    splitTotalLabel: "Total réparti :",
     savedWord: "épargné",
     goalWord: "Objectif",
     freqMonthly: "Mensuel",
@@ -676,6 +680,10 @@ const TRANSLATIONS = {
     remainingToRepay: "Remaining to repay",
     remainingToSave: "Remaining to save",
     viewHistory: "View history",
+    perPaycheckHint: "≈ {amount} to set aside from each paycheck (you're paid every {freq}).",
+    customSplitToggle: "Customize the amount for each paycheck",
+    paycheckLabel: "Paycheck {n}",
+    splitTotalLabel: "Split total:",
     savedWord: "saved",
     goalWord: "Goal",
     freqMonthly: "Monthly",
@@ -2124,7 +2132,7 @@ const ChildrenStep = forwardRef(function ChildrenStep({ theme, state, items, onA
 
 const AIDANT_RELATIONS = ["Parent", "Conjoint·e", "Enfant", "Frère/Sœur", "Ami·e", "Autre"];
 
-const DEBT_ICONS = ["💳", "🚗", "🏠"];
+const DEBT_ICONS = ["💳", "🚗", "🏠", "🎓", "🏥", "📱", "🧾", "💰"];
 
 // Catégories de dépenses du journal quotidien — chacune rattachée à "besoin" ou "envie"
 // pour alimenter automatiquement la règle du 50/30/20 dans l'onglet Aide.
@@ -2149,7 +2157,7 @@ function expenseCategoryLabel(catId, lang, state) {
   return lang === "en" ? cat.en : cat.fr;
 }
 
-const PROJECT_ICONS = ["🏖️", "💍", "🎯"];
+const PROJECT_ICONS = ["🏖️", "✈️", "🏔️", "🎄", "💍", "🏠", "🚗", "👶", "🎓", "💻", "🎁", "🎯"];
 
 function IconAvatar({ icon, color }) {
   return (
@@ -2591,6 +2599,21 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
   const [termTouched, setTermTouched] = useState(!!editItem);
   const canSubmit = f.title && f.amount && f.startDate && f.endDate;
 
+  // Combien mettre de côté à chaque paie, basé sur ta vraie fréquence de revenu — utile pour
+  // les personnes payées aux 2 semaines qui préfèrent épargner un peu à chaque paie plutôt
+  // que tout d'un coup en fin de mois.
+  const payFrequency = state.paydays[0]?.frequency;
+  const formInstallment = f.amount && f.endDate
+    ? (() => {
+        const monthsLeft = monthsBetween(f.startDate || getToday(), f.endDate);
+        if (monthsLeft <= 0) return null;
+        return Math.ceil(Number(f.amount) / (monthsLeft * periodsPerMonth(f.frequency)));
+      })()
+    : null;
+  const perPaycheckAmount = formInstallment && payFrequency && payFrequency !== f.frequency
+    ? monthlyEquivalent(formInstallment, f.frequency) / periodsPerMonth(payFrequency)
+    : null;
+
   useEffect(() => {
     if (termTouched) return;
     const suggested = suggestTerm(f.startDate, f.endDate);
@@ -2634,6 +2657,13 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
             options={freqOptions(lang, ["mensuel", "hebdomadaire", "bi-hebdomadaire"])}
           />
         </Field>
+        {perPaycheckAmount != null && (
+          <p className="text-xs text-slate-400 -mt-2 mb-3">
+            {t(lang, "perPaycheckHint")
+              .replace("{amount}", money(perPaycheckAmount, f.currency))
+              .replace("{freq}", freqLabel(payFrequency))}
+          </p>
+        )}
         <Field label={termTouched ? t(lang, "termLabel") : t(lang, "termSuggested")}>
           <div className="flex gap-2">
             {TERMES.map((term) => (
@@ -2677,7 +2707,7 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
   const isEdit = !!editItem;
   const [f, setF] = useState(() => {
     const src = editItem || duplicateFrom;
-    if (!src) return { title: "", day: "", amount: "", period: "mensuel", month: "1", startDate: getToday(), owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "", essential: false };
+    if (!src) return { title: "", day: "", amount: "", period: "mensuel", month: "1", startDate: getToday(), owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "", essential: false, paycheckSplit: null };
     return {
       title: editItem ? src.title : "",
       day: src.day != null ? String(src.day) : "",
@@ -2690,12 +2720,48 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
       holdingAccount: src.holdingAccount || "",
       chargeAccount: src.chargeAccount || "",
       essential: src.essential || false,
+      paycheckSplit: src.paycheckSplit || null,
     };
   });
   const usesStartDate = ["hebdomadaire", "bi-hebdomadaire", "bimestriel"].includes(f.period);
   const canSubmit = f.title && f.amount && (usesStartDate ? f.startDate : f.day);
+  // Combien mettre de côté à chaque paie, basé sur ta vraie fréquence de revenu — utile pour
+  // les personnes payées aux 2 semaines qui préfèrent répartir une grosse facture (loyer...)
+  // sur chaque paie plutôt que de tout prendre d'un coup.
+  const payFrequency = state.paydays[0]?.frequency;
+  const perPaycheckAmount = f.amount && payFrequency && payFrequency !== f.period
+    ? monthlyEquivalent(Number(f.amount), f.period) / periodsPerMonth(payFrequency)
+    : null;
+  // Nombre de paies qui tombent dans une période de cette facture (ex. 2 paies/mois si payé
+  // aux 2 semaines et facture mensuelle). On ne propose la répartition personnalisée que dans
+  // un cas raisonnable (2 à 4 paies), sinon ça n'a pas de sens.
+  const paychecksPerPeriod = payFrequency && payFrequency !== f.period
+    ? Math.round(periodsPerMonth(payFrequency) / periodsPerMonth(f.period))
+    : 0;
+  const canCustomSplit = perPaycheckAmount != null && paychecksPerPeriod >= 2 && paychecksPerPeriod <= 4;
+  const [useCustomSplit, setUseCustomSplit] = useState(!!(editItem?.paycheckSplit?.length));
+  const splitValues = f.paycheckSplit && f.paycheckSplit.length === paychecksPerPeriod
+    ? f.paycheckSplit
+    : Array.from({ length: paychecksPerPeriod }, () => "");
+  const splitTotal = splitValues.reduce((a, v) => a + (Number(v) || 0), 0);
+  const setSplitValue = (idx, val) => {
+    const next = [...splitValues];
+    next[idx] = val;
+    setF({ ...f, paycheckSplit: next });
+  };
   const submit = () => {
-    const base = { title: f.title, amount: Number(f.amount), period: f.period, owner: f.owner, currency: f.currency, holdingAccount: f.holdingAccount, chargeAccount: f.chargeAccount, essential: f.essential };
+    const validSplit = useCustomSplit && canCustomSplit && splitValues.every((v) => v !== "" && !isNaN(Number(v)));
+    const base = {
+      title: f.title,
+      amount: Number(f.amount),
+      period: f.period,
+      owner: f.owner,
+      currency: f.currency,
+      holdingAccount: f.holdingAccount,
+      chargeAccount: f.chargeAccount,
+      essential: f.essential,
+      paycheckSplit: validSplit ? splitValues.map(Number) : null,
+    };
     const item = usesStartDate
       ? { ...base, startDate: f.startDate, day: null, month: null }
       : { ...base, day: Number(f.day), month: f.period === "annuel" ? Number(f.month) : null, startDate: null };
@@ -2703,7 +2769,8 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
       onSave(editItem.id, item);
     } else {
       onAdd(item);
-      setF({ title: "", day: "", amount: "", period: "mensuel", month: "1", startDate: getToday(), owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "", essential: false });
+      setF({ title: "", day: "", amount: "", period: "mensuel", month: "1", startDate: getToday(), owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "", essential: false, paycheckSplit: null });
+      setUseCustomSplit(false);
     }
   };
   useImperativeHandle(ref, () => ({ commit: () => { if (canSubmit) submit(); } }));
@@ -2716,6 +2783,44 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
         <Field label={`${t(lang, "fieldAmount")} (${f.currency})`}>
           <input type="number" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
         </Field>
+        {perPaycheckAmount != null && (
+          <div className="-mt-2 mb-3">
+            <p className="text-xs text-slate-400">
+              {t(lang, "perPaycheckHint")
+                .replace("{amount}", money(perPaycheckAmount, f.currency))
+                .replace("{freq}", freqLabel(payFrequency))}
+            </p>
+            {canCustomSplit && (
+              <label className="flex items-center gap-2 mt-1.5 text-xs cursor-pointer" style={{ color: theme.primary }}>
+                <input
+                  type="checkbox"
+                  checked={useCustomSplit}
+                  onChange={(e) => setUseCustomSplit(e.target.checked)}
+                />
+                {t(lang, "customSplitToggle")}
+              </label>
+            )}
+            {useCustomSplit && canCustomSplit && (
+              <div className="mt-2 p-3 rounded-lg bg-slate-50 space-y-2">
+                {splitValues.map((v, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <span className="text-xs text-slate-500 w-16 shrink-0">{t(lang, "paycheckLabel").replace("{n}", idx + 1)}</span>
+                    <input
+                      type="number"
+                      className={inputCls}
+                      value={v}
+                      onChange={(e) => setSplitValue(idx, e.target.value)}
+                      placeholder="0"
+                    />
+                  </div>
+                ))}
+                <p className="text-xs" style={{ color: Math.abs(splitTotal - Number(f.amount || 0)) < 0.01 ? "#16A34A" : theme.danger }}>
+                  {t(lang, "splitTotalLabel")} {money(splitTotal, f.currency)} / {money(Number(f.amount || 0), f.currency)}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
         <Field label={t(lang, "fieldFrequency")}>
           <FreqButtons
             theme={theme}
@@ -3647,7 +3752,7 @@ function CalendarTab({ theme, state, setState, showToast }) {
           field="bills"
           StepComp={RecurringStep}
           stepExtraProps={{ title: t(lang, "billsTitle"), hint: t(lang, "billsHint") }}
-          renderRow={(x) => `${x.title} — ${money(x.amount, x.currency || state.currency)} (${x.period})${x.holdingAccount || x.chargeAccount ? ` — ${[x.holdingAccount, x.chargeAccount].filter(Boolean).join(" → ")}` : ""}`}
+          renderRow={(x) => `${x.title} — ${money(x.amount, x.currency || state.currency)} (${x.period})${x.paycheckSplit?.length ? ` · ${x.paycheckSplit.map((v) => money(v, x.currency || state.currency)).join(" + ")}` : ""}${x.holdingAccount || x.chargeAccount ? ` — ${[x.holdingAccount, x.chargeAccount].filter(Boolean).join(" → ")}` : ""}`}
           onClose={() => setAddMode(null)}
         />
       )}
@@ -3661,7 +3766,7 @@ function CalendarTab({ theme, state, setState, showToast }) {
           field="subscriptions"
           StepComp={RecurringStep}
           stepExtraProps={{ title: t(lang, "subscriptionsTitle"), hint: t(lang, "subscriptionsHint"), showEssentialToggle: true }}
-          renderRow={(x) => `${x.title} — ${money(x.amount, x.currency || state.currency)} (${x.period})${x.holdingAccount || x.chargeAccount ? ` — ${[x.holdingAccount, x.chargeAccount].filter(Boolean).join(" → ")}` : ""}`}
+          renderRow={(x) => `${x.title} — ${money(x.amount, x.currency || state.currency)} (${x.period})${x.paycheckSplit?.length ? ` · ${x.paycheckSplit.map((v) => money(v, x.currency || state.currency)).join(" + ")}` : ""}${x.holdingAccount || x.chargeAccount ? ` — ${[x.holdingAccount, x.chargeAccount].filter(Boolean).join(" → ")}` : ""}`}
           onClose={() => setAddMode(null)}
         />
       )}
@@ -3726,13 +3831,14 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
   const [showAddDebt, setShowAddDebt] = useState(false);
   const [editingDebt, setEditingDebt] = useState(null);
   const [duplicatingDebt, setDuplicatingDebt] = useState(null);
+  const [expandedHistory, setExpandedHistory] = useState({});
   const [celebratingDebt, setCelebratingDebt] = useState(null);
 
   const totalDebtRemaining = (debts) => debts.reduce((a, d) => a + (d.amount - d.paid), 0);
 
   const addDebtItem = (item) => {
     setState((s) => {
-      const newDebts = [...s.debts, { id: uid(), ...item }];
+      const newDebts = [...s.debts, { id: uid(), history: [], ...item }];
       return { ...s, debts: newDebts, debtsHistory: pushHistoryPoint(s.debtsHistory, totalDebtRemaining(newDebts)) };
     });
     setShowAddDebt(false);
@@ -3750,7 +3856,7 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
     return { ...s, debts: newDebts, debtsHistory: pushHistoryPoint(s.debtsHistory, totalDebtRemaining(newDebts)) };
   });
 
-  const registerPayment = (id) => {
+  const registerPayment = (id, direction = 1) => {
     const amt = Number(payInput[id]);
     if (!amt) return;
     const previousState = state;
@@ -3758,18 +3864,22 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
     setState((s) => {
       const newDebts = s.debts.map((d) => {
         if (d.id !== id) return d;
-        const newPaid = Math.min(d.amount, d.paid + amt);
-        if (d.paid < d.amount && newPaid >= d.amount) {
+        const newPaid = Math.max(0, Math.min(d.amount, d.paid + amt * direction));
+        if (direction > 0 && d.paid < d.amount && newPaid >= d.amount) {
           setCelebratingDebt(d);
           reachedGoal = true;
         }
-        return { ...d, paid: newPaid };
+        const entry = { date: getToday(), amount: amt * direction, paid: newPaid };
+        return { ...d, paid: newPaid, history: [...(d.history || []), entry] };
       });
       return { ...s, debts: newDebts, debtsHistory: pushHistoryPoint(s.debtsHistory, totalDebtRemaining(newDebts)) };
     });
     setPayInput((p) => ({ ...p, [id]: "" }));
     if (!reachedGoal && showToast) {
-      showToast(`Paiement de ${money(amt, state.currency)} enregistré`, () => setState(previousState));
+      showToast(
+        direction > 0 ? `Paiement de ${money(amt, state.currency)} enregistré` : `${money(amt, state.currency)} retiré du remboursement`,
+        () => setState(previousState)
+      );
     }
   };
 
@@ -3914,6 +4024,31 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
                 <span>{money(d.paid, state.currency)} remboursé</span>
                 <span>{money(remaining, state.currency)} restant</span>
               </div>
+              {(d.history || []).length > 0 && (
+                <div className="mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setExpandedHistory((v) => ({ ...v, [d.id]: !v[d.id] }))}
+                    className="flex items-center gap-1 text-xs font-medium"
+                    style={{ color: theme.primary }}
+                  >
+                    <ChevronRight size={12} className={expandedHistory[d.id] ? "rotate-90" : ""} style={{ transition: "transform 0.15s" }} />
+                    {t(lang, "viewHistory")} ({d.history.length})
+                  </button>
+                  {expandedHistory[d.id] && (
+                    <ul className="mt-2 space-y-1 max-h-40 overflow-y-auto">
+                      {[...d.history].reverse().map((h, idx) => (
+                        <li key={idx} className="flex justify-between text-xs px-2 py-1 rounded bg-slate-50">
+                          <span className="text-slate-400">{h.date}</span>
+                          <span className="font-medium" style={{ color: h.amount >= 0 ? "#16A34A" : theme.danger }}>
+                            {h.amount >= 0 ? "+" : ""}{money(h.amount, d.currency || state.currency)}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
               <div className="flex gap-2 mt-3">
                 <input
                   type="number"
@@ -3923,13 +4058,23 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
                   onChange={(e) => setPayInput((p) => ({ ...p, [d.id]: e.target.value }))}
                 />
                 <button
-                  onClick={() => registerPayment(d.id)}
+                  onClick={() => registerPayment(d.id, 1)}
                   className="text-xs font-medium px-3 py-1.5 rounded-lg text-white"
                   style={{ backgroundColor: theme.accent }}
                 >
                   Paiement
                 </button>
+                <button
+                  onClick={() => registerPayment(d.id, -1)}
+                  className="text-xs font-medium px-3 py-1.5 rounded-lg border"
+                  style={{ borderColor: theme.accent, color: theme.accent }}
+                >
+                  Retirer
+                </button>
               </div>
+              <p className="text-[11px] text-slate-400 mt-1.5">
+                Erreur de saisie ou paiement annulé ? Utilise « Retirer » pour corriger le montant remboursé.
+              </p>
 
               {d.paymentMode === "recurrent" && (
                 <div className="mt-3 pt-3 border-t border-slate-100">
