@@ -392,6 +392,8 @@ const TRANSLATIONS = {
     privacyPolicyBody: "Voici où en sont réellement tes données.\n\nCE QUE NOUS COLLECTONS\nUniquement ce que tu entres toi-même : prénom, dettes, projets, abonnements, factures, revenus, investissements, et la composition de ton foyer si tu la renseignes — plus ton adresse courriel pour la connexion.\n\nOÙ C'EST STOCKÉ\nTes données sont hébergées par Supabase, dans une base sécurisée, accessible uniquement par toi grâce à ton compte. La connexion se fait par lien envoyé à ton courriel, sans mot de passe à retenir.\n\nCE QUE NOUS NE FAISONS PAS\nNous ne vendons ni ne partageons tes données à des fins publicitaires. Aucune publicité dans l'application. Aucun suivi analytique caché.\n\nTES DROITS DÈS MAINTENANT\nTu peux exporter toutes tes données à tout moment (CSV, sauvegarde complète) juste au-dessus dans ces réglages, te déconnecter, ou réinitialiser complètement l'application.\n\nPOUR LA SUITE\nUne politique de confidentialité complète et conforme à la loi sera publiée séparément et remplacera ce résumé.",
     privacyPolicyClose: "Fermer",
     remainingToRepay: "Reste à rembourser",
+    remainingToSave: "Reste à épargner",
+    viewHistory: "Voir l'historique",
     savedWord: "épargné",
     goalWord: "Objectif",
     freqMonthly: "Mensuel",
@@ -672,6 +674,8 @@ const TRANSLATIONS = {
     privacyPolicyBody: "Here's where your data actually stands.\n\nWHAT WE COLLECT\nOnly what you enter yourself: first name, debts, projects, subscriptions, bills, income, investments, and your household composition if you fill it in — plus your email for sign-in.\n\nWHERE IT'S STORED\nYour data is hosted by Supabase, in a secure database, accessible only by you through your account. Sign-in happens via a link sent to your email, no password to remember.\n\nWHAT WE DON'T DO\nWe never sell or share your data for advertising purposes. No ads in the app. No hidden analytics tracking.\n\nYOUR RIGHTS RIGHT NOW\nYou can export all your data at any time (CSV, full backup) just above in these settings, sign out, or fully reset the app.\n\nWHAT'S NEXT\nA complete, legally compliant privacy policy will be published separately and will replace this summary.",
     privacyPolicyClose: "Close",
     remainingToRepay: "Remaining to repay",
+    remainingToSave: "Remaining to save",
+    viewHistory: "View history",
     savedWord: "saved",
     goalWord: "Goal",
     freqMonthly: "Monthly",
@@ -3218,6 +3222,10 @@ function CalendarTab({ theme, state, setState, showToast }) {
   const daysInMonth = new Date(cursor.y, cursor.m + 1, 0).getDate();
   const firstWeekday = (new Date(cursor.y, cursor.m, 1).getDay() + 6) % 7;
 
+  const now = new Date();
+  const isCurrentMonth = cursor.y === now.getFullYear() && cursor.m === now.getMonth();
+  const todayDate = now.getDate();
+
   const eventsOnYMD = (y, m, day) => {
     const list = [];
 
@@ -3477,6 +3485,7 @@ function CalendarTab({ theme, state, setState, showToast }) {
           if (!d) return <div key={i} />;
           const evs = eventsForDay(d);
           const isSelected = selectedDay === d;
+          const isToday = isCurrentMonth && d === todayDate;
           return (
             <button
               key={i}
@@ -3484,8 +3493,9 @@ function CalendarTab({ theme, state, setState, showToast }) {
               className="aspect-square rounded-lg flex flex-col items-center justify-center text-xs relative"
               style={{
                 backgroundColor: isSelected ? theme.primary : evs.length ? theme.soft : "white",
-                color: isSelected ? "white" : theme.text,
-                border: "1px solid #f1f5f9",
+                color: isSelected ? "white" : isToday ? theme.primary : theme.text,
+                border: isToday && !isSelected ? `1.5px solid ${theme.primary}` : "1px solid #f1f5f9",
+                fontWeight: isToday ? 700 : 400,
               }}
             >
               <span>{d}</span>
@@ -3994,13 +4004,14 @@ function ProjectsTab({ theme, state, setState, showToast }) {
   const [showAddProject, setShowAddProject] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [duplicatingProject, setDuplicatingProject] = useState(null);
+  const [expandedHistory, setExpandedHistory] = useState({});
   const [celebratingProject, setCelebratingProject] = useState(null);
 
   const totalProjectSaved = (projects) => projects.reduce((a, p) => a + p.saved, 0);
 
   const addProjectItem = (item) => {
     setState((s) => {
-      const newProjects = [...s.projects, { id: uid(), ...item }];
+      const newProjects = [...s.projects, { id: uid(), history: [], ...item }];
       return { ...s, projects: newProjects, projectsHistory: pushHistoryPoint(s.projectsHistory, totalProjectSaved(newProjects)) };
     });
     setShowAddProject(false);
@@ -4031,7 +4042,8 @@ function ProjectsTab({ theme, state, setState, showToast }) {
           setCelebratingProject(p);
           reachedGoal = true;
         }
-        return { ...p, saved: newSaved };
+        const entry = { date: getToday(), amount: amt * direction, saved: newSaved };
+        return { ...p, saved: newSaved, history: [...(p.history || []), entry] };
       });
       return { ...s, projects: newProjects, projectsHistory: pushHistoryPoint(s.projectsHistory, totalProjectSaved(newProjects)) };
     });
@@ -4127,6 +4139,36 @@ function ProjectsTab({ theme, state, setState, showToast }) {
                 <span>{money(p.saved, p.currency || state.currency)} {t(lang, "savedWord")}</span>
                 <span>{t(lang, "goalWord")} {money(p.target, p.currency || state.currency)}</span>
               </div>
+              {p.saved < p.target && (
+                <p className="text-xs font-medium mt-1" style={{ color: theme.accent }}>
+                  {t(lang, "remainingToSave")} : {money(p.target - p.saved, p.currency || state.currency)}
+                </p>
+              )}
+              {(p.history || []).length > 0 && (
+                <div className="mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setExpandedHistory((v) => ({ ...v, [p.id]: !v[p.id] }))}
+                    className="flex items-center gap-1 text-xs font-medium"
+                    style={{ color: theme.primary }}
+                  >
+                    <ChevronRight size={12} className={expandedHistory[p.id] ? "rotate-90" : ""} style={{ transition: "transform 0.15s" }} />
+                    {t(lang, "viewHistory")} ({p.history.length})
+                  </button>
+                  {expandedHistory[p.id] && (
+                    <ul className="mt-2 space-y-1 max-h-40 overflow-y-auto">
+                      {[...p.history].reverse().map((h, idx) => (
+                        <li key={idx} className="flex justify-between text-xs px-2 py-1 rounded bg-slate-50">
+                          <span className="text-slate-400">{h.date}</span>
+                          <span className="font-medium" style={{ color: h.amount >= 0 ? "#16A34A" : theme.danger }}>
+                            {h.amount >= 0 ? "+" : ""}{money(h.amount, p.currency || state.currency)}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
               <div className="flex gap-2 mt-3">
                 <input
                   type="number"
@@ -5104,11 +5146,24 @@ function AideTab({ theme, state }) {
 // ---------------------------------------------------------------------------
 // App principale
 // ---------------------------------------------------------------------------
+function GoogleGlyph() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.1 8 3.1l5.7-5.7C34.6 6 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z" />
+      <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.1 8 3.1l5.7-5.7C34.6 6 29.6 4 24 4 16 4 9.1 8.6 6.3 14.7z" />
+      <path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.3-5.1l-6.6-5.6C29.6 34.9 27 36 24 36c-5.2 0-9.7-3.4-11.3-8.1l-6.6 5.1C9 39.4 15.9 44 24 44z" />
+      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4 5.6l6.6 5.6C41.6 36.6 44 31 44 24c0-1.3-.1-2.7-.4-3.5z" />
+    </svg>
+  );
+}
+
 function LoginScreen() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [guestLoading, setGuestLoading] = useState(false);
 
   const sendLink = async () => {
     if (!email) return;
@@ -5121,6 +5176,23 @@ function LoginScreen() {
     setLoading(false);
     if (error) setError(error.message);
     else setSent(true);
+  };
+
+  const signInWithGoogle = async () => {
+    setError("");
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin },
+    });
+    if (error) setError(error.message);
+  };
+
+  const continueAsGuest = async () => {
+    setError("");
+    setGuestLoading(true);
+    const { error } = await supabase.auth.signInAnonymously();
+    setGuestLoading(false);
+    if (error) setError(error.message);
   };
 
   return (
@@ -5137,26 +5209,62 @@ function LoginScreen() {
           </p>
         ) : (
           <>
-            <p className="text-sm text-slate-500 mb-4">
-              Entre ton e-mail — tu recevras un lien pour te connecter, sans mot de passe.
-            </p>
-            <input
-              type="email"
-              className={inputCls}
-              placeholder="toi@exemple.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && sendLink()}
-            />
-            {error && <p className="text-xs text-red-500 mt-2">{error}</p>}
+            <p className="text-sm text-slate-500 mb-4">Choisis comment te connecter.</p>
+
             <button
-              onClick={sendLink}
-              disabled={!email || loading}
-              className="mt-4 w-full text-sm font-medium text-white px-4 py-2.5 rounded-lg disabled:opacity-40"
-              style={{ backgroundColor: "#5BC2B4" }}
+              onClick={signInWithGoogle}
+              className="w-full flex items-center justify-center gap-2 text-sm font-medium px-4 py-2.5 rounded-lg border border-slate-300 hover:bg-slate-50"
             >
-              {loading ? "Envoi…" : "Recevoir mon lien de connexion"}
+              <GoogleGlyph /> Continuer avec Google
             </button>
+
+            {!showEmailForm ? (
+              <button
+                onClick={() => setShowEmailForm(true)}
+                className="mt-2 w-full text-sm font-medium px-4 py-2.5 rounded-lg border border-slate-300 hover:bg-slate-50"
+              >
+                Continuer avec votre e-mail
+              </button>
+            ) : (
+              <div className="mt-2">
+                <input
+                  type="email"
+                  className={inputCls}
+                  placeholder="toi@exemple.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && sendLink()}
+                  autoFocus
+                />
+                <button
+                  onClick={sendLink}
+                  disabled={!email || loading}
+                  className="mt-2 w-full text-sm font-medium text-white px-4 py-2.5 rounded-lg disabled:opacity-40"
+                  style={{ backgroundColor: "#5BC2B4" }}
+                >
+                  {loading ? "Envoi…" : "Recevoir mon lien de connexion"}
+                </button>
+              </div>
+            )}
+
+            <div className="flex items-center gap-2 my-4">
+              <div className="flex-1 h-px bg-slate-200" />
+              <span className="text-xs text-slate-400">ou</span>
+              <div className="flex-1 h-px bg-slate-200" />
+            </div>
+
+            <button
+              onClick={continueAsGuest}
+              disabled={guestLoading}
+              className="w-full flex items-center justify-center gap-2 text-sm font-medium px-4 py-2.5 rounded-lg text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+            >
+              <User size={16} /> {guestLoading ? "Connexion…" : "Continuer en tant qu'invité·e"}
+            </button>
+            <p className="text-[11px] text-slate-400 mt-2 text-center">
+              En invité·e, tes données restent liées à cet appareil — crée un compte plus tard pour ne pas les perdre.
+            </p>
+
+            {error && <p className="text-xs text-red-500 mt-3">{error}</p>}
           </>
         )}
       </div>
