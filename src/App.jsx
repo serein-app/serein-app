@@ -398,6 +398,9 @@ const TRANSLATIONS = {
     customSplitToggle: "Personnaliser le montant de chaque paie",
     paycheckLabel: "Paie {n}",
     splitTotalLabel: "Total réparti :",
+    savingFreqLockedLabel: "Aligné sur ta paie — aux {freq}",
+    savingFreqLockedHint: "Tu ne peux mettre de l'argent de côté que les jours où tu es payé, donc l'épargne suit automatiquement ta fréquence de paie.",
+    noPaydayWarning: "Ajoute une paie dans l'onglet Paies pour que ce rappel s'aligne sur tes vrais versements.",
     savedWord: "épargné",
     goalWord: "Objectif",
     freqMonthly: "Mensuel",
@@ -684,6 +687,9 @@ const TRANSLATIONS = {
     customSplitToggle: "Customize the amount for each paycheck",
     paycheckLabel: "Paycheck {n}",
     splitTotalLabel: "Split total:",
+    savingFreqLockedLabel: "Aligned with your paycheck — every {freq}",
+    savingFreqLockedHint: "You can only set money aside on the days you get paid, so savings automatically follow your paycheck frequency.",
+    noPaydayWarning: "Add a paycheck in the Paydays tab so this reminder lines up with your real payments.",
     savedWord: "saved",
     goalWord: "Goal",
     freqMonthly: "Monthly",
@@ -2580,9 +2586,26 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
 const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList }, ref) {
   const lang = state.language || "fr";
   const isEdit = !!editItem;
+  // On ne peut concrètement mettre de l'argent de côté que les jours où on est payé —
+  // donc par défaut, la cadence d'épargne d'un nouveau projet suit ta vraie fréquence de
+  // paie (et démarre à la même date que ta paie) plutôt qu'un choix arbitraire.
+  const primaryPayday = state.paydays[0];
   const [f, setF] = useState(() => {
     const src = editItem || duplicateFrom;
-    if (!src) return { title: "", icon: PROJECT_ICONS[0], amount: "", startDate: getToday(), endDate: "", term: "court", owner: "commun", frequency: "mensuel", currency: state.currency, holdingAccount: "" };
+    if (!src) {
+      return {
+        title: "",
+        icon: PROJECT_ICONS[0],
+        amount: "",
+        startDate: primaryPayday?.startDate || getToday(),
+        endDate: "",
+        term: "court",
+        owner: "commun",
+        frequency: primaryPayday?.frequency || "mensuel",
+        currency: state.currency,
+        holdingAccount: "",
+      };
+    }
     return {
       title: editItem ? src.title : "",
       icon: src.icon || PROJECT_ICONS[0],
@@ -2598,21 +2621,9 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
   });
   const [termTouched, setTermTouched] = useState(!!editItem);
   const canSubmit = f.title && f.amount && f.startDate && f.endDate;
-
-  // Combien mettre de côté à chaque paie, basé sur ta vraie fréquence de revenu — utile pour
-  // les personnes payées aux 2 semaines qui préfèrent épargner un peu à chaque paie plutôt
-  // que tout d'un coup en fin de mois.
-  const payFrequency = state.paydays[0]?.frequency;
-  const formInstallment = f.amount && f.endDate
-    ? (() => {
-        const monthsLeft = monthsBetween(f.startDate || getToday(), f.endDate);
-        if (monthsLeft <= 0) return null;
-        return Math.ceil(Number(f.amount) / (monthsLeft * periodsPerMonth(f.frequency)));
-      })()
-    : null;
-  const perPaycheckAmount = formInstallment && payFrequency && payFrequency !== f.frequency
-    ? monthlyEquivalent(formInstallment, f.frequency) / periodsPerMonth(payFrequency)
-    : null;
+  // Tant qu'une paie existe, la cadence d'épargne du projet reste verrouillée sur celle-ci —
+  // pas d'option pour choisir une fréquence différente de tes vrais versements.
+  const lockedToPayday = !!primaryPayday;
 
   useEffect(() => {
     if (termTouched) return;
@@ -2621,12 +2632,15 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
   }, [f.startDate, f.endDate, termTouched]);
 
   const submit = () => {
-    const item = { title: f.title, icon: f.icon, target: Number(f.amount), term: f.term, owner: f.owner, currency: f.currency, startDate: f.startDate, endDate: f.endDate, frequency: f.frequency, holdingAccount: f.holdingAccount };
+    // Verrouille systématiquement la cadence d'épargne sur la vraie paie au moment
+    // d'enregistrer, même si le projet modifié avait une ancienne fréquence différente.
+    const frequency = lockedToPayday ? primaryPayday.frequency : f.frequency;
+    const item = { title: f.title, icon: f.icon, target: Number(f.amount), term: f.term, owner: f.owner, currency: f.currency, startDate: f.startDate, endDate: f.endDate, frequency, holdingAccount: f.holdingAccount };
     if (isEdit) {
       onSave(editItem.id, item);
     } else {
       onAdd({ ...item, saved: 0 });
-      setF({ title: "", icon: PROJECT_ICONS[0], amount: "", startDate: getToday(), endDate: "", term: "court", owner: "commun", frequency: "mensuel", currency: state.currency, holdingAccount: "" });
+      setF({ title: "", icon: PROJECT_ICONS[0], amount: "", startDate: primaryPayday?.startDate || getToday(), endDate: "", term: "court", owner: "commun", frequency: primaryPayday?.frequency || "mensuel", currency: state.currency, holdingAccount: "" });
       setTermTouched(false);
     }
   };
@@ -2649,20 +2663,24 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
         <Field label={t(lang, "fieldProjectEnd")}>
           <input type="date" className={selectCls} style={dateInputStyle} value={f.endDate} onChange={(e) => setF({ ...f, endDate: e.target.value })} />
         </Field>
-        <Field label={t(lang, "fieldSavingFreq")}>
-          <FreqButtons
-            theme={theme}
-            value={f.frequency}
-            onChange={(v) => setF({ ...f, frequency: v })}
-            options={freqOptions(lang, ["mensuel", "hebdomadaire", "bi-hebdomadaire"])}
-          />
-        </Field>
-        {perPaycheckAmount != null && (
-          <p className="text-xs text-slate-400 -mt-2 mb-3">
-            {t(lang, "perPaycheckHint")
-              .replace("{amount}", money(perPaycheckAmount, f.currency))
-              .replace("{freq}", freqLabel(payFrequency))}
-          </p>
+        {lockedToPayday ? (
+          <Field label={t(lang, "fieldSavingFreq")}>
+            <div className="rounded-lg border px-3 py-2.5 text-sm flex items-center justify-between" style={{ borderColor: "#e2e8f0", backgroundColor: theme.soft, color: theme.text }}>
+              <span>{t(lang, "savingFreqLockedLabel").replace("{freq}", freqLabel(primaryPayday.frequency))}</span>
+              <Check size={16} style={{ color: theme.primary }} />
+            </div>
+            <p className="text-xs text-slate-400 mt-1.5">{t(lang, "savingFreqLockedHint")}</p>
+          </Field>
+        ) : (
+          <Field label={t(lang, "fieldSavingFreq")}>
+            <FreqButtons
+              theme={theme}
+              value={f.frequency}
+              onChange={(v) => setF({ ...f, frequency: v })}
+              options={freqOptions(lang, ["mensuel", "hebdomadaire", "bi-hebdomadaire"])}
+            />
+            <p className="text-xs mt-1.5" style={{ color: theme.danger }}>{t(lang, "noPaydayWarning")}</p>
+          </Field>
         )}
         <Field label={termTouched ? t(lang, "termLabel") : t(lang, "termSuggested")}>
           <div className="flex gap-2">
