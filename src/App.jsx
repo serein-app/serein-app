@@ -400,6 +400,7 @@ const TRANSLATIONS = {
     splitTotalLabel: "Total réparti :",
     savingFreqLockedLabel: "Aligné sur ta paie — aux {freq}",
     savingFreqLockedHint: "Tu ne peux mettre de l'argent de côté que les jours où tu es payé, donc l'épargne suit automatiquement ta fréquence de paie.",
+    startDateLockedLabel: "Aligné sur ta paie — à partir du {date}",
     noPaydayWarning: "Ajoute une paie dans l'onglet Paies pour que ce rappel s'aligne sur tes vrais versements.",
     savedWord: "épargné",
     goalWord: "Objectif",
@@ -689,6 +690,7 @@ const TRANSLATIONS = {
     splitTotalLabel: "Split total:",
     savingFreqLockedLabel: "Aligned with your paycheck — every {freq}",
     savingFreqLockedHint: "You can only set money aside on the days you get paid, so savings automatically follow your paycheck frequency.",
+    startDateLockedLabel: "Aligned with your paycheck — starting {date}",
     noPaydayWarning: "Add a paycheck in the Paydays tab so this reminder lines up with your real payments.",
     savedWord: "saved",
     goalWord: "Goal",
@@ -2632,10 +2634,13 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
   }, [f.startDate, f.endDate, termTouched]);
 
   const submit = () => {
-    // Verrouille systématiquement la cadence d'épargne sur la vraie paie au moment
-    // d'enregistrer, même si le projet modifié avait une ancienne fréquence différente.
+    // Verrouille systématiquement la cadence ET la date d'ancrage de l'épargne sur la vraie
+    // paie au moment d'enregistrer — sinon les deux calendriers (paie / projet) peuvent avoir
+    // la même fréquence sans jamais tomber sur les mêmes jours (ex. paie aux 2 semaines à
+    // partir du 3, projet aux 2 semaines à partir du 10 : jamais le même jour).
     const frequency = lockedToPayday ? primaryPayday.frequency : f.frequency;
-    const item = { title: f.title, icon: f.icon, target: Number(f.amount), term: f.term, owner: f.owner, currency: f.currency, startDate: f.startDate, endDate: f.endDate, frequency, holdingAccount: f.holdingAccount };
+    const startDate = lockedToPayday ? primaryPayday.startDate : f.startDate;
+    const item = { title: f.title, icon: f.icon, target: Number(f.amount), term: f.term, owner: f.owner, currency: f.currency, startDate, endDate: f.endDate, frequency, holdingAccount: f.holdingAccount };
     if (isEdit) {
       onSave(editItem.id, item);
     } else {
@@ -2657,9 +2662,18 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
         <Field label={`${t(lang, "fieldProjectAmount")} (${f.currency})`}>
           <input type="number" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
         </Field>
-        <Field label={t(lang, "fieldProjectStart")}>
-          <input type="date" className={selectCls} style={dateInputStyle} value={f.startDate} onChange={(e) => setF({ ...f, startDate: e.target.value })} />
-        </Field>
+        {lockedToPayday ? (
+          <Field label={t(lang, "fieldProjectStart")}>
+            <div className="rounded-lg border px-3 py-2.5 text-sm flex items-center justify-between" style={{ borderColor: "#e2e8f0", backgroundColor: theme.soft, color: theme.text }}>
+              <span>{t(lang, "startDateLockedLabel").replace("{date}", primaryPayday.startDate)}</span>
+              <Check size={16} style={{ color: theme.primary }} />
+            </div>
+          </Field>
+        ) : (
+          <Field label={t(lang, "fieldProjectStart")}>
+            <input type="date" className={selectCls} style={dateInputStyle} value={f.startDate} onChange={(e) => setF({ ...f, startDate: e.target.value })} />
+          </Field>
+        )}
         <Field label={t(lang, "fieldProjectEnd")}>
           <input type="date" className={selectCls} style={dateInputStyle} value={f.endDate} onChange={(e) => setF({ ...f, endDate: e.target.value })} />
         </Field>
@@ -3396,11 +3410,19 @@ function CalendarTab({ theme, state, setState, showToast }) {
       }
     });
 
+    // Un projet ne peut concrètement recevoir de l'argent que les jours où on est payé : on
+    // affiche donc toujours son rappel calé sur la vraie paie (fréquence + date d'ancrage) quand
+    // il y en a une, plutôt que sur les valeurs stockées sur le projet — utile aussi pour les
+    // projets créés avant ce verrouillage, qui gardent encore une ancienne date désynchronisée.
+    const primaryPayday = state.paydays[0];
     state.projects.forEach((p) => {
-      if (!p.startDate || !p.frequency || !p.endDate) return;
+      if (!p.endDate) return;
+      const effStartDate = primaryPayday ? primaryPayday.startDate : p.startDate;
+      const effFrequency = primaryPayday ? primaryPayday.frequency : p.frequency;
+      if (!effStartDate || !effFrequency) return;
       const occDate = new Date(y, m, day);
       const endD = new Date(p.endDate + "T00:00:00");
-      if (occDate <= endD && occurrencesInMonth(p.startDate, p.frequency, y, m).includes(day)) {
+      if (occDate <= endD && occurrencesInMonth(effStartDate, effFrequency, y, m).includes(day)) {
         list.push({ kind: "projet", title: p.title, amount: projectInstallment(p), owner: p.owner });
       }
     });
