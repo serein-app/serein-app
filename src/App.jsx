@@ -307,6 +307,20 @@ const TRANSLATIONS = {
     debtsTitle: "Tes dettes",
     debtsHint: "Titre, montant total, et comment tu la rembourses.",
     fieldTitle: "Titre",
+    fieldDebtKind: "Type de dette",
+    debtKindTerm: "Prêt à terme",
+    debtKindRevolving: "Crédit renouvelable",
+    debtKindTermHint: "Montant fixe à rembourser d'ici une date précise (prêt auto, hypothèque, prêt étudiant...).",
+    debtKindRevolvingHint: "Carte de crédit, marge de crédit : le solde peut monter (achats) et descendre (paiements), sans montant fixe à atteindre.",
+    fieldCurrentBalance: "Solde actuel",
+    fieldCreditLimit: "Limite de crédit",
+    optionalPlaceholder: "Optionnel",
+    currentBalanceLabel: "de solde actuel",
+    utilizedLabel: "de la limite utilisés",
+    creditLimitOf: "Limite :",
+    purchaseAction: "Achat",
+    paymentAction: "Paiement",
+    revolvingMovementHint: "« Achat » augmente le solde (nouvelle dépense), « Paiement » le réduit.",
     fieldDebtTotal: "Montant total de la dette",
     fieldDebtRemaining: "Montant qu'il reste à payer aujourd'hui — laisse vide si rien n'est encore remboursé",
     fieldInterestRate: "Taux d'intérêt annuel (%) — optionnel, ex : carte de crédit, hypothèque",
@@ -597,6 +611,20 @@ const TRANSLATIONS = {
     debtsTitle: "Your debts",
     debtsHint: "Title, total amount, and how you're paying it off.",
     fieldTitle: "Title",
+    fieldDebtKind: "Debt type",
+    debtKindTerm: "Fixed-term loan",
+    debtKindRevolving: "Revolving credit",
+    debtKindTermHint: "A fixed amount to repay by a set date (car loan, mortgage, student loan...).",
+    debtKindRevolvingHint: "Credit card, line of credit: the balance can go up (purchases) and down (payments), with no fixed target amount.",
+    fieldCurrentBalance: "Current balance",
+    fieldCreditLimit: "Credit limit",
+    optionalPlaceholder: "Optional",
+    currentBalanceLabel: "current balance",
+    utilizedLabel: "of limit used",
+    creditLimitOf: "Limit:",
+    purchaseAction: "Purchase",
+    paymentAction: "Payment",
+    revolvingMovementHint: "“Purchase” increases the balance (new charge), “Payment” reduces it.",
     fieldDebtTotal: "Total debt amount",
     fieldDebtRemaining: "Amount still owed today — leave blank if nothing has been repaid yet",
     fieldInterestRate: "Annual interest rate (%) — optional, e.g. credit card, mortgage",
@@ -2444,16 +2472,19 @@ function freqOptions(lang, ids) {
 const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList }, ref) {
   const lang = state.language || "fr";
   const isEdit = !!editItem;
+  const emptyForm = { kind: "terme", title: "", icon: DEBT_ICONS[0], amount: "", remainingAmount: "", creditLimit: "", interestRate: "", paymentMode: "recurrent", dueDate: getToday(), startDate: getToday(), endDateMode: "date", endDate: "", durationMonths: "", frequency: "mensuel", owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "" };
   const [f, setF] = useState(() => {
     const src = editItem || duplicateFrom;
-    if (!src) return { title: "", icon: DEBT_ICONS[0], amount: "", remainingAmount: "", interestRate: "", paymentMode: "recurrent", dueDate: getToday(), startDate: getToday(), endDateMode: "date", endDate: "", durationMonths: "", frequency: "mensuel", owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "" };
+    if (!src) return emptyForm;
     return {
+      kind: src.kind || "terme",
       title: editItem ? src.title : "",
       icon: src.icon || DEBT_ICONS[0],
       amount: editItem ? String(src.amount) : "",
       remainingAmount: editItem ? String(src.amount - src.paid) : "",
+      creditLimit: src.creditLimit != null ? String(src.creditLimit) : "",
       interestRate: src.interestRate != null ? String(src.interestRate) : "",
-      paymentMode: src.paymentMode,
+      paymentMode: src.paymentMode || "recurrent",
       dueDate: src.dueDate || getToday(),
       startDate: src.startDate || getToday(),
       endDateMode: "date",
@@ -2466,12 +2497,44 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
       chargeAccount: src.chargeAccount || "",
     };
   });
-  const canSubmit = f.title && f.amount && (f.paymentMode === "unique" ? f.dueDate : (f.endDateMode === "date" ? f.endDate : f.durationMonths));
+  const isRevolving = f.kind === "renouvelable";
+  const canSubmit = isRevolving
+    ? f.title && f.amount
+    : f.title && f.amount && (f.paymentMode === "unique" ? f.dueDate : (f.endDateMode === "date" ? f.endDate : f.durationMonths));
   const submit = () => {
+    if (isRevolving) {
+      // Une dette « crédit renouvelable » n'a pas de montant fixe à atteindre : on suit
+      // directement le solde actuel, qui peut monter (achats) et descendre (paiements).
+      const item = {
+        kind: "renouvelable",
+        title: f.title,
+        icon: f.icon,
+        amount: Number(f.amount),
+        paid: 0,
+        creditLimit: f.creditLimit !== "" ? Number(f.creditLimit) : null,
+        interestRate: f.interestRate !== "" ? Number(f.interestRate) : null,
+        owner: f.owner,
+        currency: f.currency,
+        holdingAccount: f.holdingAccount,
+        chargeAccount: f.chargeAccount,
+        paymentMode: undefined,
+        dueDate: undefined,
+        startDate: undefined,
+        endDate: undefined,
+        frequency: undefined,
+      };
+      if (isEdit) {
+        onSave(editItem.id, item);
+      } else {
+        onAdd(item);
+        setF(emptyForm);
+      }
+      return;
+    }
     const total = Number(f.amount);
     const remaining = f.remainingAmount !== "" ? Number(f.remainingAmount) : total;
     const paid = Math.max(0, Math.min(total, total - remaining));
-    const base = { title: f.title, icon: f.icon, amount: total, paid, owner: f.owner, currency: f.currency, paymentMode: f.paymentMode, interestRate: f.interestRate !== "" ? Number(f.interestRate) : null, holdingAccount: f.holdingAccount, chargeAccount: f.chargeAccount };
+    const base = { kind: "terme", title: f.title, icon: f.icon, amount: total, paid, creditLimit: null, owner: f.owner, currency: f.currency, paymentMode: f.paymentMode, interestRate: f.interestRate !== "" ? Number(f.interestRate) : null, holdingAccount: f.holdingAccount, chargeAccount: f.chargeAccount };
     const resolvedEndDate = f.endDateMode === "date" ? f.endDate : addMonthsFromToday(f.durationMonths);
     const item = f.paymentMode === "unique"
       ? { ...base, dueDate: f.dueDate, startDate: undefined, endDate: undefined, frequency: undefined }
@@ -2480,7 +2543,7 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
       onSave(editItem.id, item);
     } else {
       onAdd(item);
-      setF({ title: "", icon: DEBT_ICONS[0], amount: "", remainingAmount: "", interestRate: "", paymentMode: "recurrent", dueDate: getToday(), startDate: getToday(), endDateMode: "date", endDate: "", durationMonths: "", frequency: "mensuel", owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "" });
+      setF(emptyForm);
     }
   };
   useImperativeHandle(ref, () => ({ commit: () => { if (canSubmit) submit(); } }));
@@ -2494,68 +2557,98 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
           <IconPicker theme={theme} value={f.icon} onChange={(v) => setF({ ...f, icon: v })} options={DEBT_ICONS} lang={lang} />
         </Field>
 
-        <div className="p-3 rounded-lg bg-slate-50 mb-3">
-          <Field label={`${t(lang, "fieldDebtTotal")} (${f.currency})`}>
-            <input type="number" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
-          </Field>
-          <Field label={`${t(lang, "fieldDebtRemaining")} (${f.currency})`}>
-            <input type="number" className={inputCls} value={f.remainingAmount} onChange={(e) => setF({ ...f, remainingAmount: e.target.value })} placeholder={f.amount || "0"} />
-          </Field>
-          <label className="block">
-            <span className="block text-sm font-medium mb-1 text-slate-600">{t(lang, "fieldInterestRate")}</span>
-            <input type="number" step="0.01" className={inputCls} value={f.interestRate} onChange={(e) => setF({ ...f, interestRate: e.target.value })} placeholder={t(lang, "interestRatePlaceholder")} />
-          </label>
-        </div>
-
-        <Field label={t(lang, "fieldRepayment")}>
+        <Field label={t(lang, "fieldDebtKind")}>
           <FreqButtons
             theme={theme}
-            value={f.paymentMode}
-            onChange={(v) => setF({ ...f, paymentMode: v })}
-            options={freqOptions(lang, ["unique", "recurrent"])}
+            value={f.kind}
+            onChange={(v) => setF({ ...f, kind: v })}
+            options={[
+              { id: "terme", label: t(lang, "debtKindTerm") },
+              { id: "renouvelable", label: t(lang, "debtKindRevolving") },
+            ]}
           />
+          <p className="text-xs text-slate-400 mt-1.5">{isRevolving ? t(lang, "debtKindRevolvingHint") : t(lang, "debtKindTermHint")}</p>
         </Field>
-        {f.paymentMode === "unique" ? (
-          <Field label={t(lang, "fieldDueDateFull")}>
-            <input type="date" className={selectCls} style={dateInputStyle} value={f.dueDate} onChange={(e) => setF({ ...f, dueDate: e.target.value })} />
-          </Field>
-        ) : (
-          <div className="p-3 rounded-lg bg-slate-50">
-            <Field label={t(lang, "fieldDebtStart")}>
-              <input type="date" className={selectCls} style={dateInputStyle} value={f.startDate} onChange={(e) => setF({ ...f, startDate: e.target.value })} />
-            </Field>
-            <p className="text-xs text-slate-400 -mt-2 mb-3">{t(lang, "debtStartHint")}</p>
 
-            <Field label={t(lang, "endDateModeQuestion")}>
+        {isRevolving ? (
+          <div className="p-3 rounded-lg bg-slate-50 mb-3">
+            <Field label={`${t(lang, "fieldCurrentBalance")} (${f.currency})`}>
+              <input type="number" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
+            </Field>
+            <Field label={`${t(lang, "fieldCreditLimit")} (${f.currency})`}>
+              <input type="number" className={inputCls} value={f.creditLimit} onChange={(e) => setF({ ...f, creditLimit: e.target.value })} placeholder={t(lang, "optionalPlaceholder")} />
+            </Field>
+            <label className="block">
+              <span className="block text-sm font-medium mb-1 text-slate-600">{t(lang, "fieldInterestRate")}</span>
+              <input type="number" step="0.01" className={inputCls} value={f.interestRate} onChange={(e) => setF({ ...f, interestRate: e.target.value })} placeholder={t(lang, "interestRatePlaceholder")} />
+            </label>
+          </div>
+        ) : (
+          <>
+            <div className="p-3 rounded-lg bg-slate-50 mb-3">
+              <Field label={`${t(lang, "fieldDebtTotal")} (${f.currency})`}>
+                <input type="number" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
+              </Field>
+              <Field label={`${t(lang, "fieldDebtRemaining")} (${f.currency})`}>
+                <input type="number" className={inputCls} value={f.remainingAmount} onChange={(e) => setF({ ...f, remainingAmount: e.target.value })} placeholder={f.amount || "0"} />
+              </Field>
+              <label className="block">
+                <span className="block text-sm font-medium mb-1 text-slate-600">{t(lang, "fieldInterestRate")}</span>
+                <input type="number" step="0.01" className={inputCls} value={f.interestRate} onChange={(e) => setF({ ...f, interestRate: e.target.value })} placeholder={t(lang, "interestRatePlaceholder")} />
+              </label>
+            </div>
+
+            <Field label={t(lang, "fieldRepayment")}>
               <FreqButtons
                 theme={theme}
-                value={f.endDateMode}
-                onChange={(v) => setF({ ...f, endDateMode: v })}
-                options={[
-                  { id: "date", label: t(lang, "endDateModeDate") },
-                  { id: "duration", label: t(lang, "endDateModeDuration") },
-                ]}
+                value={f.paymentMode}
+                onChange={(v) => setF({ ...f, paymentMode: v })}
+                options={freqOptions(lang, ["unique", "recurrent"])}
               />
             </Field>
-            {f.endDateMode === "date" ? (
-              <Field label={t(lang, "fieldDebtEnd")}>
-                <input type="date" className={selectCls} style={dateInputStyle} value={f.endDate} onChange={(e) => setF({ ...f, endDate: e.target.value })} />
+            {f.paymentMode === "unique" ? (
+              <Field label={t(lang, "fieldDueDateFull")}>
+                <input type="date" className={selectCls} style={dateInputStyle} value={f.dueDate} onChange={(e) => setF({ ...f, dueDate: e.target.value })} />
               </Field>
             ) : (
-              <Field label={t(lang, "durationMonthsLabel")}>
-                <input type="number" min="1" className={inputCls} value={f.durationMonths} onChange={(e) => setF({ ...f, durationMonths: e.target.value })} placeholder="Ex : 18" />
-              </Field>
-            )}
+              <div className="p-3 rounded-lg bg-slate-50">
+                <Field label={t(lang, "fieldDebtStart")}>
+                  <input type="date" className={selectCls} style={dateInputStyle} value={f.startDate} onChange={(e) => setF({ ...f, startDate: e.target.value })} />
+                </Field>
+                <p className="text-xs text-slate-400 -mt-2 mb-3">{t(lang, "debtStartHint")}</p>
 
-            <Field label={t(lang, "fieldRepaymentFreq")}>
-              <FreqButtons
-                theme={theme}
-                value={f.frequency}
-                onChange={(v) => setF({ ...f, frequency: v })}
-                options={freqOptions(lang, ["mensuel", "hebdomadaire", "bi-hebdomadaire"])}
-              />
-            </Field>
-          </div>
+                <Field label={t(lang, "endDateModeQuestion")}>
+                  <FreqButtons
+                    theme={theme}
+                    value={f.endDateMode}
+                    onChange={(v) => setF({ ...f, endDateMode: v })}
+                    options={[
+                      { id: "date", label: t(lang, "endDateModeDate") },
+                      { id: "duration", label: t(lang, "endDateModeDuration") },
+                    ]}
+                  />
+                </Field>
+                {f.endDateMode === "date" ? (
+                  <Field label={t(lang, "fieldDebtEnd")}>
+                    <input type="date" className={selectCls} style={dateInputStyle} value={f.endDate} onChange={(e) => setF({ ...f, endDate: e.target.value })} />
+                  </Field>
+                ) : (
+                  <Field label={t(lang, "durationMonthsLabel")}>
+                    <input type="number" min="1" className={inputCls} value={f.durationMonths} onChange={(e) => setF({ ...f, durationMonths: e.target.value })} placeholder="Ex : 18" />
+                  </Field>
+                )}
+
+                <Field label={t(lang, "fieldRepaymentFreq")}>
+                  <FreqButtons
+                    theme={theme}
+                    value={f.frequency}
+                    onChange={(v) => setF({ ...f, frequency: v })}
+                    options={freqOptions(lang, ["mensuel", "hebdomadaire", "bi-hebdomadaire"])}
+                  />
+                </Field>
+              </div>
+            )}
+          </>
         )}
         <OwnerSelect theme={theme} state={state} value={f.owner} onChange={(v) => setF({ ...f, owner: v })} />
         <AdvancedSection theme={theme} lang={lang}>
@@ -2576,9 +2669,11 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
         <ListPreview
           items={items}
           onRemove={onRemove}
-          render={(d) => d.paymentMode === "unique"
-            ? `${d.title} — ${money(d.amount - d.paid, d.currency || state.currency)} restant — échéance le ${d.dueDate}`
-            : `${d.title} — ${money(d.amount - d.paid, d.currency || state.currency)} restant — jusqu'au ${d.endDate}`}
+          render={(d) => d.kind === "renouvelable"
+            ? `${d.title} — ${money(d.amount, d.currency || state.currency)} de solde`
+            : d.paymentMode === "unique"
+              ? `${d.title} — ${money(d.amount - d.paid, d.currency || state.currency)} restant — échéance le ${d.dueDate}`
+              : `${d.title} — ${money(d.amount - d.paid, d.currency || state.currency)} restant — jusqu'au ${d.endDate}`}
         />
       )}
     </div>
@@ -3901,9 +3996,18 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
     if (!amt) return;
     const previousState = state;
     let reachedGoal = false;
+    const target = state.debts.find((d) => d.id === id);
+    const isRevolving = target?.kind === "renouvelable";
     setState((s) => {
       const newDebts = s.debts.map((d) => {
         if (d.id !== id) return d;
+        if (d.kind === "renouvelable") {
+          // Un crédit renouvelable n'a pas de montant fixe à atteindre : « Achat » (direction 1)
+          // augmente le solde actuel, « Paiement » (direction -1) le diminue, sans limite haute.
+          const newAmount = Math.max(0, d.amount + amt * direction);
+          const entry = { date: getToday(), amount: amt * direction, balance: newAmount };
+          return { ...d, amount: newAmount, history: [...(d.history || []), entry] };
+        }
         const newPaid = Math.max(0, Math.min(d.amount, d.paid + amt * direction));
         if (direction > 0 && d.paid < d.amount && newPaid >= d.amount) {
           setCelebratingDebt(d);
@@ -3916,10 +4020,10 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
     });
     setPayInput((p) => ({ ...p, [id]: "" }));
     if (!reachedGoal && showToast) {
-      showToast(
-        direction > 0 ? `Paiement de ${money(amt, state.currency)} enregistré` : `${money(amt, state.currency)} retiré du remboursement`,
-        () => setState(previousState)
-      );
+      const label = isRevolving
+        ? (direction > 0 ? `Achat de ${money(amt, state.currency)} enregistré` : `Paiement de ${money(amt, state.currency)} enregistré`)
+        : (direction > 0 ? `Paiement de ${money(amt, state.currency)} enregistré` : `${money(amt, state.currency)} retiré du remboursement`);
+      showToast(label, () => setState(previousState));
     }
   };
 
@@ -4021,8 +4125,10 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
 
       <div className="space-y-3">
         {filteredDebts.map((d) => {
+          const isRevolving = d.kind === "renouvelable";
           const remaining = d.amount - d.paid;
           const pct = d.amount ? (d.paid / d.amount) * 100 : 0;
+          const utilizationPct = isRevolving && d.creditLimit ? Math.min(100, (d.amount / d.creditLimit) * 100) : null;
           const currentInstallment = debtInstallment(d);
           const interestOnly = d.paymentMode === "recurrent" ? interestOnlyPayment(remaining, d.interestRate, d.frequency) : 0;
           const barelyCoversInterest = d.interestRate && d.paymentMode === "recurrent" && currentInstallment > 0 && currentInstallment <= interestOnly * 1.05;
@@ -4041,9 +4147,11 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
                       )}
                     </h3>
                     <p className="text-xs text-slate-400">
-                      {d.paymentMode === "unique"
-                        ? `Échéance : ${d.dueDate}`
-                        : `~${money(currentInstallment, d.currency || state.currency)} / ${freqLabel(d.frequency)} · jusqu'au ${d.endDate}`}
+                      {isRevolving
+                        ? (d.creditLimit ? `${t(lang, "creditLimitOf")} ${money(d.creditLimit, d.currency || state.currency)}` : t(lang, "debtKindRevolving"))
+                        : d.paymentMode === "unique"
+                          ? `Échéance : ${d.dueDate}`
+                          : `~${money(currentInstallment, d.currency || state.currency)} / ${freqLabel(d.frequency)} · jusqu'au ${d.endDate}`}
                       {(d.holdingAccount || d.chargeAccount) && ` · ${[d.holdingAccount, d.chargeAccount].filter(Boolean).join(" → ")}`}
                     </p>
                   </div>
@@ -4059,11 +4167,27 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
                   ⚠️ Ce versement couvre à peine les intérêts (~{money(interestOnly, d.currency || state.currency)} / {freqLabel(d.frequency)}) — le capital diminue très lentement à ce rythme.
                 </p>
               )}
-              <ProgressBar value={pct} color={theme.primary} />
-              <div className="flex justify-between text-xs mt-1.5 text-slate-500">
-                <span>{money(d.paid, state.currency)} remboursé</span>
-                <span>{money(remaining, state.currency)} restant</span>
-              </div>
+              {isRevolving ? (
+                utilizationPct != null ? (
+                  <>
+                    <ProgressBar value={utilizationPct} color={utilizationPct >= 90 ? theme.danger : theme.primary} />
+                    <div className="flex justify-between text-xs mt-1.5 text-slate-500">
+                      <span>{money(d.amount, d.currency || state.currency)} {t(lang, "currentBalanceLabel")}</span>
+                      <span>{Math.round(utilizationPct)}% {t(lang, "utilizedLabel")}</span>
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-xs mt-1.5 text-slate-500">{t(lang, "currentBalanceLabel")} : {money(d.amount, d.currency || state.currency)}</p>
+                )
+              ) : (
+                <>
+                  <ProgressBar value={pct} color={theme.primary} />
+                  <div className="flex justify-between text-xs mt-1.5 text-slate-500">
+                    <span>{money(d.paid, state.currency)} remboursé</span>
+                    <span>{money(remaining, state.currency)} restant</span>
+                  </div>
+                </>
+              )}
               {(d.history || []).length > 0 && (
                 <div className="mt-2">
                   <button
@@ -4077,14 +4201,22 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
                   </button>
                   {expandedHistory[d.id] && (
                     <ul className="mt-2 space-y-1 max-h-40 overflow-y-auto">
-                      {[...d.history].reverse().map((h, idx) => (
-                        <li key={idx} className="flex justify-between text-xs px-2 py-1 rounded bg-slate-50">
-                          <span className="text-slate-400">{h.date}</span>
-                          <span className="font-medium" style={{ color: h.amount >= 0 ? "#16A34A" : theme.danger }}>
-                            {h.amount >= 0 ? "+" : ""}{money(h.amount, d.currency || state.currency)}
-                          </span>
-                        </li>
-                      ))}
+                      {[...d.history].reverse().map((h, idx) => {
+                        // Pour un crédit renouvelable, un montant positif = achat (le solde augmente,
+                        // donc en rouge) ; pour une dette classique, un montant positif = paiement
+                        // (le solde restant diminue, donc en vert). Sens inversé entre les deux.
+                        const isGood = isRevolving ? h.amount < 0 : h.amount >= 0;
+                        return (
+                          <li key={idx} className="flex justify-between text-xs px-2 py-1 rounded bg-slate-50">
+                            <span className="text-slate-400">
+                              {h.date}{isRevolving && ` · ${h.amount >= 0 ? t(lang, "purchaseAction") : t(lang, "paymentAction")}`}
+                            </span>
+                            <span className="font-medium" style={{ color: isGood ? "#16A34A" : theme.danger }}>
+                              {h.amount >= 0 ? "+" : ""}{money(h.amount, d.currency || state.currency)}
+                            </span>
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                 </div>
@@ -4097,23 +4229,44 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
                   value={payInput[d.id] || ""}
                   onChange={(e) => setPayInput((p) => ({ ...p, [d.id]: e.target.value }))}
                 />
-                <button
-                  onClick={() => registerPayment(d.id, 1)}
-                  className="text-xs font-medium px-3 py-1.5 rounded-lg text-white"
-                  style={{ backgroundColor: theme.accent }}
-                >
-                  Paiement
-                </button>
-                <button
-                  onClick={() => registerPayment(d.id, -1)}
-                  className="text-xs font-medium px-3 py-1.5 rounded-lg border"
-                  style={{ borderColor: theme.accent, color: theme.accent }}
-                >
-                  Retirer
-                </button>
+                {isRevolving ? (
+                  <>
+                    <button
+                      onClick={() => registerPayment(d.id, 1)}
+                      className="text-xs font-medium px-3 py-1.5 rounded-lg border"
+                      style={{ borderColor: theme.danger, color: theme.danger }}
+                    >
+                      {t(lang, "purchaseAction")}
+                    </button>
+                    <button
+                      onClick={() => registerPayment(d.id, -1)}
+                      className="text-xs font-medium px-3 py-1.5 rounded-lg text-white"
+                      style={{ backgroundColor: theme.accent }}
+                    >
+                      {t(lang, "paymentAction")}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => registerPayment(d.id, 1)}
+                      className="text-xs font-medium px-3 py-1.5 rounded-lg text-white"
+                      style={{ backgroundColor: theme.accent }}
+                    >
+                      Paiement
+                    </button>
+                    <button
+                      onClick={() => registerPayment(d.id, -1)}
+                      className="text-xs font-medium px-3 py-1.5 rounded-lg border"
+                      style={{ borderColor: theme.accent, color: theme.accent }}
+                    >
+                      Retirer
+                    </button>
+                  </>
+                )}
               </div>
               <p className="text-[11px] text-slate-400 mt-1.5">
-                Erreur de saisie ou paiement annulé ? Utilise « Retirer » pour corriger le montant remboursé.
+                {isRevolving ? t(lang, "revolvingMovementHint") : "Erreur de saisie ou paiement annulé ? Utilise « Retirer » pour corriger le montant remboursé."}
               </p>
 
               {d.paymentMode === "recurrent" && (
