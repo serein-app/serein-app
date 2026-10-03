@@ -3247,7 +3247,7 @@ function ReceiptScanner({ theme, state, onAddExpenses, lang }) {
     return (
       <div>
         <p className="text-sm text-slate-500 mb-4">{t(lang, "scanReceiptHint")}</p>
-        <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
+        <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
         <button
           onClick={() => fileInputRef.current?.click()}
           className="w-full flex flex-col items-center gap-2 py-8 rounded-xl border-2 border-dashed"
