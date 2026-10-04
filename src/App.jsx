@@ -3876,46 +3876,7 @@ function CalendarTab({ theme, state, setState, showToast }) {
                 <span className="block text-xs text-slate-400">{t(lang, "manageSubsDesc")}</span>
               </span>
             </button>
-            <button
-              onClick={() => { setShowAddMenu(false); setAddMode("expense"); }}
-              className="w-full flex items-center gap-3 p-3 rounded-lg border border-slate-200 text-left hover:bg-slate-50"
-            >
-              <span className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#F59E0B1A" }}>
-                <ReceiptText size={16} style={{ color: "#F59E0B" }} />
-              </span>
-              <span>
-                <span className="block text-sm font-medium">{t(lang, "expensesTitle")}</span>
-                <span className="block text-xs text-slate-400">{t(lang, "manageExpensesDesc")}</span>
-              </span>
-            </button>
-            <button
-              onClick={() => { setShowAddMenu(false); setAddMode("scan"); }}
-              className="w-full flex items-center gap-3 p-3 rounded-lg border border-slate-200 text-left hover:bg-slate-50"
-            >
-              <span className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#8B5CF61A" }}>
-                <Camera size={16} style={{ color: "#8B5CF6" }} />
-              </span>
-              <span>
-                <span className="block text-sm font-medium">{t(lang, "scanReceiptTitle")}</span>
-                <span className="block text-xs text-slate-400">{t(lang, "scanReceiptDesc")}</span>
-              </span>
-            </button>
           </div>
-        </BottomSheet>
-      )}
-
-      {addMode === "scan" && (
-        <BottomSheet title={t(lang, "scanReceiptTitle")} onClose={() => setAddMode(null)}>
-          <ReceiptScanner
-            theme={theme}
-            state={state}
-            onAddExpenses={(items) => {
-              setState((s) => ({ ...s, expenses: [...s.expenses, ...items.map((it) => ({ id: uid(), ...it }))] }));
-              setAddMode(null);
-              if (showToast) showToast(`${items.length} dépense${items.length > 1 ? "s" : ""} ajoutée${items.length > 1 ? "s" : ""}`, null);
-            }}
-            lang={lang}
-          />
         </BottomSheet>
       )}
 
@@ -3956,20 +3917,6 @@ function CalendarTab({ theme, state, setState, showToast }) {
           StepComp={RecurringStep}
           stepExtraProps={{ title: t(lang, "subscriptionsTitle"), hint: t(lang, "subscriptionsHint"), showEssentialToggle: true }}
           renderRow={(x) => `${x.title} — ${money(x.amount, x.currency || state.currency)} (${x.period})${x.paycheckSplit?.length ? ` · ${x.paycheckSplit.map((v) => money(v, x.currency || state.currency)).join(" + ")}` : ""}${x.holdingAccount || x.chargeAccount ? ` — ${[x.holdingAccount, x.chargeAccount].filter(Boolean).join(" → ")}` : ""}`}
-          onClose={() => setAddMode(null)}
-        />
-      )}
-
-      {addMode === "expense" && (
-        <ManageListSheet
-          sheetTitle={t(lang, "expensesTitle")}
-          theme={theme}
-          state={state}
-          setState={setState}
-          field="expenses"
-          StepComp={ExpenseStep}
-          stepExtraProps={{ onAddCategory: (cat) => setState((s) => ({ ...s, expenseCategories: [...(s.expenseCategories || []), cat] })) }}
-          renderRow={(x) => `${allExpenseCategories(state).find((c) => c.id === x.category)?.icon || ""} ${expenseCategoryLabel(x.category, lang, state)} — ${money(x.amount, x.currency || state.currency)} — ${x.date}${x.chargeAccount ? ` — ${x.chargeAccount}` : ""}`}
           onClose={() => setAddMode(null)}
         />
       )}
