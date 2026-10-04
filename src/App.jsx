@@ -372,6 +372,8 @@ const TRANSLATIONS = {
     assetsLabel: "Actifs",
     debtsLabelShort: "Dettes",
     upcomingDays: "Prochains jours",
+    showMoreUpcoming: "Voir {n} de plus",
+    showLess: "Voir moins",
     today: "Aujourd'hui",
     tomorrow: "Demain",
     inNDays: "Dans {n} jours",
@@ -395,6 +397,8 @@ const TRANSLATIONS = {
     scanReceiptRetry: "Réessayer avec une autre photo",
     scanReceiptReviewHint: "Vérifie ce que l'IA a trouvé avant d'enregistrer — décoche ou corrige ce qui ne va pas.",
     scanReceiptConfirm: "Ajouter {n} dépense(s)",
+    scanChargeAccountPlaceholder: "Ex : Carte de crédit, Carte de débit",
+    scanChargeAccountHint: "S'applique à toutes les dépenses ci-dessus — laisse vide si tu préfères l'ajouter plus tard sur chacune.",
     yourDataTitle: "Tes données",
     yourDataHint: "Tu peux repartir avec tes données à tout moment — aucune obligation de rester si tu changes d'avis.",
     exportCSV: "CSV",
@@ -473,6 +477,15 @@ const TRANSLATIONS = {
     aideCancelHintNonEssential: "Parmi tes abonnements non essentiels, « {title} » est le plus cher — l'annuler libérerait ~{amount}/mois.",
     aideAllEssential: "Tous tes abonnements sont marqués comme essentiels — rien à suggérer d'annuler ici.",
     expensesHint: "Une dépense du quotidien — épicerie, restaurant, transport… Ça alimente les repères de l'onglet Aide.",
+    expensesTabHint: "Photographie tes reçus ou ajoute tes dépenses — vois où va ton argent chaque semaine ou chaque mois.",
+    addExpenseManual: "Ajouter à la main",
+    periodWeek: "Cette semaine",
+    periodMonth: "Ce mois-ci",
+    spentThisWeek: "Dépensé cette semaine",
+    spentThisMonth: "Dépensé ce mois-ci",
+    byCategory: "Par catégorie",
+    noExpensesPeriod: "Aucune dépense enregistrée pour cette période.",
+    transactionsLabel: "Transactions",
     fieldExpenseCategory: "Catégorie",
     fieldExpenseDate: "Date",
     fieldExpenseNote: "Note — optionnel",
@@ -506,6 +519,7 @@ const TRANSLATIONS = {
     letsGo: "C'est parti",
     skipRest: "Passer le reste et terminer plus tard — tu pourras tout ajouter depuis l'appli",
     tabCalendar: "Calendrier",
+    tabExpenses: "Dépenses",
     tabDebts: "Dettes",
     tabProjects: "Projets",
     tabInvestments: "Invest.",
@@ -676,6 +690,8 @@ const TRANSLATIONS = {
     assetsLabel: "Assets",
     debtsLabelShort: "Debts",
     upcomingDays: "Upcoming days",
+    showMoreUpcoming: "Show {n} more",
+    showLess: "Show less",
     today: "Today",
     tomorrow: "Tomorrow",
     inNDays: "In {n} days",
@@ -699,6 +715,8 @@ const TRANSLATIONS = {
     scanReceiptRetry: "Try another photo",
     scanReceiptReviewHint: "Check what the AI found before saving — uncheck or fix anything that's wrong.",
     scanReceiptConfirm: "Add {n} expense(s)",
+    scanChargeAccountPlaceholder: "E.g. Credit card, Debit card",
+    scanChargeAccountHint: "Applies to all the expenses above — leave blank if you'd rather add it to each one later.",
     yourDataTitle: "Your data",
     yourDataHint: "You can take your data with you at any time — no obligation to stay if you change your mind.",
     exportCSV: "CSV",
@@ -777,6 +795,15 @@ const TRANSLATIONS = {
     aideCancelHintNonEssential: "Among your non-essential subscriptions, \u00ab {title} \u00bb is the priciest — cancelling it would free up ~{amount}/month.",
     aideAllEssential: "All your subscriptions are marked essential — nothing to suggest cancelling here.",
     expensesHint: "A day-to-day expense — groceries, dining out, transport… This feeds the guidelines in the Help tab.",
+    expensesTabHint: "Photograph your receipts or add expenses — see where your money goes each week or month.",
+    addExpenseManual: "Add manually",
+    periodWeek: "This week",
+    periodMonth: "This month",
+    spentThisWeek: "Spent this week",
+    spentThisMonth: "Spent this month",
+    byCategory: "By category",
+    noExpensesPeriod: "No expenses recorded for this period.",
+    transactionsLabel: "Transactions",
     fieldExpenseCategory: "Category",
     fieldExpenseDate: "Date",
     fieldExpenseNote: "Note — optional",
@@ -810,6 +837,7 @@ const TRANSLATIONS = {
     letsGo: "Let's go",
     skipRest: "Skip the rest and finish later — you'll be able to add everything from the app",
     tabCalendar: "Calendar",
+    tabExpenses: "Expenses",
     tabDebts: "Debts",
     tabProjects: "Projects",
     tabInvestments: "Invest.",
@@ -3079,19 +3107,19 @@ const ExpenseStep = forwardRef(function ExpenseStep({ theme, state, items, onAdd
   const lang = state.language || "fr";
   const isEdit = !!editItem;
   const [f, setF] = useState(() => editItem ? {
-    amount: String(editItem.amount), category: editItem.category, date: editItem.date || getToday(), note: editItem.note || "", owner: editItem.owner || "commun", currency: editItem.currency || state.currency,
-  } : { amount: "", category: "epicerie", date: getToday(), note: "", owner: "commun", currency: state.currency });
+    amount: String(editItem.amount), category: editItem.category, date: editItem.date || getToday(), note: editItem.note || "", owner: editItem.owner || "commun", currency: editItem.currency || state.currency, chargeAccount: editItem.chargeAccount || "",
+  } : { amount: "", category: "epicerie", date: getToday(), note: "", owner: "commun", currency: state.currency, chargeAccount: "" });
   const [addingCategory, setAddingCategory] = useState(false);
   const [newCat, setNewCat] = useState({ label: "", icon: "🏷️", type: "envie" });
   const categories = allExpenseCategories(state);
   const canSubmit = f.amount && f.category;
   const submit = () => {
-    const item = { amount: Number(f.amount), category: f.category, date: f.date, note: f.note, owner: f.owner, currency: f.currency };
+    const item = { amount: Number(f.amount), category: f.category, date: f.date, note: f.note, owner: f.owner, currency: f.currency, chargeAccount: f.chargeAccount };
     if (isEdit) {
       onSave(editItem.id, item);
     } else {
       onAdd(item);
-      setF({ amount: "", category: "epicerie", date: getToday(), note: "", owner: "commun", currency: state.currency });
+      setF({ amount: "", category: "epicerie", date: getToday(), note: "", owner: "commun", currency: state.currency, chargeAccount: "" });
     }
   };
   const submitNewCategory = () => {
@@ -3184,13 +3212,16 @@ const ExpenseStep = forwardRef(function ExpenseStep({ theme, state, items, onAdd
         <Field label={t(lang, "fieldExpenseNote")}>
           <input className={inputCls} value={f.note} onChange={(e) => setF({ ...f, note: e.target.value })} placeholder={t(lang, "fieldExpenseNotePlaceholder")} />
         </Field>
+        <Field label={t(lang, "fieldChargeAccount")}>
+          <input className={inputCls} value={f.chargeAccount} onChange={(e) => setF({ ...f, chargeAccount: e.target.value })} placeholder={t(lang, "fieldChargeAccountPlaceholder")} />
+        </Field>
         <OwnerSelect theme={theme} state={state} value={f.owner} onChange={(v) => setF({ ...f, owner: v })} />
       </StepShell>
       {!hideList && (
         <ListPreview
           items={items}
           onRemove={onRemove}
-          render={(x) => `${categories.find((c) => c.id === x.category)?.icon || ""} ${expenseCategoryLabel(x.category, lang, state)} — ${money(x.amount, x.currency || state.currency)} — ${x.date}`}
+          render={(x) => `${categories.find((c) => c.id === x.category)?.icon || ""} ${expenseCategoryLabel(x.category, lang, state)} — ${money(x.amount, x.currency || state.currency)} — ${x.date}${x.chargeAccount ? ` — ${x.chargeAccount}` : ""}`}
         />
       )}
     </div>
@@ -3204,6 +3235,7 @@ function ReceiptScanner({ theme, state, onAddExpenses, lang }) {
   const [status, setStatus] = useState("idle"); // idle | analyzing | review | empty | error
   const [detected, setDetected] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
+  const [chargeAccount, setChargeAccount] = useState("");
   const fileInputRef = useRef(null);
 
   const handleFile = (file) => {
@@ -3239,7 +3271,7 @@ function ReceiptScanner({ theme, state, onAddExpenses, lang }) {
   const confirm = () => {
     const toAdd = detected
       .filter((d) => d.included)
-      .map((d) => ({ amount: Number(d.amount), category: d.category, date: d.date || getToday(), note: d.description || "", owner: "commun", currency: state.currency }));
+      .map((d) => ({ amount: Number(d.amount), category: d.category, date: d.date || getToday(), note: d.description || "", owner: "commun", currency: state.currency, chargeAccount }));
     onAddExpenses(toAdd);
   };
 
@@ -3322,6 +3354,16 @@ function ReceiptScanner({ theme, state, onAddExpenses, lang }) {
             </div>
           </div>
         ))}
+      </div>
+      <div className="mb-4">
+        <span className="block text-sm font-medium mb-1 text-slate-600">{t(lang, "fieldChargeAccount")}</span>
+        <input
+          className={inputCls}
+          value={chargeAccount}
+          onChange={(e) => setChargeAccount(e.target.value)}
+          placeholder={t(lang, "scanChargeAccountPlaceholder")}
+        />
+        <p className="text-xs text-slate-400 mt-1">{t(lang, "scanChargeAccountHint")}</p>
       </div>
       <button
         onClick={confirm}
@@ -3450,6 +3492,7 @@ function CalendarTab({ theme, state, setState, showToast }) {
   const [ownerFilter, setOwnerFilter] = useState("all");
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [addMode, setAddMode] = useState(null); // "payday" | "bill" | "subscription"
+  const [showAllUpcoming, setShowAllUpcoming] = useState(false);
 
   const daysInMonth = new Date(cursor.y, cursor.m + 1, 0).getDate();
   const firstWeekday = (new Date(cursor.y, cursor.m, 1).getDay() + 6) % 7;
@@ -3655,7 +3698,7 @@ function CalendarTab({ theme, state, setState, showToast }) {
             <h3 className="text-sm font-medium" style={{ color: theme.text }}>{t(lang, "upcomingDays")}</h3>
           </div>
           <ul className="divide-y divide-slate-100">
-            {upcomingEvents.map((e, idx) => {
+            {(showAllUpcoming ? upcomingEvents : upcomingEvents.slice(0, 3)).map((e, idx) => {
               const Icon = kindIcon[e.kind];
               const isIncome = e.kind === "paie";
               return (
@@ -3677,6 +3720,17 @@ function CalendarTab({ theme, state, setState, showToast }) {
               );
             })}
           </ul>
+          {upcomingEvents.length > 3 && (
+            <button
+              type="button"
+              onClick={() => setShowAllUpcoming((v) => !v)}
+              className="flex items-center gap-1 text-xs font-medium mt-2 pt-2 border-t border-slate-100 w-full justify-center"
+              style={{ color: theme.primary }}
+            >
+              <ChevronRight size={12} className={showAllUpcoming ? "rotate-90" : ""} style={{ transition: "transform 0.15s" }} />
+              {showAllUpcoming ? t(lang, "showLess") : t(lang, "showMoreUpcoming").replace("{n}", upcomingEvents.length - 3)}
+            </button>
+          )}
         </div>
       )}
 
@@ -3915,7 +3969,7 @@ function CalendarTab({ theme, state, setState, showToast }) {
           field="expenses"
           StepComp={ExpenseStep}
           stepExtraProps={{ onAddCategory: (cat) => setState((s) => ({ ...s, expenseCategories: [...(s.expenseCategories || []), cat] })) }}
-          renderRow={(x) => `${allExpenseCategories(state).find((c) => c.id === x.category)?.icon || ""} ${expenseCategoryLabel(x.category, lang, state)} — ${money(x.amount, x.currency || state.currency)} — ${x.date}`}
+          renderRow={(x) => `${allExpenseCategories(state).find((c) => c.id === x.category)?.icon || ""} ${expenseCategoryLabel(x.category, lang, state)} — ${money(x.amount, x.currency || state.currency)} — ${x.date}${x.chargeAccount ? ` — ${x.chargeAccount}` : ""}`}
           onClose={() => setAddMode(null)}
         />
       )}
@@ -5290,6 +5344,213 @@ function EnvelopeMiniRow({ title, pct, color, sub }) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Dépenses — vue dédiée : scan/ajout en un geste, et analyse semaine/mois
+// ---------------------------------------------------------------------------
+function startOfWeek(date) {
+  const d = new Date(date);
+  const day = (d.getDay() + 6) % 7; // lundi = 0
+  d.setDate(d.getDate() - day);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+const EXPENSE_CHART_PALETTE = ["#5BC2B4", "#A78BFA", "#FFB69B", "#2E9E5B", "#D97706", "#9333EA", "#0EA5E9", "#C2732A"];
+
+function ExpensesTab({ theme, state, setState, showToast }) {
+  const lang = state.language || "fr";
+  const [period, setPeriod] = useState("week"); // "week" | "month"
+  const [ownerFilter, setOwnerFilter] = useState("all");
+  const [sheet, setSheet] = useState(null); // "scan" | "add" | { edit: item }
+
+  const now = new Date();
+  const periodExpenses = useMemo(() => {
+    let list = state.expenses;
+    if (HAS_OWNERS.includes(state.profileType) && ownerFilter !== "all") {
+      list = list.filter((e) => e.owner === ownerFilter);
+    }
+    if (period === "week") {
+      const start = startOfWeek(now);
+      return list.filter((e) => new Date(e.date + "T00:00:00") >= start);
+    }
+    return list.filter((e) => {
+      const d = new Date(e.date + "T00:00:00");
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    });
+  }, [state.expenses, period, ownerFilter, state.profileType]);
+
+  const total = periodExpenses.reduce((a, e) => a + toMainCurrency(e.amount, e.currency || state.currency, state), 0);
+
+  const categoryBreakdown = useMemo(() => {
+    const totals = {};
+    periodExpenses.forEach((e) => {
+      totals[e.category] = (totals[e.category] || 0) + toMainCurrency(e.amount, e.currency || state.currency, state);
+    });
+    return allExpenseCategories(state)
+      .map((cat, i) => ({ ...cat, total: totals[cat.id] || 0, color: EXPENSE_CHART_PALETTE[i % EXPENSE_CHART_PALETTE.length] }))
+      .filter((c) => c.total > 0)
+      .sort((a, b) => b.total - a.total);
+  }, [periodExpenses, state.currency, state.exchangeRates, state.expenseCategories]);
+
+  const sortedExpenses = useMemo(() => [...periodExpenses].sort((a, b) => (a.date < b.date ? 1 : -1)), [periodExpenses]);
+
+  const removeExpense = (id) => setState((s) => ({ ...s, expenses: s.expenses.filter((e) => e.id !== id) }));
+  const addExpense = (item) => {
+    setState((s) => ({ ...s, expenses: [...s.expenses, { id: uid(), ...item }] }));
+    setSheet(null);
+  };
+  const saveExpense = (id, fields) => {
+    setState((s) => ({ ...s, expenses: s.expenses.map((e) => (e.id === id ? { ...e, ...fields } : e)) }));
+    setSheet(null);
+  };
+
+  const editingItem = sheet && typeof sheet === "object" ? sheet.edit : null;
+
+  return (
+    <div className="p-4 pb-24">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h2 className="font-semibold" style={{ color: theme.text }}>{t(lang, "tabExpenses")}</h2>
+          <p className="text-xs text-slate-400">{t(lang, "expensesTabHint")}</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 mb-4">
+        <button
+          onClick={() => setSheet("scan")}
+          className="flex flex-col items-center gap-1.5 rounded-xl p-3 text-white shadow-sm"
+          style={{ backgroundColor: theme.primary }}
+        >
+          <Camera size={22} />
+          <span className="text-xs font-medium">{t(lang, "scanReceiptTitle")}</span>
+        </button>
+        <button
+          onClick={() => setSheet("add")}
+          className="flex flex-col items-center gap-1.5 rounded-xl p-3 border-2"
+          style={{ borderColor: theme.primary, color: theme.primary, backgroundColor: theme.soft }}
+        >
+          <Plus size={22} />
+          <span className="text-xs font-medium">{t(lang, "addExpenseManual")}</span>
+        </button>
+      </div>
+
+      <OwnerFilterBar theme={theme} state={state} value={ownerFilter} onChange={setOwnerFilter} />
+
+      <div className="mb-4">
+        <FreqButtons
+          theme={theme}
+          value={period}
+          onChange={setPeriod}
+          options={[
+            { id: "week", label: t(lang, "periodWeek") },
+            { id: "month", label: t(lang, "periodMonth") },
+          ]}
+        />
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
+        <p className="text-xs text-slate-400 mb-1">
+          {period === "week" ? t(lang, "spentThisWeek") : t(lang, "spentThisMonth")}
+        </p>
+        <p className="text-2xl font-semibold" style={{ color: theme.text }}>{money(total, state.currency)}</p>
+      </div>
+
+      {categoryBreakdown.length === 0 ? (
+        <div className="bg-white rounded-xl shadow-sm p-6 mb-4 text-center">
+          <p className="text-sm text-slate-400">{t(lang, "noExpensesPeriod")}</p>
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
+          <h3 className="text-sm font-medium mb-3" style={{ color: theme.text }}>{t(lang, "byCategory")}</h3>
+          <div className="flex items-center gap-3">
+            <div className="w-28 h-28 shrink-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={categoryBreakdown} dataKey="total" nameKey={lang === "en" ? "en" : "fr"} innerRadius={28} outerRadius={50} paddingAngle={2}>
+                    {categoryBreakdown.map((c) => <Cell key={c.id} fill={c.color} />)}
+                  </Pie>
+                  <Tooltip formatter={(v) => money(v, state.currency)} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <ul className="flex-1 space-y-1.5">
+              {categoryBreakdown.map((c) => (
+                <li key={c.id} className="flex items-center justify-between text-xs">
+                  <span className="flex items-center gap-1.5 text-slate-600">
+                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: c.color }} /> {c.icon} {lang === "en" ? c.en : c.fr}
+                  </span>
+                  <span className="text-slate-400">{money(c.total, state.currency)} · {Math.round((c.total / total) * 100)}%</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-white rounded-xl shadow-sm p-4">
+        <h3 className="text-sm font-medium mb-3" style={{ color: theme.text }}>{t(lang, "transactionsLabel")}</h3>
+        {sortedExpenses.length === 0 ? (
+          <p className="text-sm text-slate-400 text-center py-4">{t(lang, "noExpensesPeriod")}</p>
+        ) : (
+          <ul className="divide-y divide-slate-100">
+            {sortedExpenses.map((e) => {
+              const cat = allExpenseCategories(state).find((c) => c.id === e.category);
+              return (
+                <li key={e.id} className="flex items-center gap-3 py-2.5">
+                  <button onClick={() => setSheet({ edit: e })} className="flex items-center gap-3 flex-1 min-w-0 text-left">
+                    <span className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 text-base" style={{ backgroundColor: theme.soft }}>
+                      {cat?.icon || "📦"}
+                    </span>
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-sm font-medium truncate">{e.note || expenseCategoryLabel(e.category, lang, state)}</span>
+                      <span className="block text-xs text-slate-400">
+                        {e.date}{e.chargeAccount ? ` · ${e.chargeAccount}` : ""}
+                      </span>
+                    </span>
+                  </button>
+                  <span className="text-sm font-medium shrink-0" style={{ color: theme.text }}>{money(e.amount, e.currency || state.currency)}</span>
+                  <ConfirmDeleteButton onConfirm={() => removeExpense(e.id)} />
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+
+      {sheet === "scan" && (
+        <BottomSheet title={t(lang, "scanReceiptTitle")} onClose={() => setSheet(null)}>
+          <ReceiptScanner
+            theme={theme}
+            state={state}
+            onAddExpenses={(items) => {
+              setState((s) => ({ ...s, expenses: [...s.expenses, ...items.map((it) => ({ id: uid(), ...it }))] }));
+              setSheet(null);
+              if (showToast) showToast(`${items.length} dépense${items.length > 1 ? "s" : ""} ajoutée${items.length > 1 ? "s" : ""}`, null);
+            }}
+            lang={lang}
+          />
+        </BottomSheet>
+      )}
+
+      {(sheet === "add" || editingItem) && (
+        <BottomSheet title={editingItem ? t(lang, "saveChanges") : t(lang, "expensesTitle")} onClose={() => setSheet(null)}>
+          <ExpenseStep
+            theme={theme}
+            state={state}
+            items={state.expenses}
+            editItem={editingItem}
+            onAdd={addExpense}
+            onSave={saveExpense}
+            onRemove={removeExpense}
+            hideList
+            onAddCategory={(cat) => setState((s) => ({ ...s, expenseCategories: [...(s.expenseCategories || []), cat] }))}
+          />
+        </BottomSheet>
+      )}
+    </div>
+  );
+}
+
 function AideTab({ theme, state }) {
   const lang = state.language || "fr";
   const monthlyIncome = state.paydays.reduce((a, p) => a + toMainCurrency(monthlyEquivalent(p.amount, p.frequency), p.currency || state.currency, state), 0);
@@ -5791,6 +6052,7 @@ function SereinApp() {
 
   const tabs = [
     { id: "calendar", label: t(lang, "tabCalendar"), icon: CalendarIcon },
+    { id: "expenses", label: t(lang, "tabExpenses"), icon: ReceiptText },
     { id: "debts", label: t(lang, "tabDebts"), icon: Wallet },
     { id: "projects", label: t(lang, "tabProjects"), icon: Target },
     { id: "investments", label: t(lang, "tabInvestments"), icon: TrendingUp },
@@ -5828,6 +6090,7 @@ function SereinApp() {
       </div>
 
       {tab === "calendar" && <CalendarTab theme={theme} state={state} setState={setState} showToast={showToast} />}
+      {tab === "expenses" && <ExpensesTab theme={theme} state={state} setState={setState} showToast={showToast} />}
       {tab === "debts" && <DebtsTab theme={theme} state={state} setState={setState} onGoToAide={() => setTab("aide")} showToast={showToast} />}
       {tab === "projects" && <ProjectsTab theme={theme} state={state} setState={setState} showToast={showToast} />}
       {tab === "investments" && <InvestmentsTab theme={theme} state={state} setState={setState} showToast={showToast} />}
