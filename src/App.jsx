@@ -35,6 +35,7 @@ import {
   Copy,
   Camera,
   Share2,
+  Sparkles,
 } from "lucide-react";
 import {
   LineChart,
@@ -104,6 +105,36 @@ const THEMES = {
 // par défaut avant que l'utilisateur choisisse une couleur, mais n'est plus proposé comme choix
 // permanent — pour ne pas surcharger l'écran de sélection.
 const PRESET_THEME_IDS = ["serein", "ambre", "ametiste", "foret"];
+
+// ---------------------------------------------------------------------------
+// Journal des mises à jour (changelog) — affiché automatiquement une fois à
+// chaque utilisateur quand APP_VERSION change, et consultable en tout temps
+// depuis les Réglages. Pour publier une nouvelle version : augmenter
+// APP_VERSION et ajouter une entrée EN HAUT de ce tableau.
+// ---------------------------------------------------------------------------
+const APP_VERSION = "1.1.0";
+const CHANGELOG = [
+  {
+    version: "1.1.0",
+    date: "2026-10-04",
+    fr: [
+      "Nouvel onglet Dépenses : scanne une photo de tes achats ou de ton relevé bancaire, et suis tes dépenses par semaine ou par mois avec un camembert par catégorie.",
+      "Les projets d'épargne sont maintenant automatiquement alignés sur la date réelle de ta paie.",
+      "Suivi des cartes de crédit : choisis entre une dette classique à terme ou un crédit renouvelable qui monte et descend avec tes achats.",
+      "La liste « Prochains jours » du calendrier peut maintenant être repliée pour n'afficher que l'essentiel.",
+      "Lors d'un scan, possibilité de choisir une photo dans ta bibliothèque, pas seulement de prendre une nouvelle photo.",
+      "Ajout du compte utilisé (crédit/débit) sur les dépenses, manuelles comme scannées.",
+    ],
+    en: [
+      "New Expenses tab: scan a photo of your purchases or bank statement, and track your spending weekly or monthly with a pie chart by category.",
+      "Savings projects are now automatically aligned with your real payday date.",
+      "Credit card tracking: choose between a classic fixed-term loan or revolving credit that moves up and down with your purchases.",
+      "The calendar's \"Upcoming days\" list can now be collapsed to show just the essentials.",
+      "When scanning, you can now choose a photo from your library instead of only taking a new one.",
+      "Added a charge account (credit/debit) field on expenses, both manual and scanned.",
+    ],
+  },
+];
 
 // --- Thème personnalisé : dérive une palette complète à partir d'une seule couleur choisie ---
 function hexToHsl(hex) {
@@ -405,10 +436,16 @@ const TRANSLATIONS = {
     exportBackup: "Sauvegarde complète",
     exportPrint: "Imprimer / Enregistrer en PDF",
     comingSoonTitle: "À venir sur la vraie appli",
-    comingSoonText: "Ce prototype ne peut pas encore le faire, mais c'est prévu pour la version déployée : verrouillage par Face ID ou code à l'ouverture, et des rappels avant chaque échéance (facture, dette, abonnement) — pas seulement un affichage dans le calendrier. Les notifications demandent un vrai serveur, qu'un artefact ne peut pas fournir.",
+    comingSoonText: "Prévu pour une prochaine mise à jour : verrouillage par Face ID ou code à l'ouverture, et des rappels automatiques envoyés sur ton téléphone avant chaque échéance (facture, dette, abonnement) — pas seulement un affichage dans le calendrier.",
     privacyPolicy: "Politique de confidentialité",
     privacyPolicyBody: "Voici où en sont réellement tes données.\n\nCE QUE NOUS COLLECTONS\nUniquement ce que tu entres toi-même : prénom, dettes, projets, abonnements, factures, revenus, investissements, et la composition de ton foyer si tu la renseignes — plus ton adresse courriel pour la connexion.\n\nOÙ C'EST STOCKÉ\nTes données sont hébergées par Supabase, dans une base sécurisée, accessible uniquement par toi grâce à ton compte. La connexion se fait par lien envoyé à ton courriel, sans mot de passe à retenir.\n\nCE QUE NOUS NE FAISONS PAS\nNous ne vendons ni ne partageons tes données à des fins publicitaires. Aucune publicité dans l'application. Aucun suivi analytique caché.\n\nTES DROITS DÈS MAINTENANT\nTu peux exporter toutes tes données à tout moment (CSV, sauvegarde complète) juste au-dessus dans ces réglages, te déconnecter, ou réinitialiser complètement l'application.\n\nPOUR LA SUITE\nUne politique de confidentialité complète et conforme à la loi sera publiée séparément et remplacera ce résumé.",
     privacyPolicyClose: "Fermer",
+    whatsNewTitle: "Nouveautés 🎉",
+    whatsNewIntro: "Voici ce qui a changé depuis ta dernière visite :",
+    whatsNewGotIt: "Compris",
+    changelogMenuLabel: "Nouveautés",
+    changelogTitle: "Historique des mises à jour",
+    changelogVersionLabel: "Version",
     remainingToRepay: "Reste à rembourser",
     remainingToSave: "Reste à épargner",
     viewHistory: "Voir l'historique",
@@ -723,10 +760,16 @@ const TRANSLATIONS = {
     exportBackup: "Full backup",
     exportPrint: "Print / Save as PDF",
     comingSoonTitle: "Coming to the real app",
-    comingSoonText: "This prototype can't do this yet, but it's planned for the deployed version: Face ID or passcode lock on opening, and reminders before each due date (bill, debt, subscription) — not just a passive display in the calendar. Notifications require a real server, which an artifact can't provide.",
+    comingSoonText: "Planned for an upcoming update: Face ID or passcode lock on opening, and automatic reminders sent to your phone before each due date (bill, debt, subscription) — not just a passive display in the calendar.",
     privacyPolicy: "Privacy Policy",
     privacyPolicyBody: "Here's where your data actually stands.\n\nWHAT WE COLLECT\nOnly what you enter yourself: first name, debts, projects, subscriptions, bills, income, investments, and your household composition if you fill it in — plus your email for sign-in.\n\nWHERE IT'S STORED\nYour data is hosted by Supabase, in a secure database, accessible only by you through your account. Sign-in happens via a link sent to your email, no password to remember.\n\nWHAT WE DON'T DO\nWe never sell or share your data for advertising purposes. No ads in the app. No hidden analytics tracking.\n\nYOUR RIGHTS RIGHT NOW\nYou can export all your data at any time (CSV, full backup) just above in these settings, sign out, or fully reset the app.\n\nWHAT'S NEXT\nA complete, legally compliant privacy policy will be published separately and will replace this summary.",
     privacyPolicyClose: "Close",
+    whatsNewTitle: "What's new 🎉",
+    whatsNewIntro: "Here's what changed since your last visit:",
+    whatsNewGotIt: "Got it",
+    changelogMenuLabel: "What's new",
+    changelogTitle: "Update history",
+    changelogVersionLabel: "Version",
     remainingToRepay: "Remaining to repay",
     remainingToSave: "Remaining to save",
     viewHistory: "View history",
@@ -4968,6 +5011,7 @@ function SettingsPanel({ theme, state, setState, onClose, onReset }) {
   }, []);
   const [showAddChild, setShowAddChild] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
+  const [showChangelogHistory, setShowChangelogHistory] = useState(false);
   const [showAddPayday, setShowAddPayday] = useState(false);
   const [editingPayday, setEditingPayday] = useState(null);
   const [showAddAidant, setShowAddAidant] = useState(false);
@@ -5176,6 +5220,14 @@ function SettingsPanel({ theme, state, setState, onClose, onReset }) {
         </div>
 
         <button
+          onClick={() => setShowChangelogHistory(true)}
+          className="w-full flex items-center justify-between text-sm px-3 py-2.5 rounded-lg border border-slate-200 mb-2"
+        >
+          <span className="flex items-center gap-2 text-slate-600"><Sparkles size={15} /> {t(lang, "changelogMenuLabel")}</span>
+          <ChevronRight size={16} className="text-slate-400" />
+        </button>
+
+        <button
           onClick={() => setShowPrivacyPolicy(true)}
           className="w-full flex items-center justify-between text-sm px-3 py-2.5 rounded-lg border border-slate-200 mb-6"
         >
@@ -5219,6 +5271,35 @@ function SettingsPanel({ theme, state, setState, onClose, onReset }) {
           <p className="text-sm text-slate-600 whitespace-pre-line leading-relaxed">{t(lang, "privacyPolicyBody")}</p>
           <button
             onClick={() => setShowPrivacyPolicy(false)}
+            className="w-full mt-5 text-sm font-medium text-white px-4 py-2.5 rounded-lg"
+            style={{ backgroundColor: theme.primary }}
+          >
+            {t(lang, "privacyPolicyClose")}
+          </button>
+        </BottomSheet>
+      )}
+
+      {showChangelogHistory && (
+        <BottomSheet title={t(lang, "changelogTitle")} onClose={() => setShowChangelogHistory(false)}>
+          <div className="space-y-5">
+            {CHANGELOG.map((entry) => (
+              <div key={entry.version}>
+                <p className="text-xs font-medium text-slate-400 mb-2">
+                  {t(lang, "changelogVersionLabel")} {entry.version} — {entry.date}
+                </p>
+                <ul className="space-y-2">
+                  {entry[lang === "en" ? "en" : "fr"].map((line, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm">
+                      <Sparkles size={14} className="mt-0.5 shrink-0" style={{ color: theme.primary }} />
+                      <span>{line}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={() => setShowChangelogHistory(false)}
             className="w-full mt-5 text-sm font-medium text-white px-4 py-2.5 rounded-lg"
             style={{ backgroundColor: theme.primary }}
           >
@@ -5827,11 +5908,33 @@ function SereinApp() {
   const [splashDone, setSplashDone] = useState(false);
   const [session, setSession] = useState(undefined); // undefined = pas encore vérifié, null = pas connecté
   const [loadDone, setLoadDone] = useState(false);
+  const [showChangelog, setShowChangelog] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setSplashDone(true), 1500);
     return () => clearTimeout(t);
   }, []);
+
+  // Affiche automatiquement "Nouveautés" une seule fois par version, mais jamais à un tout
+  // nouvel utilisateur qui n'a pas encore terminé son inscription (profileType pas encore défini).
+  useEffect(() => {
+    if (!loadDone || !state || !state.profileType) return;
+    try {
+      const seen = localStorage.getItem("serein_last_seen_version");
+      if (seen !== APP_VERSION) setShowChangelog(true);
+    } catch {
+      // localStorage indisponible (navigation privée, etc.) — tant pis, pas bloquant.
+    }
+  }, [loadDone, state?.profileType]);
+
+  const dismissChangelog = () => {
+    try {
+      localStorage.setItem("serein_last_seen_version", APP_VERSION);
+    } catch {
+      // ignore
+    }
+    setShowChangelog(false);
+  };
 
   // Vérifie si l'utilisateur est déjà connecté, et écoute les changements (connexion/déconnexion)
   useEffect(() => {
@@ -6069,6 +6172,27 @@ function SereinApp() {
             setShowSettings(false);
           }}
         />
+      )}
+
+      {showChangelog && (
+        <BottomSheet title={t(lang, "whatsNewTitle")} onClose={dismissChangelog}>
+          <p className="text-sm text-slate-500 mb-3">{t(lang, "whatsNewIntro")}</p>
+          <ul className="space-y-2.5 mb-5">
+            {CHANGELOG[0].fr && CHANGELOG[0][lang === "en" ? "en" : "fr"].map((line, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm">
+                <Sparkles size={14} className="mt-0.5 shrink-0" style={{ color: theme.primary }} />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+          <button
+            onClick={dismissChangelog}
+            className="w-full text-sm font-medium text-white px-4 py-2.5 rounded-lg"
+            style={{ backgroundColor: theme.primary }}
+          >
+            {t(lang, "whatsNewGotIt")}
+          </button>
+        </BottomSheet>
       )}
     </div>
   );
