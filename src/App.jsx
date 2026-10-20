@@ -48,6 +48,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
+  ReferenceLine,
 } from "recharts";
 
 // ---------------------------------------------------------------------------
@@ -112,8 +113,22 @@ const PRESET_THEME_IDS = ["serein", "ambre", "ametiste", "foret"];
 // depuis les Réglages. Pour publier une nouvelle version : augmenter
 // APP_VERSION et ajouter une entrée EN HAUT de ce tableau.
 // ---------------------------------------------------------------------------
-const APP_VERSION = "1.3.0";
+const APP_VERSION = "1.4.0";
 const CHANGELOG = [
+  {
+    version: "1.4.0",
+    date: "2026-10-20",
+    fr: [
+      "Plus de découvert : indique le solde de ton compte et Serein rejoue jour par jour tes paies et tes prélèvements. Tu vois la date exacte où le compte risque de passer sous zéro, et pourquoi.",
+      "Nouveau « Plan par paie » : pour chaque paie, ce qu'il faut garder de côté (factures, abonnements, dettes, projets), ton budget courses/loisirs et ce qui te reste vraiment. En rouge s'il manque de l'argent.",
+      "Le conseiller de dettes tient compte de ta marge réelle : il ne te propose plus une mensualité qui ferait passer ton compte à découvert.",
+    ],
+    en: [
+      "No more overdrafts: enter your account balance and Serein replays your paychecks and payments day by day. You see the exact date your account could go below zero, and why.",
+      "New \"Plan by paycheck\": for each paycheck, what to set aside (bills, subscriptions, debts, projects), your groceries/leisure budget and what you really have left. In red when money is missing.",
+      "The debt advisor now accounts for your real margin: it no longer suggests a payment that would overdraw your account.",
+    ],
+  },
   {
     version: "1.3.0",
     date: "2026-10-08",
@@ -661,6 +676,45 @@ const TRANSLATIONS = {
     hhMyName: "Mon prénom (affiché en haut de l'écran)",
     hhSave: "Enregistrer",
     hhSaved: "Enregistré",
+    cfNoBalanceTitle: "Évite le découvert",
+    cfNoBalanceBody: "Indique le solde de ton compte : Serein prévoit jour par jour si tu risques d'être à découvert.",
+    cfAlertTitle: "Découvert prévu le {date}",
+    cfAlertBody: "Le compte descendrait jusqu'à -{amount}. Touche pour voir pourquoi et quoi faire.",
+    cfTightTitle: "Compte très serré",
+    cfTightBody: "Point bas prévu : {amount} le {date}. Touche pour voir le plan par paie.",
+    cfOkTitle: "Aucun découvert prévu",
+    cfOkBody: "Point bas des 2 prochains mois : {amount} le {date}.",
+    cfStale: "Solde saisi il y a plus d'une semaine : mets-le à jour pour une prévision fiable.",
+    planTitle: "Plan par paie",
+    planIntro: "Pour ne jamais être à découvert : Serein rejoue tes paies et tes prélèvements jour par jour, et te montre pour chaque paie ce qu'il faut garder de côté.",
+    planBalanceLabel: "Solde actuel du compte",
+    planBalanceHint: "Le solde de ton compte courant aujourd'hui (celui qui reçoit ta paie).",
+    planBalanceAsOf: "Solde enregistré le {date}. Mets-le à jour de temps en temps.",
+    planVariableLabel: "Budget courses, loisirs et imprévus par mois",
+    planVariableHint: "Ce que tu dépenses « au quotidien » hors factures et abonnements (courses, sorties, essence…). Il est réparti sur chaque jour.",
+    planSave: "Enregistrer et recalculer",
+    planAlertDetail: "Avec {culprit}, le compte passe à {balance}. Point le plus bas : -{lowest}.",
+    planNextPay: "Prochaine paie le {date}",
+    planFixTitle: "Pour l'éviter :",
+    planFix1: "Garde plus d'argent de côté sur la paie précédente (voir le plan ci-dessous).",
+    planFix2: "Baisse le budget courses/loisirs ou réduis un versement de projet le temps de passer ce cap.",
+    planFix3: "Décale une dépense ou une date de prélèvement après la prochaine paie.",
+    planChartHint: "Solde prévu du compte. Sous la ligne rouge : découvert.",
+    planByPaycheck: "Ce qu'il faut garder de chaque paie",
+    planNoPaydays: "Ajoute une paie pour voir ton plan.",
+    planPaycheckOf: "Paie du {date}",
+    planCurrent: "en cours",
+    planUntil: "Couvre les dépenses jusqu'au {date} (exclu)",
+    planSetAside: "À garder pour les prélèvements",
+    planVariable: "Budget courses / loisirs",
+    planLeft: "Reste",
+    planShort: "Il manque {amount} sur cette période : réduis une dépense ou décale-la.",
+    planShowDetail: "Voir le détail",
+    planHideDetail: "Masquer le détail",
+    planGroupFixed: "Factures et abonnements",
+    planGroupDebts: "Dettes",
+    planGroupSavings: "Épargne / projets",
+    advisorOverdraft: "Attention : cette mensualité dépasse ta marge mensuelle ({free}). Choisis une durée plus longue pour ne pas être à découvert.",
     hhJoinTitle: "Rejoindre un foyer",
     hhJoinBody: "Entre le code d'invitation reçu de la personne qui t'invite.",
     hhJoinWarnData: "Tu as déjà tes propres données dans Serein. En rejoignant ce foyer, tu verras uniquement celles du foyer. Les tiennes sont mises de côté (rien n'est supprimé) et reviennent si tu quittes le foyer.",
@@ -1102,6 +1156,45 @@ const TRANSLATIONS = {
     hhMyName: "My first name (shown at the top of the screen)",
     hhSave: "Save",
     hhSaved: "Saved",
+    cfNoBalanceTitle: "Avoid overdrafts",
+    cfNoBalanceBody: "Enter your account balance: Serein forecasts day by day whether you risk going overdrawn.",
+    cfAlertTitle: "Overdraft expected on {date}",
+    cfAlertBody: "Your account would drop to -{amount}. Tap to see why and what to do.",
+    cfTightTitle: "Account very tight",
+    cfTightBody: "Expected low point: {amount} on {date}. Tap to see the plan by paycheck.",
+    cfOkTitle: "No overdraft expected",
+    cfOkBody: "Low point over the next 2 months: {amount} on {date}.",
+    cfStale: "Balance entered over a week ago: update it for a reliable forecast.",
+    planTitle: "Plan by paycheck",
+    planIntro: "To never be overdrawn: Serein replays your paychecks and payments day by day and shows, for each paycheck, what to set aside.",
+    planBalanceLabel: "Current account balance",
+    planBalanceHint: "Your checking account balance today (the one that receives your pay).",
+    planBalanceAsOf: "Balance saved on {date}. Update it from time to time.",
+    planVariableLabel: "Groceries, leisure and unexpected, per month",
+    planVariableHint: "What you spend day to day apart from bills and subscriptions (groceries, outings, fuel…). It is spread over each day.",
+    planSave: "Save and recalculate",
+    planAlertDetail: "With {culprit}, the account goes to {balance}. Lowest point: -{lowest}.",
+    planNextPay: "Next paycheck on {date}",
+    planFixTitle: "To avoid it:",
+    planFix1: "Set more money aside from the previous paycheck (see the plan below).",
+    planFix2: "Lower the groceries/leisure budget or reduce a project contribution until you're past this point.",
+    planFix3: "Move an expense or a payment date to after the next paycheck.",
+    planChartHint: "Forecast account balance. Below the red line: overdraft.",
+    planByPaycheck: "What to keep from each paycheck",
+    planNoPaydays: "Add a paycheck to see your plan.",
+    planPaycheckOf: "Paycheck of {date}",
+    planCurrent: "current",
+    planUntil: "Covers spending until {date} (excluded)",
+    planSetAside: "To keep for payments",
+    planVariable: "Groceries / leisure budget",
+    planLeft: "Left",
+    planShort: "You are short {amount} for this period: cut an expense or move it.",
+    planShowDetail: "Show details",
+    planHideDetail: "Hide details",
+    planGroupFixed: "Bills and subscriptions",
+    planGroupDebts: "Debts",
+    planGroupSavings: "Savings / projects",
+    advisorOverdraft: "Careful: this payment exceeds your monthly margin ({free}). Pick a longer duration to avoid an overdraft.",
     hhJoinTitle: "Join a household",
     hhJoinBody: "Enter the invitation code you received from the person inviting you.",
     hhJoinWarnData: "You already have your own data in Serein. By joining this household you will only see the household's data. Yours is set aside (nothing is deleted) and comes back if you leave the household.",
@@ -2098,14 +2191,19 @@ function monthsToPayOff(bal, annualRatePct, pay) {
 }
 // Propositions de durée selon l'ampleur de la dette + durée conseillée (mensualité raisonnable
 // par rapport au revenu si on le connaît, sinon une durée « moyenne »).
-function debtPlanOptions(bal, annualRatePct, monthlyIncome) {
+function debtPlanOptions(bal, annualRatePct, monthlyIncome, freeMonthly) {
   const horizons = bal < 1500 ? [3, 6, 12, 24] : bal < 10000 ? [12, 24, 36, 60] : [24, 48, 84, 120];
   const options = horizons.map((months) => {
     const pay = amortizedInstallment(bal, annualRatePct, months, "mensuel");
     return { months, pay, interest: Math.max(0, pay * months - bal) };
   });
   let recommended = options[1];
-  if (monthlyIncome > 0) {
+  if (typeof freeMonthly === "number") {
+    // Marge réelle connue (revenus - charges - dettes - épargne - budget courant) : on ne conseille
+    // jamais une mensualité qui ferait passer le compte à découvert.
+    const ok = freeMonthly > 0 ? options.find((o) => o.pay <= freeMonthly * 0.6) : null;
+    recommended = ok || options[options.length - 1];
+  } else if (monthlyIncome > 0) {
     const ok = options.find((o) => o.pay <= monthlyIncome * 0.15);
     recommended = ok || options[options.length - 1];
   }
@@ -3225,7 +3323,10 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
   const bal = Number(f.amount) || 0;
   const rateNum = f.interestRate !== "" ? Number(f.interestRate) || 0 : 0;
   const payNum = Number(f.monthlyPay) || 0;
-  const planInfo = useQuick && bal > 0 ? debtPlanOptions(bal, rateNum, monthlyIncome) : null;
+  // Marge mensuelle réelle si les charges sont renseignées (on retire la mensualité actuelle en cas de modification)
+  const ownInstallment = editItem ? toMainCurrency(monthlyEquivalent(debtInstallment(editItem), editItem.frequency), editItem.currency || state.currency, state) : 0;
+  const freeMonthly = hasCommitmentData(state) && monthlyIncome > 0 ? monthlyFreeCapacity(state) + ownInstallment : null;
+  const planInfo = useQuick && bal > 0 ? debtPlanOptions(bal, rateNum, monthlyIncome, freeMonthly) : null;
   let plan = null;
   if (planInfo) {
     if (payNum > 0) {
@@ -3428,7 +3529,11 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
                       {t(lang, "advisorResult").replace("{date}", monthYearLabel(plan.months, lang)).replace("{duration}", durationLabel(plan.months, lang))}
                       {plan.interest >= 1 ? " " + t(lang, "advisorInterest").replace("{interest}", money(Math.round(plan.interest), f.currency)) : ""}
                     </p>
-                    {monthlyIncome > 0 && plan.pay > monthlyIncome * 0.25 && (
+                    {freeMonthly != null && plan.pay > Math.max(0, freeMonthly) + 0.5 ? (
+                      <p className="text-xs mt-1" style={{ color: theme.danger }}>
+                        {t(lang, "advisorOverdraft").replace("{free}", money(Math.max(0, Math.round(freeMonthly)), state.currency))}
+                      </p>
+                    ) : monthlyIncome > 0 && plan.pay > monthlyIncome * 0.25 && (
                       <p className="text-xs mt-1" style={{ color: theme.danger }}>
                         {t(lang, "advisorHeavy").replace("{pct}", Math.round((plan.pay / monthlyIncome) * 100))}
                       </p>
@@ -4582,6 +4687,377 @@ function PaydayOccurrenceSheet({ theme, lang, state, target, onSaveThis, onSaveA
   );
 }
 
+// Tous les événements d'un jour (paies, factures, abonnements, dettes, projets) — sans filtre de propriétaire
+function buildEventsOn(state, y, m, day) {
+  const list = [];
+
+  state.paydays.forEach((p) => {
+    if (!p.startDate || !p.frequency) return;
+    if (occurrencesInMonth(p.startDate, p.frequency, y, m).includes(day)) {
+      const dateKey = `${y}-${String(m + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      const ov = p.overrides && p.overrides[dateKey];
+      const overridden = typeof ov === "number" && Number.isFinite(ov);
+      list.push({ kind: "paie", title: p.title, amount: overridden ? ov : p.amount, owner: p.owner, currency: p.currency, paydayId: p.id, dateKey, y, m, day, overridden });
+    }
+  });
+
+  state.subscriptions.forEach((s) => {
+    if (s.startDate) {
+      if (occurrencesInMonth(s.startDate, s.period, y, m).includes(day)) {
+        list.push({ kind: "abonnement", title: s.title, amount: s.amount, owner: s.owner, currency: s.currency });
+      }
+    } else {
+      const monthMatches = s.period === "mensuel" || (s.period === "annuel" && s.month === m + 1);
+      if (s.day === day && monthMatches) list.push({ kind: "abonnement", title: s.title, amount: s.amount, owner: s.owner, currency: s.currency });
+    }
+  });
+
+  state.bills.forEach((b) => {
+    if (b.startDate) {
+      if (occurrencesInMonth(b.startDate, b.period, y, m).includes(day)) {
+        list.push({ kind: "facture", title: b.title, amount: b.amount, owner: b.owner, currency: b.currency });
+      }
+    } else {
+      const monthMatches = b.period === "mensuel" || (b.period === "annuel" && b.month === m + 1);
+      if (b.day === day && monthMatches) list.push({ kind: "facture", title: b.title, amount: b.amount, owner: b.owner, currency: b.currency });
+    }
+  });
+
+  state.debts.forEach((d) => {
+    if (d.paymentMode === "unique" && d.dueDate) {
+      const dd = new Date(d.dueDate + "T00:00:00");
+      if (dd.getFullYear() === y && dd.getMonth() === m && dd.getDate() === day) {
+        list.push({ kind: "dette", title: d.title, amount: d.amount - d.paid, owner: d.owner, currency: d.currency });
+      }
+    } else if (d.paymentMode === "recurrent" && d.startDate && d.frequency && d.endDate) {
+      const occDate = new Date(y, m, day);
+      const endD = new Date(d.endDate + "T00:00:00");
+      if (occDate <= endD && occurrencesInMonth(d.startDate, d.frequency, y, m).includes(day)) {
+        list.push({ kind: "dette", title: d.title, amount: debtInstallment(d), owner: d.owner, currency: d.currency });
+      }
+    }
+  });
+
+  // Un projet ne peut concrètement recevoir de l'argent que les jours où on est payé : on
+  // affiche donc toujours son rappel calé sur la vraie paie (fréquence + date d'ancrage) quand
+  // il y en a une, plutôt que sur les valeurs stockées sur le projet — utile aussi pour les
+  // projets créés avant ce verrouillage, qui gardent encore une ancienne date désynchronisée.
+  const primaryPayday = state.paydays[0];
+  state.projects.forEach((p) => {
+    if (!p.endDate) return;
+    const effStartDate = primaryPayday ? primaryPayday.startDate : p.startDate;
+    const effFrequency = primaryPayday ? primaryPayday.frequency : p.frequency;
+    if (!effStartDate || !effFrequency) return;
+    const occDate = new Date(y, m, day);
+    const endD = new Date(p.endDate + "T00:00:00");
+    if (occDate <= endD && occurrencesInMonth(effStartDate, effFrequency, y, m).includes(day)) {
+      list.push({ kind: "projet", title: p.title, amount: projectInstallment(p), owner: p.owner, currency: p.currency });
+    }
+  });
+  return list;
+}
+
+// ---------------------------------------------------------------------------
+// Trésorerie : éviter le découvert. On rejoue jour par jour les paies et les prélèvements
+// à partir du solde du compte, pour voir si le solde passe sous zéro — et combien garder de
+// chaque paie pour couvrir ce qui sort avant la suivante (comme un tableau « plan par paie »).
+// ---------------------------------------------------------------------------
+const DAY_MS = 86400000;
+function ymdOf(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+function startOfToday() {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+function shortDate(d, lang) {
+  const label = d.toLocaleDateString(lang === "en" ? "en-US" : "fr-FR", { day: "numeric", month: "short" });
+  return label.replace(/\.$/, ""); // « 28 oct. » → « 28 oct » (évite « oct.. » en fin de phrase)
+}
+// Montant d'un événement dans la devise principale ; les paies comptent en positif
+function signedEventAmount(e, state) {
+  const v = toMainCurrency(e.amount, e.currency || state.currency, state);
+  return e.kind === "paie" ? v : -v;
+}
+
+// Charges mensuelles déjà saisies (en devise principale) et marge qui reste chaque mois
+function monthlyCommitments(state) {
+  const conv = (amount, cur) => toMainCurrency(amount, cur || state.currency, state);
+  const fixed =
+    state.bills.reduce((a, b) => a + conv(monthlyEquivalent(b.amount, b.period), b.currency), 0) +
+    state.subscriptions.reduce((a, s) => a + conv(monthlyEquivalent(s.amount, s.period), s.currency), 0);
+  const debts = state.debts.reduce((a, d) => a + conv(monthlyEquivalent(debtInstallment(d), d.frequency), d.currency), 0);
+  const savings = state.projects.reduce((a, p) => a + conv(monthlyEquivalent(projectInstallment(p), p.frequency), p.currency), 0);
+  const variable = Number(state.variableMonthly) || 0;
+  return { fixed, debts, savings, variable, total: fixed + debts + savings + variable };
+}
+function monthlyFreeCapacity(state) {
+  return monthlyIncomeOf(state) - monthlyCommitments(state).total;
+}
+// Les charges sont-elles assez renseignées pour que la « marge » ait un sens ?
+function hasCommitmentData(state) {
+  return state.bills.length + state.subscriptions.length > 0;
+}
+
+// Rejoue les jours à partir du solde connu : solde de fin de journée, événements, creux minimal.
+function projectCashflow(state, horizonDays = 60) {
+  const cb = state.cashBalance;
+  if (!cb || typeof cb.amount !== "number" || !Number.isFinite(cb.amount)) return null;
+  const today = startOfToday();
+  let start = cb.asOf ? new Date(cb.asOf + "T00:00:00") : today;
+  if (isNaN(start.getTime()) || start > today) start = today;
+  const oldest = new Date(today.getTime() - 45 * DAY_MS);
+  if (start < oldest) start = oldest;
+  const stale = (today - new Date((cb.asOf || ymdOf(today)) + "T00:00:00")) / DAY_MS > 7;
+  const daily = (Number(state.variableMonthly) || 0) / 30.4;
+  const end = new Date(today.getTime() + horizonDays * DAY_MS);
+  let bal = cb.amount;
+  const days = [];
+  let lowest = null;
+  let firstNegative = null;
+  for (let d = new Date(start); d <= end; d = new Date(d.getTime() + DAY_MS)) {
+    const events = buildEventsOn(state, d.getFullYear(), d.getMonth(), d.getDate());
+    events.forEach((e) => { bal += signedEventAmount(e, state); });
+    bal -= daily;
+    const rec = { date: new Date(d), balance: bal, events };
+    days.push(rec);
+    if (d >= today) {
+      if (!lowest || bal < lowest.balance) lowest = rec;
+      if (!firstNegative && bal < 0) firstNegative = rec;
+    }
+  }
+  const nextPay = days.find((r) => r.date > today && r.events.some((e) => e.kind === "paie"));
+  return { days: days.filter((r) => r.date >= today), lowest, firstNegative, stale, nextPay: nextPay ? nextPay.date : null };
+}
+
+// Plan « par paie » : pour chaque paie, ce qui sort jusqu'à la paie suivante.
+function buildPaycheckPlan(state, count = 6) {
+  const today = startOfToday();
+  const from = new Date(today.getTime() - 40 * DAY_MS);
+  const to = new Date(today.getTime() + 260 * DAY_MS);
+  const daily = (Number(state.variableMonthly) || 0) / 30.4;
+  const byDate = [];
+  for (let d = new Date(from); d <= to; d = new Date(d.getTime() + DAY_MS)) {
+    byDate.push({ date: new Date(d), events: buildEventsOn(state, d.getFullYear(), d.getMonth(), d.getDate()) });
+  }
+  const payDates = byDate.filter((r) => r.events.some((e) => e.kind === "paie")).map((r) => r.date);
+  if (!payDates.length) return [];
+  let startIdx = 0;
+  payDates.forEach((pd, i) => { if (pd <= today) startIdx = i; });
+  const periods = [];
+  for (let i = startIdx; i < Math.min(payDates.length - 1, startIdx + count); i++) {
+    const ps = payDates[i], pe = payDates[i + 1];
+    const rows = byDate.filter((r) => r.date >= ps && r.date < pe);
+    const incomes = [], fixed = [], debts = [], projects = [];
+    rows.forEach((r) => r.events.forEach((e) => {
+      const item = { title: e.title, amount: Math.abs(signedEventAmount(e, state)), date: r.date };
+      if (e.kind === "paie") incomes.push(item);
+      else if (e.kind === "dette") debts.push(item);
+      else if (e.kind === "projet") projects.push(item);
+      else fixed.push(item);
+    }));
+    const sum = (arr) => arr.reduce((a, x) => a + x.amount, 0);
+    const days = Math.round((pe - ps) / DAY_MS);
+    const variable = daily * days;
+    const income = sum(incomes);
+    const reserved = sum(fixed) + sum(debts) + sum(projects);
+    periods.push({ start: ps, end: pe, current: ps <= today && today < pe, incomes, fixed, debts, projects, income, fixedTotal: sum(fixed), debtTotal: sum(debts), projectTotal: sum(projects), variable, reserved, left: income - reserved - variable, days });
+  }
+  return periods;
+}
+
+function CashflowCard({ theme, state, onOpen }) {
+  const lang = state.language || "fr";
+  const cf = useMemo(() => projectCashflow(state, 60), [state]);
+  const hasPaydays = state.paydays.length > 0;
+  if (!hasPaydays) return null;
+  let tone = { bg: theme.soft, color: theme.text }, title, body;
+  if (!cf) {
+    title = t(lang, "cfNoBalanceTitle");
+    body = t(lang, "cfNoBalanceBody");
+  } else if (cf.firstNegative) {
+    tone = { bg: "#FEF2F2", color: "#991B1B" };
+    title = t(lang, "cfAlertTitle").replace("{date}", shortDate(cf.firstNegative.date, lang));
+    body = t(lang, "cfAlertBody").replace("{amount}", money(Math.abs(Math.round(cf.lowest.balance)), state.currency));
+  } else if (cf.lowest.balance < monthlyIncomeOf(state) * 0.05) {
+    tone = { bg: "#FEF9C3", color: "#854D0E" };
+    title = t(lang, "cfTightTitle");
+    body = t(lang, "cfTightBody").replace("{amount}", money(Math.round(cf.lowest.balance), state.currency)).replace("{date}", shortDate(cf.lowest.date, lang));
+  } else {
+    tone = { bg: "#F0FDF4", color: "#166534" };
+    title = t(lang, "cfOkTitle");
+    body = t(lang, "cfOkBody").replace("{amount}", money(Math.round(cf.lowest.balance), state.currency)).replace("{date}", shortDate(cf.lowest.date, lang));
+  }
+  return (
+    <button onClick={onOpen} className="w-full text-left rounded-xl shadow-sm p-4 mb-4" style={{ backgroundColor: tone.bg, color: tone.color }}>
+      <span className="flex items-center justify-between gap-2">
+        <span className="text-sm font-semibold">{title}</span>
+        <ChevronRight size={16} />
+      </span>
+      <span className="block text-xs mt-1 opacity-90">{body}</span>
+      {cf && cf.stale && <span className="block text-[11px] mt-1 opacity-75">{t(lang, "cfStale")}</span>}
+    </button>
+  );
+}
+
+function PaycheckCard({ theme, state, p }) {
+  const lang = state.language || "fr";
+  const [open, setOpen] = useState(false);
+  const cur = state.currency;
+  const Group = ({ label, items }) => items.length === 0 ? null : (
+    <div className="mt-2">
+      <p className="text-[11px] font-medium text-slate-400 mb-1">{label}</p>
+      <ul className="space-y-0.5">
+        {items.map((it, i) => (
+          <li key={i} className="flex justify-between text-xs text-slate-600">
+            <span className="truncate pr-2">{it.title} <span className="text-slate-400">· {shortDate(it.date, lang)}</span></span>
+            <span>{money(it.amount, cur)}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+  const negative = p.left < -0.5;
+  return (
+    <div className="bg-white rounded-xl shadow-sm p-4 mb-3" style={{ border: p.current ? `1.5px solid ${theme.primary}` : "1px solid #f1f5f9" }}>
+      <div className="flex items-center justify-between">
+        <h4 className="text-sm font-semibold" style={{ color: theme.text }}>
+          {t(lang, "planPaycheckOf").replace("{date}", shortDate(p.start, lang))}
+          {p.current && <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded-full text-white" style={{ backgroundColor: theme.primary }}>{t(lang, "planCurrent")}</span>}
+        </h4>
+        <span className="text-sm font-semibold" style={{ color: "#2E9E5B" }}>+{money(p.income, cur)}</span>
+      </div>
+      <p className="text-[11px] text-slate-400 mb-2">{t(lang, "planUntil").replace("{date}", shortDate(p.end, lang))}</p>
+
+      <div className="rounded-lg p-3 text-sm" style={{ backgroundColor: theme.soft }}>
+        <div className="flex justify-between">
+          <span className="text-slate-600">{t(lang, "planSetAside")}</span>
+          <span className="font-semibold" style={{ color: theme.text }}>{money(p.reserved, cur)}</span>
+        </div>
+        {p.variable > 0.5 && (
+          <div className="flex justify-between mt-1">
+            <span className="text-slate-600">{t(lang, "planVariable")}</span>
+            <span className="font-semibold" style={{ color: theme.text }}>{money(p.variable, cur)}</span>
+          </div>
+        )}
+        <div className="flex justify-between mt-1 pt-1 border-t border-white">
+          <span className="text-slate-600">{t(lang, "planLeft")}</span>
+          <span className="font-semibold" style={{ color: negative ? "#DC2626" : "#16A34A" }}>{negative ? "-" : ""}{money(Math.abs(p.left), cur)}</span>
+        </div>
+      </div>
+      {negative && <p className="text-xs mt-2" style={{ color: "#DC2626" }}>{t(lang, "planShort").replace("{amount}", money(Math.abs(p.left), cur))}</p>}
+
+      <button onClick={() => setOpen((v) => !v)} className="text-xs font-medium mt-2" style={{ color: theme.primary }}>
+        {open ? t(lang, "planHideDetail") : t(lang, "planShowDetail")}
+      </button>
+      {open && (
+        <div>
+          <Group label={t(lang, "planGroupFixed")} items={p.fixed} />
+          <Group label={t(lang, "planGroupDebts")} items={p.debts} />
+          <Group label={t(lang, "planGroupSavings")} items={p.projects} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PaycheckPlanSheet({ theme, state, setState, onClose }) {
+  const lang = state.language || "fr";
+  const cb = state.cashBalance;
+  const [balance, setBalance] = useState(cb && typeof cb.amount === "number" ? String(cb.amount) : "");
+  const [variable, setVariable] = useState(state.variableMonthly ? String(state.variableMonthly) : "");
+  const [saved, setSaved] = useState(false);
+  const cf = useMemo(() => projectCashflow(state, 60), [state]);
+  const plan = useMemo(() => buildPaycheckPlan(state, 6), [state]);
+  const cur = state.currency;
+  const num = (v) => Number(String(v).replace(",", "."));
+  const balOk = balance !== "" && Number.isFinite(num(balance));
+
+  const save = () => {
+    setState((s) => ({
+      ...s,
+      cashBalance: balOk ? { amount: num(balance), asOf: getToday() } : s.cashBalance,
+      variableMonthly: variable !== "" && Number.isFinite(num(variable)) ? Math.max(0, num(variable)) : 0,
+    }));
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const chartData = cf ? cf.days.map((r) => ({ d: shortDate(r.date, lang), v: Math.round(r.balance) })) : [];
+  const culprit = cf && cf.firstNegative ? cf.firstNegative.events.filter((e) => e.kind !== "paie").sort((a, b) => signedEventAmount(a, state) - signedEventAmount(b, state))[0] : null;
+
+  return (
+    <BottomSheet title={t(lang, "planTitle")} onClose={onClose}>
+      <p className="text-xs text-slate-500 mb-4">{t(lang, "planIntro")}</p>
+
+      <label className="block mb-3">
+        <span className="block text-sm font-medium mb-1 text-slate-600">{t(lang, "planBalanceLabel")} ({cur})</span>
+        <input type="number" step="any" inputMode="decimal" className={inputCls} value={balance} onChange={(e) => setBalance(e.target.value)} placeholder="Ex : 850" />
+        <span className="block text-[11px] text-slate-400 mt-1">
+          {cb && cb.asOf ? t(lang, "planBalanceAsOf").replace("{date}", shortDate(new Date(cb.asOf + "T00:00:00"), lang)) : t(lang, "planBalanceHint")}
+        </span>
+      </label>
+      <label className="block mb-3">
+        <span className="block text-sm font-medium mb-1 text-slate-600">{t(lang, "planVariableLabel")} ({cur})</span>
+        <input type="number" step="any" inputMode="decimal" className={inputCls} value={variable} onChange={(e) => setVariable(e.target.value)} placeholder="Ex : 600" />
+        <span className="block text-[11px] text-slate-400 mt-1">{t(lang, "planVariableHint")}</span>
+      </label>
+      <button onClick={save} className="w-full text-sm font-medium text-white px-4 py-2.5 rounded-lg mb-5" style={{ backgroundColor: theme.primary }}>
+        {saved ? t(lang, "hhSaved") : t(lang, "planSave")}
+      </button>
+
+      {cf && (
+        <div className="mb-5">
+          {cf.firstNegative ? (
+            <div className="rounded-lg p-3 text-sm mb-3" style={{ backgroundColor: "#FEF2F2", color: "#991B1B" }}>
+              <p className="font-semibold">{t(lang, "cfAlertTitle").replace("{date}", shortDate(cf.firstNegative.date, lang))}</p>
+              <p className="text-xs mt-1">
+                {t(lang, "planAlertDetail")
+                  .replace("{balance}", money(Math.round(cf.firstNegative.balance), cur))
+                  .replace("{culprit}", culprit ? `${culprit.title} (${money(Math.round(Math.abs(signedEventAmount(culprit, state))), cur)})` : "—")
+                  .replace("{lowest}", money(Math.abs(Math.round(cf.lowest.balance)), cur))}
+                {cf.nextPay ? " " + t(lang, "planNextPay").replace("{date}", shortDate(cf.nextPay, lang)) + "." : ""}
+              </p>
+              <p className="text-xs mt-2 font-medium">{t(lang, "planFixTitle")}</p>
+              <ul className="text-xs list-disc pl-4 mt-0.5 space-y-0.5">
+                <li>{t(lang, "planFix1")}</li>
+                <li>{t(lang, "planFix2")}</li>
+                <li>{t(lang, "planFix3")}</li>
+              </ul>
+            </div>
+          ) : (
+            <div className="rounded-lg p-3 text-sm mb-3" style={{ backgroundColor: "#F0FDF4", color: "#166534" }}>
+              <p className="font-semibold">{t(lang, "cfOkTitle")}</p>
+              <p className="text-xs mt-1">{t(lang, "cfOkBody").replace("{amount}", money(Math.round(cf.lowest.balance), cur)).replace("{date}", shortDate(cf.lowest.date, lang))}</p>
+            </div>
+          )}
+          <div className="h-40">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData} margin={{ top: 5, right: 8, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="d" tick={{ fontSize: 10 }} interval={Math.max(0, Math.floor(chartData.length / 5))} />
+                <YAxis tick={{ fontSize: 10 }} width={42} />
+                <ReferenceLine y={0} stroke="#DC2626" strokeDasharray="4 3" />
+                <Tooltip formatter={(v) => money(v, cur)} />
+                <Line type="monotone" dataKey="v" stroke={theme.primary} strokeWidth={2} dot={false} isAnimationActive={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <p className="text-[11px] text-slate-400 mt-1">{t(lang, "planChartHint")}</p>
+        </div>
+      )}
+
+      <h3 className="text-sm font-semibold mb-2" style={{ color: theme.text }}>{t(lang, "planByPaycheck")}</h3>
+      {plan.length === 0 ? (
+        <p className="text-sm text-slate-400">{t(lang, "planNoPaydays")}</p>
+      ) : (
+        plan.map((p, i) => <PaycheckCard key={i} theme={theme} state={state} p={p} />)
+      )}
+    </BottomSheet>
+  );
+}
+
 function CalendarTab({ theme, state, setState, showToast }) {
   const lang = state.language || "fr";
   const [cursor, setCursor] = useState(() => {
@@ -4593,6 +5069,7 @@ function CalendarTab({ theme, state, setState, showToast }) {
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [addMode, setAddMode] = useState(null); // "payday" | "bill" | "subscription"
   const [showAllUpcoming, setShowAllUpcoming] = useState(false);
+  const [showPlan, setShowPlan] = useState(false);
   const [editingPay, setEditingPay] = useState(null); // { paydayId, dateKey, date, amount, overridden }
 
   const openPayEdit = (e) => setEditingPay({ paydayId: e.paydayId, dateKey: e.dateKey, date: new Date(e.y, e.m, e.day), amount: e.amount, overridden: e.overridden });
@@ -4629,72 +5106,7 @@ function CalendarTab({ theme, state, setState, showToast }) {
   const todayDate = now.getDate();
 
   const eventsOnYMD = (y, m, day) => {
-    const list = [];
-
-    state.paydays.forEach((p) => {
-      if (!p.startDate || !p.frequency) return;
-      if (occurrencesInMonth(p.startDate, p.frequency, y, m).includes(day)) {
-        const dateKey = `${y}-${String(m + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-        const ov = p.overrides && p.overrides[dateKey];
-        const overridden = typeof ov === "number" && Number.isFinite(ov);
-        list.push({ kind: "paie", title: p.title, amount: overridden ? ov : p.amount, owner: p.owner, paydayId: p.id, dateKey, y, m, day, overridden });
-      }
-    });
-
-    state.subscriptions.forEach((s) => {
-      if (s.startDate) {
-        if (occurrencesInMonth(s.startDate, s.period, y, m).includes(day)) {
-          list.push({ kind: "abonnement", title: s.title, amount: s.amount, owner: s.owner });
-        }
-      } else {
-        const monthMatches = s.period === "mensuel" || (s.period === "annuel" && s.month === m + 1);
-        if (s.day === day && monthMatches) list.push({ kind: "abonnement", title: s.title, amount: s.amount, owner: s.owner });
-      }
-    });
-
-    state.bills.forEach((b) => {
-      if (b.startDate) {
-        if (occurrencesInMonth(b.startDate, b.period, y, m).includes(day)) {
-          list.push({ kind: "facture", title: b.title, amount: b.amount, owner: b.owner });
-        }
-      } else {
-        const monthMatches = b.period === "mensuel" || (b.period === "annuel" && b.month === m + 1);
-        if (b.day === day && monthMatches) list.push({ kind: "facture", title: b.title, amount: b.amount, owner: b.owner });
-      }
-    });
-
-    state.debts.forEach((d) => {
-      if (d.paymentMode === "unique" && d.dueDate) {
-        const dd = new Date(d.dueDate + "T00:00:00");
-        if (dd.getFullYear() === y && dd.getMonth() === m && dd.getDate() === day) {
-          list.push({ kind: "dette", title: d.title, amount: d.amount - d.paid, owner: d.owner });
-        }
-      } else if (d.paymentMode === "recurrent" && d.startDate && d.frequency && d.endDate) {
-        const occDate = new Date(y, m, day);
-        const endD = new Date(d.endDate + "T00:00:00");
-        if (occDate <= endD && occurrencesInMonth(d.startDate, d.frequency, y, m).includes(day)) {
-          list.push({ kind: "dette", title: d.title, amount: debtInstallment(d), owner: d.owner });
-        }
-      }
-    });
-
-    // Un projet ne peut concrètement recevoir de l'argent que les jours où on est payé : on
-    // affiche donc toujours son rappel calé sur la vraie paie (fréquence + date d'ancrage) quand
-    // il y en a une, plutôt que sur les valeurs stockées sur le projet — utile aussi pour les
-    // projets créés avant ce verrouillage, qui gardent encore une ancienne date désynchronisée.
-    const primaryPayday = state.paydays[0];
-    state.projects.forEach((p) => {
-      if (!p.endDate) return;
-      const effStartDate = primaryPayday ? primaryPayday.startDate : p.startDate;
-      const effFrequency = primaryPayday ? primaryPayday.frequency : p.frequency;
-      if (!effStartDate || !effFrequency) return;
-      const occDate = new Date(y, m, day);
-      const endD = new Date(p.endDate + "T00:00:00");
-      if (occDate <= endD && occurrencesInMonth(effStartDate, effFrequency, y, m).includes(day)) {
-        list.push({ kind: "projet", title: p.title, amount: projectInstallment(p), owner: p.owner });
-      }
-    });
-
+    const list = buildEventsOn(state, y, m, day);
     return HAS_OWNERS.includes(state.profileType) && ownerFilter !== "all"
       ? list.filter((e) => e.owner === ownerFilter)
       : list;
@@ -4780,6 +5192,8 @@ function CalendarTab({ theme, state, setState, showToast }) {
 
   return (
     <div className="p-4 pb-24">
+      <CashflowCard theme={theme} state={state} onOpen={() => setShowPlan(true)} />
+      {showPlan && <PaycheckPlanSheet theme={theme} state={state} setState={setState} onClose={() => setShowPlan(false)} />}
       {state.setupGuide && <SetupGuide theme={theme} state={state} setState={setState} />}
       <div className="rounded-xl shadow-sm p-4 mb-4" style={{ backgroundColor: theme.primary }}>
         <p className="text-xs text-white opacity-80">{t(lang, "netWorthLabel")}</p>
