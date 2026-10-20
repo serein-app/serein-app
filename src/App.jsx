@@ -112,8 +112,66 @@ const PRESET_THEME_IDS = ["serein", "ambre", "ametiste", "foret"];
 // depuis les Réglages. Pour publier une nouvelle version : augmenter
 // APP_VERSION et ajouter une entrée EN HAUT de ce tableau.
 // ---------------------------------------------------------------------------
-const APP_VERSION = "1.1.0";
+const APP_VERSION = "1.3.0";
 const CHANGELOG = [
+  {
+    version: "1.3.0",
+    date: "2026-10-08",
+    fr: [
+      "Inscription beaucoup plus courte : un écran « ce qu'il te faut » t'explique ce que tu devras avoir sous la main, puis seul ton revenu est demandé. Tu arrives directement sur ton tableau de bord.",
+      "Un guide de démarrage sur l'accueil te propose le reste (factures, abonnements, dettes, projets, placements) étape par étape, quand tu veux. Pas l'info sous la main ? Passe l'étape et reviens plus tard.",
+      "Des montants moyens sont proposés en un clic pour les abonnements et les factures (Netflix, électricité, internet…).",
+      "Dettes : plus besoin de savoir « en combien de temps » rembourser. Indique ce qu'il te reste à payer : Serein te conseille une durée et la mensualité qui va avec, avec la date de fin et les intérêts estimés.",
+      "Premier repère instantané : dès que ton revenu est saisi, tu vois une répartition conseillée (besoins / envies / épargne).",
+    ],
+    en: [
+      "Much shorter signup: a \"what you'll need\" screen explains what to have at hand, then only your income is asked. You land straight on your dashboard.",
+      "A getting-started guide on the home screen walks you through the rest (bills, subscriptions, debts, projects, investments) step by step, whenever you want. Don't have the info handy? Skip the step and come back later.",
+      "Average amounts are suggested in one tap for subscriptions and bills (Netflix, electricity, internet…).",
+      "Debts: no need to know \"how long\" you want to take anymore. Enter what you still owe: Serein recommends a duration and the matching monthly payment, with the end date and estimated interest.",
+      "First instant benchmark: as soon as your income is entered, you see a recommended split (needs / wants / savings).",
+    ],
+  },
+  {
+    version: "1.2.1",
+    date: "2026-10-08",
+    fr: [
+      "Ton salaire varie d'une paie à l'autre ? Touche une paie dans « Prochains jours » (ou dans le détail d'un jour du calendrier) pour modifier son montant : pour cette paie seulement, ou pour toutes les paies suivantes. Les totaux « Entrées » du mois se mettent à jour.",
+    ],
+    en: [
+      "Does your pay change from one paycheck to the next? Tap a paycheck in \"Upcoming days\" (or in a calendar day's details) to edit its amount: for that paycheck only, or for all following ones. The month's \"Income\" total updates too.",
+    ],
+  },
+  {
+    version: "1.2.0",
+    date: "2026-10-07",
+    fr: [
+      "Accès partagé : invite ton·ta partenaire avec un code (ou un lien). Chacun garde son propre compte et sa propre adresse e-mail, et vous voyez et modifiez les mêmes données, chacun depuis son téléphone. C'est dans Réglages → Accès partagé.",
+      "Si vous modifiez des choses en même temps, vos changements sont fusionnés au lieu de s'écraser, et l'écran se met à jour tout seul en quelques secondes.",
+      "Chaque personne du foyer peut choisir le prénom affiché en haut de l'écran.",
+    ],
+    en: [
+      "Shared access: invite your partner with a code (or a link). Each of you keeps your own account and email address, and you both see and edit the same data from your own phones. Find it in Settings → Shared access.",
+      "If you both make changes at the same time, they are merged instead of overwriting each other, and the screen refreshes by itself within seconds.",
+      "Each person in the household can choose the first name shown at the top of the screen.",
+    ],
+  },
+  {
+    version: "1.1.1",
+    date: "2026-10-07",
+    fr: [
+      "Les montants affichent maintenant les centimes (12,50 $ au lieu de 13 $).",
+      "Pendant l'inscription, tu peux modifier un élément déjà ajouté (crayon) au lieu de le supprimer et tout ressaisir.",
+      "Pendant l'inscription, la liste des abonnements, factures, etc. affiche un compteur et défile sur elle-même : on voit tout de suite que l'ajout a fonctionné, et le bouton « Continuer » reste accessible même avec beaucoup d'éléments.",
+      "Les jours de paiement sont affichés clairement (« le 5 ») dans les listes.",
+    ],
+    en: [
+      "Amounts now show cents ($12.50 instead of $13).",
+      "During setup, you can edit an item you've already added (pencil) instead of deleting it and re-entering everything.",
+      "During setup, the lists of subscriptions, bills, etc. show a counter and scroll on their own: you can see right away that an item was added, and the \"Continue\" button stays reachable even with many items.",
+      "Payment days are now clearly shown (\"day 5\") in the lists.",
+    ],
+  },
   {
     version: "1.1.0",
     date: "2026-10-04",
@@ -336,7 +394,7 @@ const TRANSLATIONS = {
     autreFirstName: "Prénom",
     autreRole: "Rôle ou lien avec toi — optionnel",
     debtsTitle: "Tes dettes",
-    debtsHint: "Titre, montant total, et comment tu la rembourses.",
+    debtsHint: "Dis-nous ce qu'il te reste à payer : on te conseille la durée et la mensualité.",
     fieldTitle: "Titre",
     fieldDebtKind: "Type de dette",
     debtKindTerm: "Prêt à terme",
@@ -438,7 +496,7 @@ const TRANSLATIONS = {
     comingSoonTitle: "À venir sur la vraie appli",
     comingSoonText: "Prévu pour une prochaine mise à jour : verrouillage par Face ID ou code à l'ouverture, et des rappels automatiques envoyés sur ton téléphone avant chaque échéance (facture, dette, abonnement) — pas seulement un affichage dans le calendrier.",
     privacyPolicy: "Politique de confidentialité",
-    privacyPolicyBody: "Voici où en sont réellement tes données.\n\nCE QUE NOUS COLLECTONS\nUniquement ce que tu entres toi-même : prénom, dettes, projets, abonnements, factures, revenus, investissements, et la composition de ton foyer si tu la renseignes — plus ton adresse courriel pour la connexion.\n\nOÙ C'EST STOCKÉ\nTes données sont hébergées par Supabase, dans une base sécurisée, accessible uniquement par toi grâce à ton compte. La connexion se fait par lien envoyé à ton courriel, sans mot de passe à retenir.\n\nCE QUE NOUS NE FAISONS PAS\nNous ne vendons ni ne partageons tes données à des fins publicitaires. Aucune publicité dans l'application. Aucun suivi analytique caché.\n\nTES DROITS DÈS MAINTENANT\nTu peux exporter toutes tes données à tout moment (CSV, sauvegarde complète) juste au-dessus dans ces réglages, te déconnecter, ou réinitialiser complètement l'application.\n\nPOUR LA SUITE\nUne politique de confidentialité complète et conforme à la loi sera publiée séparément et remplacera ce résumé.",
+    privacyPolicyBody: "Voici où en sont réellement tes données.\n\nCE QUE NOUS COLLECTONS\nUniquement ce que tu entres toi-même : prénom, dettes, projets, abonnements, factures, revenus, investissements, et la composition de ton foyer si tu la renseignes — plus ton adresse courriel pour la connexion.\n\nOÙ C'EST STOCKÉ\nTes données sont hébergées par Supabase, dans une base sécurisée, accessible uniquement par toi grâce à ton compte (et par les personnes que tu invites dans ton foyer, voir ci-dessous). La connexion se fait par lien envoyé à ton courriel, sans mot de passe à retenir.\n\nCE QUE NOUS NE FAISONS PAS\nNous ne vendons ni ne partageons tes données à des fins publicitaires. Aucune publicité dans l'application. Aucun suivi analytique caché.\n\nFOYER PARTAGÉ\nSi tu invites quelqu'un dans ton foyer, cette personne accède à toutes les données du foyer depuis son propre compte et voit ton adresse courriel dans la liste des membres. Tu peux la retirer à tout moment, et elle peut quitter le foyer quand elle veut. L'invitation se fait par un code à usage unique, valable 7 jours.\n\nTES DROITS DÈS MAINTENANT\nTu peux exporter toutes tes données à tout moment (CSV, sauvegarde complète) juste au-dessus dans ces réglages, te déconnecter, ou réinitialiser complètement l'application.\n\nPOUR LA SUITE\nUne politique de confidentialité complète et conforme à la loi sera publiée séparément et remplacera ce résumé.",
     privacyPolicyClose: "Fermer",
     whatsNewTitle: "Nouveautés 🎉",
     whatsNewIntro: "Voici ce qui a changé depuis ta dernière visite :",
@@ -579,6 +637,123 @@ const TRANSLATIONS = {
     addAidantPerson: "Ajouter une personne aidée",
     addPerson: "Ajouter une personne",
     editIncome: "Modifier le revenu",
+    hhTitle: "Accès partagé",
+    hhIntro: "Invite ton·ta partenaire à utiliser Serein avec son propre compte et sa propre adresse e-mail : vous voyez et modifiez les mêmes données, chacun depuis son téléphone.",
+    hhInviteButton: "Inviter quelqu'un",
+    hhJoinButton: "J'ai un code d'invitation",
+    hhYourCode: "Code d'invitation",
+    hhCodeHint: "À usage unique, valable jusqu'au {date}. Envoie-le à la personne : elle l'entre dans Serein (« J'ai un code d'invitation ») ou ouvre le lien.",
+    hhShare: "Partager",
+    hhCopyCode: "Copier le code",
+    hhCopied: "Copié !",
+    hhNewCode: "Générer un nouveau code",
+    hhShareMessage: "Rejoins mon foyer sur Serein : {link} (ou entre le code {code} dans l'appli)",
+    hhYouBadge: "toi",
+    hhOwnerBadge: "propriétaire",
+    hhGuest: "Invité·e",
+    hhRemove: "Retirer",
+    hhRemoveConfirm: "Retirer {name} du foyer ?",
+    hhCancel: "Annuler",
+    hhLeave: "Quitter le foyer",
+    hhLeaveConfirm: "Tu retrouveras ton espace personnel d'avant. Les données du foyer restent chez {owner} : rien n'est copié ni supprimé. Quitter le foyer ?",
+    hhMemberInfo: "Tu utilises les données du foyer de {owner}.",
+    hhSharedNote: "Les données, le thème, la langue et la devise sont communs à tout le foyer.",
+    hhMyName: "Mon prénom (affiché en haut de l'écran)",
+    hhSave: "Enregistrer",
+    hhSaved: "Enregistré",
+    hhJoinTitle: "Rejoindre un foyer",
+    hhJoinBody: "Entre le code d'invitation reçu de la personne qui t'invite.",
+    hhJoinWarnData: "Tu as déjà tes propres données dans Serein. En rejoignant ce foyer, tu verras uniquement celles du foyer. Les tiennes sont mises de côté (rien n'est supprimé) et reviennent si tu quittes le foyer.",
+    hhJoinConfirm: "Rejoindre le foyer",
+    hhJoining: "Connexion…",
+    hhJoined: "Tu as rejoint le foyer !",
+    hhLeft: "Tu as quitté le foyer.",
+    hhNoLongerMember: "Tu ne fais plus partie de ce foyer.",
+    hhResetWarn: "Attention : ce foyer est partagé, les données seront effacées pour tout le monde.",
+    hhResetMember: "Seule la personne qui a créé le foyer peut tout réinitialiser. Tu peux quitter le foyer à la place.",
+    hhSignOut: "Se déconnecter",
+    hhErr_invalid_code: "Code invalide ou expiré. Vérifie-le ou demande un nouveau code.",
+    hhErr_too_many_attempts: "Trop d'essais. Réessaie dans une heure.",
+    hhErr_already_member: "Tu fais déjà partie d'un foyer.",
+    hhErr_has_members: "Des personnes utilisent déjà ton foyer : retire-les d'abord pour en rejoindre un autre.",
+    hhErr_own_code: "C'est ton propre code : donne-le à l'autre personne.",
+    hhErr_household_full: "Ce foyer est complet (4 personnes maximum).",
+    hhErr_only_owner_can_invite: "Seule la personne qui a créé le foyer peut inviter.",
+    hhErr_no_data_yet: "Termine d'abord ton inscription, puis invite.",
+    hhErr_not_found: "Cette personne ne fait plus partie du foyer.",
+    hhErr_generic: "Une erreur est survenue. Vérifie ta connexion et réessaie.",
+    syncLoadErrTitle: "Impossible de charger tes données",
+    syncLoadErrBody: "Tes données sont en sécurité, rien n'a été modifié. Vérifie ta connexion et réessaie.",
+    syncRetry: "Réessayer",
+    payEditTitle: "Modifier cette paie",
+    payEditHint: "Ton salaire varie ? Change le montant de cette paie seulement, ou de toutes les suivantes.",
+    payDateLabel: "Paie du {date}",
+    payUsualAmount: "Montant habituel : {amount}",
+    payThisAmount: "Montant de cette paie",
+    paySaveThis: "Enregistrer pour cette paie seulement",
+    paySaveAll: "Appliquer à toutes les paies",
+    payReset: "Revenir au montant habituel",
+    payModified: "modifié",
+    payTapHint: "Touche une paie pour modifier son montant.",
+    onbStart: "C'est parti",
+    onbSeeDashboard: "Voir mon tableau de bord",
+    onbSkipIncome: "Je n'ai pas de revenu régulier / plus tard → voir mon tableau de bord",
+    onbPaydayLead: "Dernière étape : ton revenu net. Un ordre de grandeur suffit, tu pourras le corriger à tout moment.",
+    prepTitle: "Avant de commencer",
+    prepLead: "Ça prend 2 minutes. Aujourd'hui, une seule information est nécessaire :",
+    prepNow: "Ton revenu net",
+    prepNowHint: "Ce que tu reçois sur ton compte (ta dernière fiche de paie, ou un ordre de grandeur). Pas besoin d'être exact.",
+    prepLater: "Ensuite, quand tu veux",
+    prepLaterHint: "Rien d'obligatoire : pas l'info sous la main ? On te propose des montants moyens, et tu peux y revenir plus tard.",
+    prepSubsBills: "Abonnements et factures",
+    prepSubsBillsNeed: "Ton relevé bancaire du dernier mois, ou tes factures",
+    prepDebts: "Dettes",
+    prepDebtsNeed: "L'appli de ta banque : combien il te reste à rembourser (et ta mensualité si tu la connais)",
+    prepProjects: "Projets d'épargne",
+    prepProjectsNeed: "Une idée du montant visé, même approximative",
+    prepInvest: "Investissements",
+    prepInvestNeed: "La valeur actuelle de tes placements",
+    prepFooter: "Tout est enregistré automatiquement : tu peux fermer l'appli et revenir quand tu veux.",
+    aboutTitle: "Faisons connaissance",
+    aboutHint: "Pour personnaliser ton espace.",
+    guideTitle: "Complète ton tableau de bord",
+    guideAllDone: "Tableau de bord complet 🎉",
+    guideProgress: "{n} étape(s) faite(s) sur {total} — à ton rythme",
+    guideHide: "Masquer",
+    guideHideHint: "Tu pourras toujours tout ajouter depuis les onglets et le bouton +.",
+    guideIncomeLine: "Ton revenu : {amount} par mois",
+    guideRule: "Repère simple (règle 50/30/20) : besoins {needs} · envies {wants} · épargne {save}",
+    guideNextLabel: "Prochaine étape :",
+    guideStart: "Commencer",
+    guideSkip: "Plus tard",
+    guideSkipped: "passée",
+    guideNeedPaydays: "Aie sous la main : ta dernière fiche de paie, ou le montant reçu sur ton compte.",
+    guideNeedBills: "Aie sous la main : ton relevé bancaire du dernier mois. Pas l'info ? Touche une pastille, on propose un montant moyen.",
+    guideNeedSubs: "Aie sous la main : ton relevé bancaire (cherche les prélèvements récurrents). Pas l'info ? Touche une pastille, on propose un montant moyen.",
+    guideNeedDebts: "Aie sous la main : l'appli de ta banque (solde restant). Le reste, Serein te le calcule et te conseille.",
+    guideNeedProjects: "Une idée du montant visé suffit. On te propose des projets types.",
+    guideNeedInvest: "Aie sous la main : la valeur actuelle de tes placements. Optionnel.",
+    quickAddLabel: "Ajout rapide (montants moyens, à ajuster) :",
+    debtPresetLabel: "Quel type de dette ? (on prérègle un taux moyen)",
+    debtToDetail: "Je connais mon contrat (dates, fréquence…) → mode détaillé",
+    debtBackSimple: "← Revenir au mode simple",
+    quickBalance: "Combien te reste-t-il à rembourser ?",
+    quickBalanceHint: "Dans l'appli de ta banque. Une estimation suffit, tu pourras corriger.",
+    quickRateAvg: "Taux moyen indicatif pour ce type de dette : remplace-le si tu connais le tien.",
+    quickRateUnknown: "Optionnel. Tu ne le connais pas ? Laisse vide.",
+    advisorTitle: "Notre conseil",
+    advisorPick: "Choisis une durée, on calcule la mensualité. On a présélectionné la plus raisonnable pour toi.",
+    advisorHaveMonthly: "On calcule la date de fin avec ta mensualité.",
+    advisorBest: "conseillé",
+    advisorKnowMonthly: "Tu connais déjà ta mensualité ? (optionnel)",
+    advisorMonthlyPlaceholder: "Laisse vide : on te propose un plan",
+    advisorResult: "Fin prévue : {date} ({duration}).",
+    advisorInterest: "Intérêts estimés : environ {interest}.",
+    advisorTooLow: "Ce montant couvre à peine les intérêts (environ {interest}/mois) : la dette ne baisserait presque pas. Vise un peu plus haut.",
+    advisorHeavy: "Ça représente {pct} % de ton revenu : si c'est trop serré, choisis une durée plus longue.",
+    projectPresetLabel: "Idées de projets :",
+    projectEmergencyHint: "Fonds d'urgence : environ 3 mois de dépenses, estimés à partir de ton revenu.",
+    inDuration: "Dans",
     resetAllData: "Réinitialiser toutes les données",
     noIncome: "Aucun revenu enregistré.",
   },
@@ -660,7 +835,7 @@ const TRANSLATIONS = {
     autreFirstName: "First name",
     autreRole: "Role or relation to you — optional",
     debtsTitle: "Your debts",
-    debtsHint: "Title, total amount, and how you're paying it off.",
+    debtsHint: "Tell us what you still owe: we recommend a duration and monthly payment.",
     fieldTitle: "Title",
     fieldDebtKind: "Debt type",
     debtKindTerm: "Fixed-term loan",
@@ -762,7 +937,7 @@ const TRANSLATIONS = {
     comingSoonTitle: "Coming to the real app",
     comingSoonText: "Planned for an upcoming update: Face ID or passcode lock on opening, and automatic reminders sent to your phone before each due date (bill, debt, subscription) — not just a passive display in the calendar.",
     privacyPolicy: "Privacy Policy",
-    privacyPolicyBody: "Here's where your data actually stands.\n\nWHAT WE COLLECT\nOnly what you enter yourself: first name, debts, projects, subscriptions, bills, income, investments, and your household composition if you fill it in — plus your email for sign-in.\n\nWHERE IT'S STORED\nYour data is hosted by Supabase, in a secure database, accessible only by you through your account. Sign-in happens via a link sent to your email, no password to remember.\n\nWHAT WE DON'T DO\nWe never sell or share your data for advertising purposes. No ads in the app. No hidden analytics tracking.\n\nYOUR RIGHTS RIGHT NOW\nYou can export all your data at any time (CSV, full backup) just above in these settings, sign out, or fully reset the app.\n\nWHAT'S NEXT\nA complete, legally compliant privacy policy will be published separately and will replace this summary.",
+    privacyPolicyBody: "Here's where your data actually stands.\n\nWHAT WE COLLECT\nOnly what you enter yourself: first name, debts, projects, subscriptions, bills, income, investments, and your household composition if you fill it in — plus your email for sign-in.\n\nWHERE IT'S STORED\nYour data is hosted by Supabase, in a secure database, accessible only by you through your account (and by the people you invite into your household, see below). Sign-in happens via a link sent to your email, no password to remember.\n\nWHAT WE DON'T DO\nWe never sell or share your data for advertising purposes. No ads in the app. No hidden analytics tracking.\n\nSHARED HOUSEHOLD\nIf you invite someone into your household, that person can access all of the household's data from their own account and sees your email address in the members list. You can remove them at any time, and they can leave whenever they want. Invitations use a single-use code valid for 7 days.\n\nYOUR RIGHTS RIGHT NOW\nYou can export all your data at any time (CSV, full backup) just above in these settings, sign out, or fully reset the app.\n\nWHAT'S NEXT\nA complete, legally compliant privacy policy will be published separately and will replace this summary.",
     privacyPolicyClose: "Close",
     whatsNewTitle: "What's new 🎉",
     whatsNewIntro: "Here's what changed since your last visit:",
@@ -903,6 +1078,123 @@ const TRANSLATIONS = {
     addAidantPerson: "Add a person you help",
     addPerson: "Add a person",
     editIncome: "Edit income",
+    hhTitle: "Shared access",
+    hhIntro: "Invite your partner to use Serein with their own account and email address: you both see and edit the same data, each from your own phone.",
+    hhInviteButton: "Invite someone",
+    hhJoinButton: "I have an invitation code",
+    hhYourCode: "Invitation code",
+    hhCodeHint: "Single use, valid until {date}. Send it to the person: they enter it in Serein (\"I have an invitation code\") or open the link.",
+    hhShare: "Share",
+    hhCopyCode: "Copy code",
+    hhCopied: "Copied!",
+    hhNewCode: "Generate a new code",
+    hhShareMessage: "Join my household on Serein: {link} (or enter code {code} in the app)",
+    hhYouBadge: "you",
+    hhOwnerBadge: "owner",
+    hhGuest: "Guest",
+    hhRemove: "Remove",
+    hhRemoveConfirm: "Remove {name} from the household?",
+    hhCancel: "Cancel",
+    hhLeave: "Leave household",
+    hhLeaveConfirm: "You'll get your previous personal space back. The household's data stays with {owner}: nothing is copied or deleted. Leave the household?",
+    hhMemberInfo: "You are using {owner}'s household data.",
+    hhSharedNote: "Data, theme, language and currency are shared by the whole household.",
+    hhMyName: "My first name (shown at the top of the screen)",
+    hhSave: "Save",
+    hhSaved: "Saved",
+    hhJoinTitle: "Join a household",
+    hhJoinBody: "Enter the invitation code you received from the person inviting you.",
+    hhJoinWarnData: "You already have your own data in Serein. By joining this household you will only see the household's data. Yours is set aside (nothing is deleted) and comes back if you leave the household.",
+    hhJoinConfirm: "Join household",
+    hhJoining: "Connecting…",
+    hhJoined: "You joined the household!",
+    hhLeft: "You left the household.",
+    hhNoLongerMember: "You're no longer part of this household.",
+    hhResetWarn: "Warning: this household is shared, the data will be erased for everyone.",
+    hhResetMember: "Only the person who created the household can reset everything. You can leave the household instead.",
+    hhSignOut: "Sign out",
+    hhErr_invalid_code: "Invalid or expired code. Check it or ask for a new one.",
+    hhErr_too_many_attempts: "Too many attempts. Try again in an hour.",
+    hhErr_already_member: "You already belong to a household.",
+    hhErr_has_members: "People are already using your household: remove them first to join another one.",
+    hhErr_own_code: "That's your own code: give it to the other person.",
+    hhErr_household_full: "This household is full (4 people maximum).",
+    hhErr_only_owner_can_invite: "Only the person who created the household can invite.",
+    hhErr_no_data_yet: "Finish your setup first, then invite.",
+    hhErr_not_found: "That person is no longer in the household.",
+    hhErr_generic: "Something went wrong. Check your connection and try again.",
+    syncLoadErrTitle: "Couldn't load your data",
+    syncLoadErrBody: "Your data is safe, nothing was changed. Check your connection and try again.",
+    syncRetry: "Retry",
+    payEditTitle: "Edit this paycheck",
+    payEditHint: "Does your pay vary? Change the amount of this paycheck only, or of all the following ones.",
+    payDateLabel: "Paycheck of {date}",
+    payUsualAmount: "Usual amount: {amount}",
+    payThisAmount: "Amount of this paycheck",
+    paySaveThis: "Save for this paycheck only",
+    paySaveAll: "Apply to all paychecks",
+    payReset: "Back to the usual amount",
+    payModified: "edited",
+    payTapHint: "Tap a paycheck to edit its amount.",
+    onbStart: "Let's go",
+    onbSeeDashboard: "See my dashboard",
+    onbSkipIncome: "No regular income / later → see my dashboard",
+    onbPaydayLead: "Last step: your net income. A rough figure is fine, you can fix it any time.",
+    prepTitle: "Before we start",
+    prepLead: "It takes 2 minutes. Today, only one piece of information is needed:",
+    prepNow: "Your net income",
+    prepNowHint: "What lands in your account (your latest payslip, or a rough figure). It doesn't need to be exact.",
+    prepLater: "Then, whenever you want",
+    prepLaterHint: "Nothing is mandatory: don't have the info handy? We suggest average amounts, and you can come back later.",
+    prepSubsBills: "Subscriptions and bills",
+    prepSubsBillsNeed: "Last month's bank statement, or your bills",
+    prepDebts: "Debts",
+    prepDebtsNeed: "Your bank app: how much is left to repay (and your monthly payment if you know it)",
+    prepProjects: "Savings projects",
+    prepProjectsNeed: "A rough idea of the target amount",
+    prepInvest: "Investments",
+    prepInvestNeed: "The current value of your holdings",
+    prepFooter: "Everything is saved automatically: you can close the app and come back whenever you want.",
+    aboutTitle: "Let's get acquainted",
+    aboutHint: "To personalize your space.",
+    guideTitle: "Complete your dashboard",
+    guideAllDone: "Dashboard complete 🎉",
+    guideProgress: "{n} step(s) done out of {total} — at your own pace",
+    guideHide: "Hide",
+    guideHideHint: "You can always add everything from the tabs and the + button.",
+    guideIncomeLine: "Your income: {amount} per month",
+    guideRule: "Simple benchmark (50/30/20 rule): needs {needs} · wants {wants} · savings {save}",
+    guideNextLabel: "Next step:",
+    guideStart: "Start",
+    guideSkip: "Later",
+    guideSkipped: "skipped",
+    guideNeedPaydays: "Have at hand: your latest payslip, or the amount received in your account.",
+    guideNeedBills: "Have at hand: last month's bank statement. Don't have it? Tap a chip, we suggest an average amount.",
+    guideNeedSubs: "Have at hand: your bank statement (look for recurring charges). Don't have it? Tap a chip, we suggest an average amount.",
+    guideNeedDebts: "Have at hand: your bank app (remaining balance). Serein works out the rest and advises you.",
+    guideNeedProjects: "A rough target amount is enough. We suggest typical projects.",
+    guideNeedInvest: "Have at hand: the current value of your holdings. Optional.",
+    quickAddLabel: "Quick add (average amounts, adjust them):",
+    debtPresetLabel: "What kind of debt? (we pre-set an average rate)",
+    debtToDetail: "I know my contract (dates, frequency…) → detailed mode",
+    debtBackSimple: "← Back to simple mode",
+    quickBalance: "How much is left to repay?",
+    quickBalanceHint: "Check your bank app. An estimate is fine, you can correct it.",
+    quickRateAvg: "Indicative average rate for this kind of debt: replace it if you know yours.",
+    quickRateUnknown: "Optional. Don't know it? Leave it empty.",
+    advisorTitle: "Our advice",
+    advisorPick: "Pick a duration and we work out the monthly payment. We pre-selected the most reasonable one for you.",
+    advisorHaveMonthly: "We work out the end date from your monthly payment.",
+    advisorBest: "advised",
+    advisorKnowMonthly: "Already know your monthly payment? (optional)",
+    advisorMonthlyPlaceholder: "Leave empty: we suggest a plan",
+    advisorResult: "Expected end: {date} ({duration}).",
+    advisorInterest: "Estimated interest: about {interest}.",
+    advisorTooLow: "This amount barely covers the interest (about {interest}/month): the debt would hardly go down. Aim a bit higher.",
+    advisorHeavy: "That is {pct}% of your income: if it's too tight, pick a longer duration.",
+    projectPresetLabel: "Project ideas:",
+    projectEmergencyHint: "Emergency fund: about 3 months of expenses, estimated from your income.",
+    inDuration: "In",
     resetAllData: "Reset all data",
     noIncome: "No income recorded yet.",
   },
@@ -911,6 +1203,130 @@ const TRANSLATIONS = {
 function t(lang, key) {
   return (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) || TRANSLATIONS.fr[key] || key;
 }
+
+// <SYNC-ENGINE-BEGIN>
+// ---------------------------------------------------------------------------
+// Synchronisation des données (foyer partagé + plusieurs appareils)
+//
+// Les données de l'appli sont UN gros objet enregistré dans une seule ligne. Si deux personnes
+// (ou deux appareils) modifient en même temps, une sauvegarde naïve écraserait celle de l'autre.
+// Ici : chaque ligne a un numéro de version ; on n'enregistre que si personne n'a modifié
+// entre-temps. Sinon on relit la version de l'autre et on FUSIONNE les deux jeux de changements
+// (fusion à 3 points : ce qu'on avait au départ, ce que j'ai changé, ce que l'autre a changé).
+// ---------------------------------------------------------------------------
+function syncIsPlain(x) {
+  return x !== null && typeof x === "object" && !Array.isArray(x);
+}
+function syncStable(x) {
+  if (Array.isArray(x)) return "[" + x.map(syncStable).join(",") + "]";
+  if (syncIsPlain(x)) {
+    return "{" + Object.keys(x).filter((k) => x[k] !== undefined).sort().map((k) => JSON.stringify(k) + ":" + syncStable(x[k])).join(",") + "}";
+  }
+  return JSON.stringify(x === undefined ? null : x);
+}
+function deepEqual(a, b) {
+  if (a === b) return true;
+  return syncStable(a) === syncStable(b);
+}
+function syncIsIdArray(x) {
+  return Array.isArray(x) && x.every((it) => syncIsPlain(it) && (typeof it.id === "string" || typeof it.id === "number"));
+}
+function syncIsObjArray(x) {
+  return Array.isArray(x) && x.every(syncIsPlain);
+}
+
+// Liste d'éléments avec identifiant (dettes, factures, dépenses…) : on fusionne élément par élément.
+function mergeIdArrays(base, local, remote) {
+  const mapOf = (arr) => new Map(arr.map((x) => [x.id, x]));
+  const B = mapOf(base), L = mapOf(local), R = mapOf(remote);
+  const order = [];
+  const seen = new Set();
+  for (const x of remote) { order.push(x.id); seen.add(x.id); }
+  for (const x of local) if (!seen.has(x.id)) { order.push(x.id); seen.add(x.id); }
+  const out = [];
+  for (const id of order) {
+    const b = B.get(id), l = L.get(id), r = R.get(id);
+    if (l && r) out.push(mergeStates(b, l, r));
+    // Ajouté chez moi uniquement, ou modifié chez moi alors que l'autre l'a supprimé → on garde.
+    // Supprimé par l'autre sans que je l'aie touché → on le supprime aussi.
+    else if (l && !r) { if (!b || !deepEqual(l, b)) out.push(l); }
+    else if (r && !l) { if (!b || !deepEqual(r, b)) out.push(r); }
+  }
+  return out;
+}
+
+// Liste sans identifiant (ex. historique de points {date, valeur}) : fusion comme un ensemble.
+function mergeObjectSets(base, local, remote) {
+  const keyOf = syncStable;
+  const B = new Set(base.map(keyOf));
+  const L = new Map(local.map((x) => [keyOf(x), x]));
+  const R = new Map(remote.map((x) => [keyOf(x), x]));
+  const out = [];
+  for (const [k, x] of R) if (!(B.has(k) && !L.has(k))) out.push(x);
+  for (const [k, x] of L) if (!R.has(k) && !B.has(k)) out.push(x);
+  if (out.every((x) => typeof x.date === "string")) out.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+  return out;
+}
+
+function mergeStates(base, local, remote) {
+  if (deepEqual(local, remote)) return local;
+  if (deepEqual(local, base)) return remote;   // je n'ai rien changé ici → je prends la version de l'autre
+  if (deepEqual(remote, base)) return local;   // l'autre n'a rien changé ici → je garde la mienne
+  if (local === undefined) return remote;
+  if (remote === undefined) return local;
+  if (Array.isArray(local) && Array.isArray(remote)) {
+    const b = Array.isArray(base) ? base : [];
+    if (syncIsIdArray(local) && syncIsIdArray(remote) && syncIsIdArray(b)) return mergeIdArrays(b, local, remote);
+    if (syncIsObjArray(local) && syncIsObjArray(remote) && syncIsObjArray(b)) return mergeObjectSets(b, local, remote);
+    return local; // liste ordonnée modifiée des deux côtés : la mienne l'emporte
+  }
+  if (syncIsPlain(local) && syncIsPlain(remote)) {
+    const b = syncIsPlain(base) ? base : {};
+    const out = {};
+    for (const k of new Set([...Object.keys(b), ...Object.keys(local), ...Object.keys(remote)])) {
+      const v = mergeStates(b[k], local[k], remote[k]);
+      if (v !== undefined) out[k] = v;
+    }
+    return out;
+  }
+  return local; // même valeur simple modifiée des deux côtés : la mienne l'emporte
+}
+
+// Enregistre `local` dans la ligne du propriétaire des données, sans jamais écraser les
+// changements de quelqu'un d'autre. `base` = { data, version } tel qu'on l'a connu pour la
+// dernière fois (version null = la ligne n'existe pas encore).
+async function pushState(supabase, ownerId, base, local) {
+  let cur = { data: base.data, version: base.version };
+  let candidate = local;
+  let merged = false;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    if (cur.version == null) {
+      const { data, error } = await supabase.from("app_state").insert({ user_id: ownerId, data: candidate }).select("version");
+      if (!error && data && data.length) return { ok: true, data: candidate, version: data[0].version, merged };
+      // 23505 = la ligne existe déjà : on pensait être le premier à écrire, c'est faux. On ne
+      // fusionne surtout pas (on risquerait d'écraser de vraies données) : l'appli recharge.
+      if (error) return error.code === "23505" ? { ok: false, exists: true, error } : { ok: false, error };
+    } else {
+      const { data, error } = await supabase
+        .from("app_state")
+        .update({ data: candidate })
+        .eq("user_id", ownerId)
+        .eq("version", cur.version)
+        .select("version");
+      if (error) return { ok: false, error };
+      if (data && data.length) return { ok: true, data: candidate, version: data[0].version, merged };
+    }
+    // Quelqu'un a enregistré entre-temps : on relit sa version, on fusionne, on réessaie.
+    const { data: remote, error: rerr } = await supabase.from("app_state").select("data, version").eq("user_id", ownerId).maybeSingle();
+    if (rerr) return { ok: false, error: rerr };
+    if (!remote) { cur = { data: null, version: null }; continue; }
+    candidate = mergeStates(cur.data, candidate, remote.data);
+    cur = { data: remote.data, version: remote.version };
+    merged = true;
+  }
+  return { ok: false, error: new Error("conflict_retries_exhausted") };
+}
+// <SYNC-ENGINE-END>
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
@@ -1065,7 +1481,12 @@ function setMoneyLocale(lang) {
 
 function money(amount, currency) {
   try {
-    return (Number(amount) || 0).toLocaleString(CURRENT_MONEY_LOCALE, { style: "currency", currency: currency || "EUR", maximumFractionDigits: 0 });
+    // Montants entiers → pas de décimales ("12 $") ; dès qu'il y a des centimes → toujours 2
+    // chiffres ("12,50 $"), pour ne jamais arrondir silencieusement ce que l'utilisateur a saisi.
+    const n = Number(amount) || 0;
+    const hasCents = Math.abs(Math.round(n * 100) % 100) > 0;
+    const digits = hasCents ? 2 : 0;
+    return n.toLocaleString(CURRENT_MONEY_LOCALE, { style: "currency", currency: currency || "EUR", minimumFractionDigits: digits, maximumFractionDigits: digits });
   } catch {
     return `${Number(amount) || 0} ${currency || ""}`;
   }
@@ -1612,8 +2033,126 @@ function CelebrationOverlay({ theme, icon, title, message, shareData, onClose, l
   );
 }
 
-function ManageListSheet({ sheetTitle, theme, state, setState, field, StepComp, stepExtraProps, renderRow, onClose }) {
-  const [showForm, setShowForm] = useState(false);
+// ---------------------------------------------------------------------------
+// Aides à la saisie : valeurs moyennes proposées, plan de remboursement conseillé
+// ---------------------------------------------------------------------------
+
+// Devise par défaut d'après le fuseau horaire de l'appareil (modifiable à l'étape suivante)
+function guessCurrency() {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+    if (/^America\/(Toronto|Montreal|Vancouver|Edmonton|Winnipeg|Halifax|Regina|St_Johns|Moncton|Glace_Bay|Iqaluit|Whitehorse)/.test(tz)) return "CAD";
+    if (tz === "Europe/London") return "GBP";
+    if (tz === "Europe/Zurich") return "CHF";
+    if (tz === "Asia/Tokyo") return "JPY";
+    if (/^America\//.test(tz)) return "USD";
+    if (/^Europe\/|^Africa\/(Casablanca|Tunis|Algiers)/.test(tz)) return "EUR";
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+// Montants moyens indicatifs (mensuels) — l'utilisateur les ajuste avec ses vrais montants
+const CURRENCY_SCALE = { JPY: 150 };
+function scaleAmount(amount, currency) {
+  if (amount == null) return "";
+  const v = amount * (CURRENCY_SCALE[currency] || 1);
+  return String(Math.round(v));
+}
+const SUBSCRIPTION_SUGGESTIONS = [
+  { fr: "Netflix", en: "Netflix", amount: 15 },
+  { fr: "Spotify", en: "Spotify", amount: 11 },
+  { fr: "Disney+", en: "Disney+", amount: 10 },
+  { fr: "YouTube Premium", en: "YouTube Premium", amount: 14 },
+  { fr: "Salle de sport", en: "Gym", amount: 35 },
+  { fr: "Stockage cloud", en: "Cloud storage", amount: 3 },
+];
+const BILL_SUGGESTIONS = [
+  { fr: "Loyer", en: "Rent", amount: null },
+  { fr: "Électricité", en: "Electricity", amount: 80 },
+  { fr: "Internet", en: "Internet", amount: 60 },
+  { fr: "Forfait mobile", en: "Mobile plan", amount: 50 },
+  { fr: "Assurance habitation", en: "Home insurance", amount: 25 },
+  { fr: "Assurance auto", en: "Car insurance", amount: 110 },
+  { fr: "Transport en commun", en: "Public transport", amount: 70 },
+];
+// Types de dette courants avec un taux moyen indicatif (à remplacer par le vrai taux si connu)
+const DEBT_PRESETS = [
+  { id: "card", fr: "Carte de crédit", en: "Credit card", icon: "💳", kind: "renouvelable", rate: 20 },
+  { id: "auto", fr: "Prêt auto", en: "Car loan", icon: "🚗", kind: "terme", rate: 7 },
+  { id: "student", fr: "Prêt étudiant", en: "Student loan", icon: "🎓", kind: "terme", rate: 4.5 },
+  { id: "home", fr: "Prêt immobilier", en: "Mortgage", icon: "🏠", kind: "terme", rate: 4.5 },
+  { id: "personal", fr: "Prêt personnel", en: "Personal loan", icon: "💰", kind: "terme", rate: 9 },
+  { id: "relative", fr: "Prêt d'un proche", en: "Loan from a relative", icon: "🧾", kind: "terme", rate: 0 },
+];
+
+// Nombre de mois pour rembourser `bal` à `pay` par mois (null si le versement ne couvre pas les intérêts)
+function monthsToPayOff(bal, annualRatePct, pay) {
+  if (!(bal > 0) || !(pay > 0)) return null;
+  const r = (annualRatePct || 0) / 100 / 12;
+  if (r === 0) return Math.min(600, Math.ceil(bal / pay));
+  if (pay <= bal * r) return null;
+  const n = Math.ceil(-Math.log(1 - (r * bal) / pay) / Math.log(1 + r));
+  return Math.min(600, Math.max(1, n));
+}
+// Propositions de durée selon l'ampleur de la dette + durée conseillée (mensualité raisonnable
+// par rapport au revenu si on le connaît, sinon une durée « moyenne »).
+function debtPlanOptions(bal, annualRatePct, monthlyIncome) {
+  const horizons = bal < 1500 ? [3, 6, 12, 24] : bal < 10000 ? [12, 24, 36, 60] : [24, 48, 84, 120];
+  const options = horizons.map((months) => {
+    const pay = amortizedInstallment(bal, annualRatePct, months, "mensuel");
+    return { months, pay, interest: Math.max(0, pay * months - bal) };
+  });
+  let recommended = options[1];
+  if (monthlyIncome > 0) {
+    const ok = options.find((o) => o.pay <= monthlyIncome * 0.15);
+    recommended = ok || options[options.length - 1];
+  }
+  return { options, recommended };
+}
+function monthYearLabel(monthsFromNow, lang) {
+  const d = new Date();
+  d.setMonth(d.getMonth() + monthsFromNow);
+  return d.toLocaleDateString(lang === "en" ? "en-US" : "fr-FR", { month: "long", year: "numeric" });
+}
+function durationLabel(months, lang) {
+  if (months < 12) return `${months} ${lang === "en" ? "months" : "mois"}`;
+  const y = Math.floor(months / 12), m = months % 12;
+  const yl = lang === "en" ? (y > 1 ? "years" : "year") : (y > 1 ? "ans" : "an");
+  return m ? `${y} ${yl} ${m} ${lang === "en" ? "mo" : "mois"}` : `${y} ${yl}`;
+}
+// Revenu mensuel (devise principale) à partir des paies saisies
+function monthlyIncomeOf(state) {
+  return state.paydays.reduce((a, p) => a + toMainCurrency(monthlyEquivalent(p.amount, p.frequency), p.currency || state.currency, state), 0);
+}
+
+// Pastilles d'ajout rapide (valeurs moyennes) pour les abonnements et factures
+function QuickChips({ theme, items, lang, onPick, label }) {
+  if (!items.length) return null;
+  return (
+    <div className="mb-4">
+      <p className="text-xs text-slate-500 mb-1.5">{label}</p>
+      <div className="flex flex-wrap gap-1.5">
+        {items.map((it, i) => (
+          <button
+            type="button"
+            key={i}
+            onClick={() => onPick(it)}
+            className="text-xs rounded-full border px-2.5 py-1.5"
+            style={{ borderColor: theme.primary, color: theme.primary, backgroundColor: "white" }}
+          >
+            + {it.label}{it.amount != null ? <span className="text-slate-400"> · ~{it.amountText}</span> : null}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
+function ManageListSheet({ sheetTitle, theme, state, setState, field, StepComp, stepExtraProps, renderRow, onClose, startWithForm }) {
+  const [showForm, setShowForm] = useState(!!startWithForm);
   const [editing, setEditing] = useState(null);
   const [duplicating, setDuplicating] = useState(null);
   const [search, setSearch] = useState("");
@@ -1743,19 +2282,22 @@ function SplashScreen() {
 // ---------------------------------------------------------------------------
 // Onboarding
 // ---------------------------------------------------------------------------
-function Onboarding({ state, setState, onFinish }) {
+function Onboarding({ state, setState, onFinish, onHaveInvite }) {
   const [step, setStep] = useState(0);
   const theme = themeFor(state);
   const lang = state.language || "fr";
 
+  // Parcours volontairement court : seule l'info « revenu » est nécessaire pour voir un tableau de
+  // bord. Tout le reste (dettes, factures, abonnements, projets, placements) se fait ensuite, à
+  // son rythme, depuis le guide affiché sur l'accueil.
   const steps = useMemo(() => {
-    const s = ["welcome", "benefit1", "benefit2", "benefit3", "language", "prenom", "theme", "situation"];
+    const s = ["welcome", "prepare", "about", "situation"];
     if (state.profileType === "autre") s.push("autre-people");
     s.push("currency");
     if (state.profileType === "couple") s.push("household");
     if (state.profileType === "parent") s.push("parents", "children");
     if (state.profileType === "aidant") s.push("aidant");
-    s.push("debts", "projects", "subscriptions", "bills", "paydays", "investments", "recap");
+    s.push("paydays");
     return s;
   }, [state.profileType]);
 
@@ -1763,28 +2305,24 @@ function Onboarding({ state, setState, onFinish }) {
     if (step > steps.length - 1) setStep(steps.length - 1);
   }, [steps, step]);
 
+  // Devise proposée d'après la région de l'appareil (modifiable à l'étape « devise »)
+  useEffect(() => {
+    if (state.currencyAuto || state.profileType) return;
+    const guess = guessCurrency();
+    setState((s) => ({ ...s, currencyAuto: true, currency: guess || s.currency }));
+  }, []);
+
   const total = steps.length;
   const current = steps[step];
 
-  // Refs vers les étapes "ajout dans une liste" : permet d'enregistrer automatiquement
-  // ce qui est en cours de saisie quand on clique sur Continuer / Retour, sans avoir
-  // à cliquer sur "Ajouter" en plus.
-  const debtsRef = useRef(null);
-  const projectsRef = useRef(null);
-  const subsRef = useRef(null);
-  const billsRef = useRef(null);
+  // Refs vers les étapes « ajout dans une liste » : permet d'enregistrer automatiquement
+  // ce qui est en cours de saisie quand on clique sur Continuer / Retour.
   const paydaysRef = useRef(null);
-  const investRef = useRef(null);
   const childrenRef = useRef(null);
   const aidantRef = useRef(null);
   const autrePeopleRef = useRef(null);
   const stepRefs = {
-    debts: debtsRef,
-    projects: projectsRef,
-    subscriptions: subsRef,
-    bills: billsRef,
     paydays: paydaysRef,
-    investments: investRef,
     children: childrenRef,
     aidant: aidantRef,
     "autre-people": autrePeopleRef,
@@ -1795,28 +2333,18 @@ function Onboarding({ state, setState, onFinish }) {
     if (r && r.current && r.current.commit) r.current.commit();
   };
 
-  const [returnToRecap, setReturnToRecap] = useState(false);
-
   const next = () => {
     commitCurrentStep();
-    if (returnToRecap) {
-      setReturnToRecap(false);
-      setStep(steps.indexOf("recap"));
-    } else {
-      setStep((s) => Math.min(s + 1, total - 1));
-    }
+    setStep((s) => Math.min(s + 1, total - 1));
   };
   const back = () => {
     commitCurrentStep();
     setStep((s) => Math.max(s - 1, 0));
   };
-
-  const editFromRecap = (stepId) => {
-    const idx = steps.indexOf(stepId);
-    if (idx >= 0) {
-      setReturnToRecap(true);
-      setStep(idx);
-    }
+  const finish = () => {
+    commitCurrentStep();
+    // laisse le temps à l'état d'enregistrer la saisie en cours avant de passer au tableau de bord
+    setTimeout(onFinish, 0);
   };
 
   const addTo = (key, item) =>
@@ -1824,7 +2352,23 @@ function Onboarding({ state, setState, onFinish }) {
   const removeFrom = (key, id) =>
     setState((s) => ({ ...s, [key]: s[key].filter((x) => x.id !== id) }));
 
+  // Modification d'un élément déjà ajouté (au lieu de devoir le supprimer puis tout ressaisir)
+  const [editingId, setEditingId] = useState(null);
+  useEffect(() => { setEditingId(null); }, [step]);
+  const startEdit = (id) => { setEditingId(id); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const saveIn = (key) => (id, fields) => {
+    setState((s) => ({ ...s, [key]: s[key].map((x) => (x.id === id ? { ...x, ...fields } : x)) }));
+    setEditingId(null);
+  };
+  const editProps = (key) => ({
+    editItem: editingId ? state[key].find((x) => x.id === editingId) : undefined,
+    onSave: saveIn(key),
+    onEditItem: startEdit,
+    editingId,
+  });
+
   const canContinue = current === "situation" ? !!state.profileType : true;
+  const isLast = step === total - 1;
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: theme.soft }}>
@@ -1837,17 +2381,31 @@ function Onboarding({ state, setState, onFinish }) {
       </div>
       <div className="flex-1 flex items-center justify-center p-5">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6">
-          {current !== "recap" && (
+          {current !== "welcome" && (
             <p className="text-xs text-slate-400 mb-3">{t(lang, "stepOf").replace("{n}", step + 1).replace("{total}", total)}</p>
           )}
-          {current === "welcome" && <WelcomeStep theme={theme} lang={lang} />}
-          {current === "benefit1" && <BenefitStep theme={theme} icon={CalendarIcon} title={t(lang, "benefit1Title")} text={t(lang, "benefit1Text")} />}
-          {current === "benefit2" && <BenefitStep theme={theme} icon={Target} title={t(lang, "benefit2Title")} text={t(lang, "benefit2Text")} />}
-          {current === "benefit3" && <BenefitStep theme={theme} icon={Users} title={t(lang, "benefit3Title")} text={t(lang, "benefit3Text")} />}
-          {current === "language" && (
-            <LanguageStep theme={theme} value={lang} onPick={(code) => setState((s) => ({ ...s, language: code }))} />
+          {editingId && (
+            <div className="mb-3 flex items-center justify-between text-xs rounded-lg px-3 py-2" style={{ backgroundColor: "#FEF9C3", color: "#854D0E" }}>
+              <span className="flex items-center gap-1.5"><Pencil size={13} /> Modification en cours</span>
+              <button type="button" onClick={() => setEditingId(null)} className="underline font-medium">Annuler</button>
+            </div>
           )}
-          {current === "prenom" && <PrenomStep value={state.userName} onChange={(v) => setState((s) => ({ ...s, userName: v }))} lang={lang} />}
+          {current === "welcome" && <WelcomeStep theme={theme} lang={lang} />}
+          {current === "welcome" && onHaveInvite && (
+            <button type="button" onClick={onHaveInvite} className="mt-5 w-full text-sm font-medium underline" style={{ color: theme.primary }}>
+              {t(lang, "hhJoinButton")}
+            </button>
+          )}
+          {current === "prepare" && <PrepareStep theme={theme} lang={lang} />}
+          {current === "about" && (
+            <AboutStep
+              theme={theme}
+              lang={lang}
+              name={state.userName}
+              onName={(v) => setState((s) => ({ ...s, userName: v }))}
+              onLang={(code) => setState((s) => ({ ...s, language: code }))}
+            />
+          )}
           {current === "situation" && (
             <SituationStep
               theme={theme}
@@ -1872,6 +2430,8 @@ function Onboarding({ state, setState, onFinish }) {
           )}
           {current === "autre-people" && (
             <AutreStep
+              key={`autre-${editingId || "new"}`}
+              {...editProps("people")}
               ref={autrePeopleRef}
               theme={theme}
               state={state}
@@ -1889,6 +2449,7 @@ function Onboarding({ state, setState, onFinish }) {
               state={state}
               people={state.people}
               onChange={(people) => setState((s) => ({ ...s, people }))}
+              lang={lang}
             />
           )}
           {current === "parents" && (
@@ -1897,10 +2458,13 @@ function Onboarding({ state, setState, onFinish }) {
               state={state}
               people={state.people}
               onChange={(people) => setState((s) => ({ ...s, people }))}
+              lang={lang}
             />
           )}
           {current === "children" && (
             <ChildrenStep
+              key={`children-${editingId || "new"}`}
+              {...editProps("children")}
               ref={childrenRef}
               theme={theme}
               state={state}
@@ -1911,6 +2475,8 @@ function Onboarding({ state, setState, onFinish }) {
           )}
           {current === "aidant" && (
             <AidantStep
+              key={`aidant-${editingId || "new"}`}
+              {...editProps("people")}
               ref={aidantRef}
               theme={theme}
               state={state}
@@ -1919,54 +2485,14 @@ function Onboarding({ state, setState, onFinish }) {
               onRemove={(id) => removeFrom("people", id)}
             />
           )}
-          {current === "theme" && (
-            <ThemeStep
-              themeId={state.themeId}
-              onPick={(id) => setState((s) => ({ ...s, themeId: id }))}
-              customColor={state.customColor}
-              customSecondary={state.customSecondary}
-              customAccent={state.customAccent}
-              onChangeCustom={(field, value) => setState((s) => ({ ...s, [field]: value }))}
-              lang={lang}
-            />
-          )}
-          {current === "debts" && (
-            <DebtsStep ref={debtsRef} theme={theme} state={state} items={state.debts} onAdd={(i) => addTo("debts", i)} onRemove={(id) => removeFrom("debts", id)} />
-          )}
-          {current === "projects" && (
-            <ProjectsStep ref={projectsRef} theme={theme} state={state} items={state.projects} onAdd={(i) => addTo("projects", i)} onRemove={(id) => removeFrom("projects", id)} />
-          )}
-          {current === "subscriptions" && (
-            <RecurringStep
-              ref={subsRef}
-              theme={theme}
-              state={state}
-              title={t(lang, "subscriptionsTitle")}
-              hint={t(lang, "subscriptionsHint")}
-              items={state.subscriptions}
-              onAdd={(i) => addTo("subscriptions", i)}
-              onRemove={(id) => removeFrom("subscriptions", id)}
-            />
-          )}
-          {current === "bills" && (
-            <RecurringStep
-              ref={billsRef}
-              theme={theme}
-              state={state}
-              title={t(lang, "billsTitle")}
-              hint={t(lang, "billsHint")}
-              items={state.bills}
-              onAdd={(i) => addTo("bills", i)}
-              onRemove={(id) => removeFrom("bills", id)}
-            />
-          )}
           {current === "paydays" && (
-            <PaydaysStep ref={paydaysRef} theme={theme} state={state} items={state.paydays} onAdd={(i) => addTo("paydays", i)} onRemove={(id) => removeFrom("paydays", id)} />
+            <>
+              <p className="text-xs rounded-lg px-3 py-2 mb-4" style={{ backgroundColor: theme.soft, color: theme.text }}>
+                {t(lang, "onbPaydayLead")}
+              </p>
+              <PaydaysStep key={`paydays-${editingId || "new"}`} {...editProps("paydays")} ref={paydaysRef} theme={theme} state={state} items={state.paydays} onAdd={(i) => addTo("paydays", i)} onRemove={(id) => removeFrom("paydays", id)} />
+            </>
           )}
-          {current === "investments" && (
-            <InvestmentsStep ref={investRef} theme={theme} state={state} items={state.investments} onAdd={(i) => addTo("investments", i)} onRemove={(id) => removeFrom("investments", id)} />
-          )}
-          {current === "recap" && <RecapStep theme={theme} state={state} onEdit={editFromRecap} />}
 
           <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-100">
             {step > 0 ? (
@@ -1974,41 +2500,29 @@ function Onboarding({ state, setState, onFinish }) {
                 <ArrowLeft size={16} /> {t(lang, "back")}
               </button>
             ) : <span />}
-            {step < total - 1 ? (
+            {!isLast ? (
               <button
                 onClick={next}
                 disabled={!canContinue}
                 className="flex items-center gap-1 text-sm font-medium text-white px-4 py-2 rounded-lg disabled:opacity-40"
                 style={{ backgroundColor: theme.primary }}
               >
-                {returnToRecap ? t(lang, "backToRecap") : t(lang, "continueBtn")} <ArrowRight size={16} />
+                {current === "welcome" ? t(lang, "onbStart") : t(lang, "continueBtn")} <ArrowRight size={16} />
               </button>
             ) : (
               <button
-                onClick={onFinish}
+                onClick={finish}
                 className="flex items-center gap-1 text-sm font-medium text-white px-4 py-2 rounded-lg"
                 style={{ backgroundColor: theme.accent }}
               >
-                <Check size={16} /> {t(lang, "letsGo")}
+                <Check size={16} /> {t(lang, "onbSeeDashboard")}
               </button>
             )}
           </div>
 
-          {["benefit1", "benefit2", "benefit3"].includes(current) && (
-            <button
-              onClick={() => setStep(steps.indexOf("language"))}
-              className="w-full text-center text-xs text-slate-400 mt-3 underline"
-            >
-              {t(lang, "skipBenefits")}
-            </button>
-          )}
-
-          {!returnToRecap && step > steps.indexOf("situation") && current !== "recap" && (
-            <button
-              onClick={() => { commitCurrentStep(); setReturnToRecap(false); setStep(steps.indexOf("recap")); }}
-              className="w-full text-center text-xs text-slate-400 mt-3 underline"
-            >
-              {t(lang, "skipRest")}
+          {current === "paydays" && (
+            <button onClick={finish} className="w-full text-center text-xs text-slate-400 mt-3 underline">
+              {t(lang, "onbSkipIncome")}
             </button>
           )}
         </div>
@@ -2018,13 +2532,112 @@ function Onboarding({ state, setState, onFinish }) {
 }
 
 function WelcomeStep({ theme, lang }) {
+  const points = [
+    { icon: CalendarIcon, text: t(lang, "benefit1Title") },
+    { icon: Target, text: t(lang, "benefit2Title") },
+    { icon: Users, text: t(lang, "benefit3Title") },
+  ];
   return (
     <div>
       <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: theme.soft }}>
         <Wallet color={theme.primary} size={24} />
       </div>
       <h1 className="text-xl font-semibold mb-2" style={{ color: theme.text }}>{t(lang, "welcomeTitle")}</h1>
-      <p className="text-sm text-slate-500 leading-relaxed">{t(lang, "welcomeBody")}</p>
+      <p className="text-sm text-slate-500 leading-relaxed mb-4">{t(lang, "welcomeBody")}</p>
+      <ul className="space-y-2.5">
+        {points.map((p, i) => {
+          const Icon = p.icon;
+          return (
+            <li key={i} className="flex items-center gap-3 text-sm">
+              <span className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: theme.soft }}>
+                <Icon size={15} color={theme.primary} />
+              </span>
+              <span style={{ color: theme.text }}>{p.text}</span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+// Écran « ce qu'il te faut » : dit clairement, avant de commencer, de quoi on aura besoin — et
+// surtout que presque rien n'est nécessaire tout de suite.
+function PrepareStep({ theme, lang }) {
+  const later = [
+    { icon: ReceiptText, title: t(lang, "prepSubsBills"), need: t(lang, "prepSubsBillsNeed") },
+    { icon: CreditCard, title: t(lang, "prepDebts"), need: t(lang, "prepDebtsNeed") },
+    { icon: Target, title: t(lang, "prepProjects"), need: t(lang, "prepProjectsNeed") },
+    { icon: TrendingUp, title: t(lang, "prepInvest"), need: t(lang, "prepInvestNeed") },
+  ];
+  return (
+    <div>
+      <h2 className="text-lg font-semibold mb-1">{t(lang, "prepTitle")}</h2>
+      <p className="text-sm text-slate-500 mb-4">{t(lang, "prepLead")}</p>
+
+      <div className="rounded-xl p-3 mb-4 flex items-start gap-3" style={{ backgroundColor: theme.soft }}>
+        <span className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-white">
+          <Wallet size={15} color={theme.primary} />
+        </span>
+        <span>
+          <span className="block text-sm font-medium" style={{ color: theme.text }}>{t(lang, "prepNow")}</span>
+          <span className="block text-xs text-slate-500">{t(lang, "prepNowHint")}</span>
+        </span>
+      </div>
+
+      <p className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-1">{t(lang, "prepLater")}</p>
+      <p className="text-xs text-slate-500 mb-2">{t(lang, "prepLaterHint")}</p>
+      <ul className="space-y-2 mb-4">
+        {later.map((l, i) => {
+          const Icon = l.icon;
+          return (
+            <li key={i} className="flex items-start gap-3 bg-slate-50 rounded-lg px-3 py-2">
+              <Icon size={15} className="mt-0.5 shrink-0 text-slate-400" />
+              <span>
+                <span className="block text-sm font-medium text-slate-700">{l.title}</span>
+                <span className="block text-xs text-slate-500">{l.need}</span>
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+      <p className="text-xs text-slate-400 flex items-start gap-1.5">
+        <Check size={13} className="mt-0.5 shrink-0" style={{ color: "#16A34A" }} /> {t(lang, "prepFooter")}
+      </p>
+    </div>
+  );
+}
+
+function AboutStep({ theme, lang, name, onName, onLang }) {
+  return (
+    <div>
+      <h2 className="text-lg font-semibold mb-1">{t(lang, "aboutTitle")}</h2>
+      <p className="text-sm text-slate-500 mb-4">{t(lang, "aboutHint")}</p>
+      <Field label={t(lang, "prenomLabel")}>
+        <input className={inputCls} value={name} onChange={(e) => onName(e.target.value)} placeholder="Ex : Léa" autoFocus />
+      </Field>
+      <Field label={t(lang, "languageTitle")}>
+        <div className="grid grid-cols-2 gap-2">
+          {LANGUAGES.map((l) => {
+            const active = lang === l.code;
+            return (
+              <button
+                type="button"
+                key={l.code}
+                onClick={() => onLang(l.code)}
+                className="rounded-lg p-2.5 text-center border-2 text-sm font-medium"
+                style={{
+                  borderColor: active ? theme.primary : "transparent",
+                  backgroundColor: active ? theme.soft : "#F8FAFC",
+                  color: active ? theme.text : "#334155",
+                }}
+              >
+                {l.label}
+              </button>
+            );
+          })}
+        </div>
+      </Field>
     </div>
   );
 }
@@ -2186,18 +2799,25 @@ function ParentsStep({ theme, state, people, onChange, hideHeading, lang }) {
   );
 }
 
-const ChildrenStep = forwardRef(function ChildrenStep({ theme, state, items, onAdd, onRemove }, ref) {
+const ChildrenStep = forwardRef(function ChildrenStep({ theme, state, items, onAdd, onSave, onRemove, editItem, onEditItem, editingId }, ref) {
   const lang = state.language || "fr";
-  const [f, setF] = useState({ name: "", age: "", hasAccount: false, accountTitle: "REEE", balance: "" });
+  const isEdit = !!editItem;
+  const [f, setF] = useState(() => editItem
+    ? { name: editItem.name, age: editItem.age != null ? String(editItem.age) : "", hasAccount: !!editItem.account, accountTitle: editItem.account?.title || "REEE", balance: editItem.account ? String(editItem.account.balance) : "" }
+    : { name: "", age: "", hasAccount: false, accountTitle: "REEE", balance: "" });
   const canSubmit = f.name;
   const submit = () => {
-    onAdd({
-      name: f.name,
-      age: f.age ? Number(f.age) : null,
-      account: f.hasAccount
-        ? { title: f.accountTitle || "REEE", balance: Number(f.balance) || 0, history: [{ date: getToday(), value: Number(f.balance) || 0 }] }
-        : null,
-    });
+    const bal = Number(f.balance) || 0;
+    const prev = editItem?.account;
+    // Si le solde change, on ajoute un point à l'historique (sans effacer l'ancien)
+    const account = f.hasAccount
+      ? isEdit && prev
+        ? { ...prev, title: f.accountTitle || "REEE", balance: bal, history: bal !== prev.balance ? [...(prev.history || []), { date: getToday(), value: bal }] : prev.history }
+        : { title: f.accountTitle || "REEE", balance: bal, history: [{ date: getToday(), value: bal }] }
+      : null;
+    const item = { name: f.name, age: f.age ? Number(f.age) : null, account };
+    if (isEdit) { onSave(editItem.id, item); return; }
+    onAdd(item);
     setF({ name: "", age: "", hasAccount: false, accountTitle: "REEE", balance: "" });
   };
   useImperativeHandle(ref, () => ({ commit: () => { if (canSubmit) submit(); } }));
@@ -2209,7 +2829,7 @@ const ChildrenStep = forwardRef(function ChildrenStep({ theme, state, items, onA
         theme={theme}
         canSubmit={canSubmit}
         onSubmit={submit}
-        buttonLabel={t(lang, "childrenAddBtn")}
+        buttonLabel={isEdit ? t(lang, "saveChanges") : t(lang, "childrenAddBtn")}
       >
         <Field label={t(lang, "childFirstName")}>
           <input className={inputCls} value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
@@ -2227,12 +2847,12 @@ const ChildrenStep = forwardRef(function ChildrenStep({ theme, state, items, onA
               <input className={inputCls} value={f.accountTitle} onChange={(e) => setF({ ...f, accountTitle: e.target.value })} />
             </Field>
             <Field label={`${t(lang, "childAccountBalance")} (${state.currency})`}>
-              <input type="number" className={inputCls} value={f.balance} onChange={(e) => setF({ ...f, balance: e.target.value })} />
+              <input type="number" step="any" inputMode="decimal" className={inputCls} value={f.balance} onChange={(e) => setF({ ...f, balance: e.target.value })} />
             </Field>
           </>
         )}
       </StepShell>
-      <ListPreview items={items} onRemove={onRemove} render={(c) => `${c.name}${c.age ? ` (${c.age})` : ""}${c.account ? ` — ${c.account.title} : ${money(c.account.balance, state.currency)}` : ""}`} />
+      <ListPreview items={items} onRemove={onRemove} onEdit={onEditItem} editingId={editingId} render={(c) => `${c.name}${c.age ? ` (${c.age})` : ""}${c.account ? ` — ${c.account.title} : ${money(c.account.balance, state.currency)}` : ""}`} />
     </div>
   );
 });
@@ -2320,12 +2940,15 @@ function IconPicker({ theme, value, onChange, options, lang }) {
   );
 }
 
-const AidantStep = forwardRef(function AidantStep({ theme, state, items, onAdd, onRemove }, ref) {
+const AidantStep = forwardRef(function AidantStep({ theme, state, items, onAdd, onSave, onRemove, editItem, onEditItem, editingId }, ref) {
   const lang = state.language || "fr";
-  const [f, setF] = useState({ label: "", relation: "Parent" });
+  const isEdit = !!editItem;
+  const [f, setF] = useState(() => editItem ? { label: editItem.label, relation: editItem.relation } : { label: "", relation: "Parent" });
   const canSubmit = f.label;
   const submit = () => {
-    onAdd({ label: f.label, relation: f.relation });
+    const item = { label: f.label, relation: f.relation };
+    if (isEdit) { onSave(editItem.id, item); return; }
+    onAdd(item);
     setF({ label: "", relation: "Parent" });
   };
   useImperativeHandle(ref, () => ({ commit: () => { if (canSubmit) submit(); } }));
@@ -2337,7 +2960,7 @@ const AidantStep = forwardRef(function AidantStep({ theme, state, items, onAdd, 
         theme={theme}
         canSubmit={canSubmit}
         onSubmit={submit}
-        buttonLabel={t(lang, "aidantAddBtn")}
+        buttonLabel={isEdit ? t(lang, "saveChanges") : t(lang, "aidantAddBtn")}
       >
         <Field label={t(lang, "aidantFirstName")}>
           <input className={inputCls} value={f.label} onChange={(e) => setF({ ...f, label: e.target.value })} placeholder="Ex : Maman" />
@@ -2348,17 +2971,20 @@ const AidantStep = forwardRef(function AidantStep({ theme, state, items, onAdd, 
           </select>
         </Field>
       </StepShell>
-      <ListPreview items={items} onRemove={onRemove} render={(p) => `${p.label} — ${p.relation}`} />
+      <ListPreview items={items} onRemove={onRemove} onEdit={onEditItem} editingId={editingId} render={(p) => `${p.label} — ${p.relation}`} />
     </div>
   );
 });
 
-const AutreStep = forwardRef(function AutreStep({ theme, state, items, onAdd, onRemove }, ref) {
+const AutreStep = forwardRef(function AutreStep({ theme, state, items, onAdd, onSave, onRemove, editItem, onEditItem, editingId }, ref) {
   const lang = state.language || "fr";
-  const [f, setF] = useState({ label: "", note: "" });
+  const isEdit = !!editItem;
+  const [f, setF] = useState(() => editItem ? { label: editItem.label, note: editItem.note || "" } : { label: "", note: "" });
   const canSubmit = f.label;
   const submit = () => {
-    onAdd({ label: f.label, note: f.note });
+    const item = { label: f.label, note: f.note };
+    if (isEdit) { onSave(editItem.id, item); return; }
+    onAdd(item);
     setF({ label: "", note: "" });
   };
   useImperativeHandle(ref, () => ({ commit: () => { if (canSubmit) submit(); } }));
@@ -2370,7 +2996,7 @@ const AutreStep = forwardRef(function AutreStep({ theme, state, items, onAdd, on
         theme={theme}
         canSubmit={canSubmit}
         onSubmit={submit}
-        buttonLabel={t(lang, "autreAddBtn")}
+        buttonLabel={isEdit ? t(lang, "saveChanges") : t(lang, "autreAddBtn")}
       >
         <Field label={t(lang, "autreFirstName")}>
           <input className={inputCls} value={f.label} onChange={(e) => setF({ ...f, label: e.target.value })} placeholder="Ex : Sam" />
@@ -2379,7 +3005,7 @@ const AutreStep = forwardRef(function AutreStep({ theme, state, items, onAdd, on
           <input className={inputCls} value={f.note} onChange={(e) => setF({ ...f, note: e.target.value })} placeholder="Ex : colocataire" />
         </Field>
       </StepShell>
-      <ListPreview items={items} onRemove={onRemove} render={(p) => `${p.label}${p.note ? ` — ${p.note}` : ""}`} />
+      <ListPreview items={items} onRemove={onRemove} onEdit={onEditItem} editingId={editingId} render={(p) => `${p.label}${p.note ? ` — ${p.note}` : ""}`} />
     </div>
   );
 });
@@ -2490,17 +3116,36 @@ function StepShell({ title, hint, children, onSubmit, canSubmit, buttonLabel, th
   );
 }
 
-function ListPreview({ items, onRemove, render }) {
+// Liste des éléments déjà ajoutés (pendant l'inscription). Compteur visible + défilement interne :
+// sur téléphone, la liste ne repousse plus le bouton "Continuer" hors de l'écran, et on voit
+// tout de suite que l'ajout a bien fonctionné. `onEdit` (optionnel) ajoute un bouton Modifier.
+function ListPreview({ items, onRemove, onEdit, editingId, render }) {
   if (!items.length) return null;
   return (
-    <ul className="mt-4 space-y-2">
-      {items.map((it) => (
-        <li key={it.id} className="flex items-center justify-between gap-2 bg-slate-50 rounded-lg px-3 py-2 text-sm">
-          <span className="min-w-0 break-words">{render(it)}</span>
-          <span className="shrink-0"><ConfirmDeleteButton onConfirm={() => onRemove(it.id)} /></span>
-        </li>
-      ))}
-    </ul>
+    <div className="mt-4">
+      <p className="text-xs font-medium text-slate-400 mb-2 flex items-center gap-1.5">
+        <Check size={13} style={{ color: "#16A34A" }} /> {items.length} ajouté{items.length > 1 ? "s" : ""}
+      </p>
+      <ul className="space-y-2 max-h-64 overflow-y-auto overscroll-contain pr-0.5">
+        {items.map((it) => (
+          <li
+            key={it.id}
+            className="flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm"
+            style={{ backgroundColor: editingId === it.id ? "#FEF9C3" : "#F8FAFC" }}
+          >
+            <span className="min-w-0 break-words">{render(it)}</span>
+            <span className="shrink-0 flex items-center gap-1">
+              {onEdit && (
+                <button type="button" onClick={() => onEdit(it.id)} className="p-1.5 rounded-md text-slate-400 hover:bg-slate-100" aria-label="Modifier">
+                  <Pencil size={15} />
+                </button>
+              )}
+              <ConfirmDeleteButton onConfirm={() => onRemove(it.id)} />
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -2540,10 +3185,10 @@ function freqOptions(lang, ids) {
   return ids.map((id) => ({ id, label: t(lang, FREQ_KEY[id] || id) }));
 }
 
-const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList }, ref) {
+const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList, onEditItem, editingId }, ref) {
   const lang = state.language || "fr";
   const isEdit = !!editItem;
-  const emptyForm = { kind: "terme", title: "", icon: DEBT_ICONS[0], amount: "", remainingAmount: "", creditLimit: "", interestRate: "", paymentMode: "recurrent", dueDate: getToday(), startDate: getToday(), endDateMode: "date", endDate: "", durationMonths: "", frequency: "mensuel", owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "" };
+  const emptyForm = { kind: "terme", title: "", icon: DEBT_ICONS[0], amount: "", remainingAmount: "", creditLimit: "", interestRate: "", paymentMode: "recurrent", dueDate: getToday(), startDate: getToday(), endDateMode: "date", endDate: "", durationMonths: "", frequency: "mensuel", owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "", monthlyPay: "", horizon: null, presetId: null };
   const [f, setF] = useState(() => {
     const src = editItem || duplicateFrom;
     if (!src) return emptyForm;
@@ -2566,11 +3211,35 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
       currency: src.currency || state.currency,
       holdingAccount: src.holdingAccount || "",
       chargeAccount: src.chargeAccount || "",
+      monthlyPay: "",
+      horizon: null,
+      presetId: null,
     };
   });
   const isRevolving = f.kind === "renouvelable";
+  // Mode simple (par défaut pour une nouvelle dette) : on demande seulement ce qu'il reste à payer,
+  // et Serein conseille une durée + la mensualité qui va avec. Le mode détaillé reste disponible.
+  const [quick, setQuick] = useState(!editItem);
+  const useQuick = quick && !isRevolving;
+  const monthlyIncome = monthlyIncomeOf(state);
+  const bal = Number(f.amount) || 0;
+  const rateNum = f.interestRate !== "" ? Number(f.interestRate) || 0 : 0;
+  const payNum = Number(f.monthlyPay) || 0;
+  const planInfo = useQuick && bal > 0 ? debtPlanOptions(bal, rateNum, monthlyIncome) : null;
+  let plan = null;
+  if (planInfo) {
+    if (payNum > 0) {
+      const n = monthsToPayOff(bal, rateNum, payNum);
+      plan = n ? { months: n, pay: payNum, interest: Math.max(0, payNum * n - bal), custom: true } : { invalid: true };
+    } else {
+      const opt = planInfo.options.find((o) => o.months === f.horizon) || planInfo.recommended;
+      plan = { months: opt.months, pay: opt.pay, interest: opt.interest };
+    }
+  }
   const canSubmit = isRevolving
     ? f.title && f.amount
+    : useQuick
+    ? !!(f.title && bal > 0 && plan && !plan.invalid)
     : f.title && f.amount && (f.paymentMode === "unique" ? f.dueDate : (f.endDateMode === "date" ? f.endDate : f.durationMonths));
   const submit = () => {
     if (isRevolving) {
@@ -2602,6 +3271,27 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
       }
       return;
     }
+    if (useQuick) {
+      onAdd({
+        kind: "terme",
+        title: f.title,
+        icon: f.icon,
+        amount: bal,
+        paid: 0,
+        creditLimit: null,
+        owner: f.owner,
+        currency: f.currency,
+        interestRate: f.interestRate !== "" ? Number(f.interestRate) : null,
+        holdingAccount: f.holdingAccount,
+        chargeAccount: f.chargeAccount,
+        paymentMode: "recurrent",
+        startDate: getToday(),
+        endDate: addMonthsFromToday(plan.months),
+        frequency: "mensuel",
+      });
+      setF(emptyForm);
+      return;
+    }
     const total = Number(f.amount);
     const remaining = f.remainingAmount !== "" ? Number(f.remainingAmount) : total;
     const paid = Math.max(0, Math.min(total, total - remaining));
@@ -2621,12 +3311,36 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
   return (
     <div>
       <StepShell title={t(lang, "debtsTitle")} hint={t(lang, "debtsHint")} theme={theme} canSubmit={canSubmit} onSubmit={submit} buttonLabel={isEdit ? t(lang, "saveChanges") : undefined} lang={lang}>
+        {!isEdit && (
+          <div className="mb-4">
+            <p className="text-xs text-slate-500 mb-1.5">{t(lang, "debtPresetLabel")}</p>
+            <div className="flex flex-wrap gap-1.5">
+              {DEBT_PRESETS.map((p) => (
+                <button
+                  type="button"
+                  key={p.id}
+                  onClick={() => setF({ ...f, title: lang === "en" ? p.en : p.fr, icon: p.icon, kind: p.kind, interestRate: String(p.rate), presetId: p.id })}
+                  className="text-xs rounded-full border px-2.5 py-1.5"
+                  style={{
+                    borderColor: f.presetId === p.id ? theme.primary : "#e2e8f0",
+                    backgroundColor: f.presetId === p.id ? theme.soft : "white",
+                    color: f.presetId === p.id ? theme.text : "#64748b",
+                  }}
+                >
+                  {p.icon} {lang === "en" ? p.en : p.fr}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         <Field label={t(lang, "fieldTitle")}>
           <input className={inputCls} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} placeholder="Ex : Prêt voiture" />
         </Field>
-        <Field label={t(lang, "fieldIcon")}>
-          <IconPicker theme={theme} value={f.icon} onChange={(v) => setF({ ...f, icon: v })} options={DEBT_ICONS} lang={lang} />
-        </Field>
+        {!(quick && !isEdit) && (
+          <Field label={t(lang, "fieldIcon")}>
+            <IconPicker theme={theme} value={f.icon} onChange={(v) => setF({ ...f, icon: v })} options={DEBT_ICONS} lang={lang} />
+          </Field>
+        )}
 
         <Field label={t(lang, "fieldDebtKind")}>
           <FreqButtons
@@ -2644,24 +3358,98 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
         {isRevolving ? (
           <div className="p-3 rounded-lg bg-slate-50 mb-3">
             <Field label={`${t(lang, "fieldCurrentBalance")} (${f.currency})`}>
-              <input type="number" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
+              <input type="number" step="any" inputMode="decimal" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
             </Field>
             <Field label={`${t(lang, "fieldCreditLimit")} (${f.currency})`}>
-              <input type="number" className={inputCls} value={f.creditLimit} onChange={(e) => setF({ ...f, creditLimit: e.target.value })} placeholder={t(lang, "optionalPlaceholder")} />
+              <input type="number" step="any" inputMode="decimal" className={inputCls} value={f.creditLimit} onChange={(e) => setF({ ...f, creditLimit: e.target.value })} placeholder={t(lang, "optionalPlaceholder")} />
             </Field>
             <label className="block">
               <span className="block text-sm font-medium mb-1 text-slate-600">{t(lang, "fieldInterestRate")}</span>
               <input type="number" step="0.01" className={inputCls} value={f.interestRate} onChange={(e) => setF({ ...f, interestRate: e.target.value })} placeholder={t(lang, "interestRatePlaceholder")} />
             </label>
           </div>
-        ) : (
+        ) : useQuick ? (
           <>
             <div className="p-3 rounded-lg bg-slate-50 mb-3">
+              <Field label={`${t(lang, "quickBalance")} (${f.currency})`}>
+                <input type="number" step="any" inputMode="decimal" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
+                <p className="text-xs text-slate-400 mt-1">{t(lang, "quickBalanceHint")}</p>
+              </Field>
+              <label className="block">
+                <span className="block text-sm font-medium mb-1 text-slate-600">{t(lang, "fieldInterestRate")}</span>
+                <input type="number" step="0.01" inputMode="decimal" className={inputCls} value={f.interestRate} onChange={(e) => setF({ ...f, interestRate: e.target.value })} placeholder={t(lang, "interestRatePlaceholder")} />
+                <p className="text-xs text-slate-400 mt-1">{f.presetId ? t(lang, "quickRateAvg") : t(lang, "quickRateUnknown")}</p>
+              </label>
+            </div>
+
+            {plan && (
+              <div className="rounded-lg border p-3 mb-3" style={{ borderColor: theme.primary }}>
+                <p className="text-sm font-medium mb-0.5" style={{ color: theme.text }}>{t(lang, "advisorTitle")}</p>
+                <p className="text-xs text-slate-500 mb-2">{payNum > 0 ? t(lang, "advisorHaveMonthly") : t(lang, "advisorPick")}</p>
+                {payNum <= 0 && (
+                  <div className="grid grid-cols-2 gap-2 mb-3">
+                    {planInfo.options.map((o) => {
+                      const active = !plan.custom && plan.months === o.months;
+                      const rec = o.months === planInfo.recommended.months;
+                      return (
+                        <button
+                          type="button"
+                          key={o.months}
+                          onClick={() => setF({ ...f, horizon: o.months })}
+                          className="rounded-lg border px-2.5 py-2 text-left"
+                          style={{
+                            borderColor: active ? theme.primary : "#e2e8f0",
+                            backgroundColor: active ? theme.soft : "white",
+                          }}
+                        >
+                          <span className="block text-xs text-slate-500">
+                            {durationLabel(o.months, lang)}
+                            {rec && <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full text-white" style={{ backgroundColor: theme.primary }}>{t(lang, "advisorBest")}</span>}
+                          </span>
+                          <span className="block text-sm font-semibold" style={{ color: theme.text }}>
+                            {money(o.pay, f.currency)}<span className="text-xs font-normal text-slate-400">/{lang === "en" ? "mo" : "mois"}</span>
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                <label className="block mb-2">
+                  <span className="block text-xs font-medium mb-1 text-slate-500">{t(lang, "advisorKnowMonthly")}</span>
+                  <input type="number" step="any" inputMode="decimal" className={inputCls} value={f.monthlyPay} onChange={(e) => setF({ ...f, monthlyPay: e.target.value })} placeholder={t(lang, "advisorMonthlyPlaceholder")} />
+                </label>
+                {plan.invalid ? (
+                  <p className="text-xs" style={{ color: theme.danger }}>
+                    {t(lang, "advisorTooLow").replace("{interest}", money(Math.ceil(interestOnlyPayment(bal, rateNum, "mensuel")), f.currency))}
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-xs font-medium" style={{ color: theme.text }}>
+                      {t(lang, "advisorResult").replace("{date}", monthYearLabel(plan.months, lang)).replace("{duration}", durationLabel(plan.months, lang))}
+                      {plan.interest >= 1 ? " " + t(lang, "advisorInterest").replace("{interest}", money(Math.round(plan.interest), f.currency)) : ""}
+                    </p>
+                    {monthlyIncome > 0 && plan.pay > monthlyIncome * 0.25 && (
+                      <p className="text-xs mt-1" style={{ color: theme.danger }}>
+                        {t(lang, "advisorHeavy").replace("{pct}", Math.round((plan.pay / monthlyIncome) * 100))}
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+            <button type="button" onClick={() => setQuick(false)} className="text-xs underline text-slate-500 mb-3">{t(lang, "debtToDetail")}</button>
+          </>
+        ) : (
+          <>
+            {!isEdit && (
+              <button type="button" onClick={() => setQuick(true)} className="text-xs underline text-slate-500 mb-3 block">{t(lang, "debtBackSimple")}</button>
+            )}
+            <div className="p-3 rounded-lg bg-slate-50 mb-3">
               <Field label={`${t(lang, "fieldDebtTotal")} (${f.currency})`}>
-                <input type="number" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
+                <input type="number" step="any" inputMode="decimal" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
               </Field>
               <Field label={`${t(lang, "fieldDebtRemaining")} (${f.currency})`}>
-                <input type="number" className={inputCls} value={f.remainingAmount} onChange={(e) => setF({ ...f, remainingAmount: e.target.value })} placeholder={f.amount || "0"} />
+                <input type="number" step="any" inputMode="decimal" className={inputCls} value={f.remainingAmount} onChange={(e) => setF({ ...f, remainingAmount: e.target.value })} placeholder={f.amount || "0"} />
               </Field>
               <label className="block">
                 <span className="block text-sm font-medium mb-1 text-slate-600">{t(lang, "fieldInterestRate")}</span>
@@ -2740,6 +3528,8 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
         <ListPreview
           items={items}
           onRemove={onRemove}
+          onEdit={onEditItem}
+          editingId={editingId}
           render={(d) => d.kind === "renouvelable"
             ? `${d.title} — ${money(d.amount, d.currency || state.currency)} de solde`
             : d.paymentMode === "unique"
@@ -2751,7 +3541,7 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
   );
 });
 
-const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList }, ref) {
+const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList, onEditItem, editingId }, ref) {
   const lang = state.language || "fr";
   const isEdit = !!editItem;
   // On ne peut concrètement mettre de l'argent de côté que les jours où on est payé —
@@ -2819,6 +3609,36 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
   return (
     <div>
       <StepShell title={t(lang, "projectsTitle")} hint={t(lang, "projectsHint")} theme={theme} canSubmit={canSubmit} onSubmit={submit} buttonLabel={isEdit ? t(lang, "saveChanges") : undefined} lang={lang}>
+        {!isEdit && (() => {
+          const income = monthlyIncomeOf(state);
+          const emergency = income > 0 ? Math.round((income * 0.7 * 3) / 100) * 100 : null;
+          const presets = [
+            { fr: "Fonds d'urgence", en: "Emergency fund", icon: "🎯", amount: emergency },
+            { fr: "Vacances", en: "Vacation", icon: "🏖️", amount: null },
+            { fr: "Voiture", en: "Car", icon: "🚗", amount: null },
+            { fr: "Mariage", en: "Wedding", icon: "💍", amount: null },
+            { fr: "Apport immobilier", en: "Home down payment", icon: "🏠", amount: null },
+          ];
+          return (
+            <div className="mb-4">
+              <p className="text-xs text-slate-500 mb-1.5">{t(lang, "projectPresetLabel")}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {presets.map((p, i) => (
+                  <button
+                    type="button"
+                    key={i}
+                    onClick={() => setF({ ...f, title: lang === "en" ? p.en : p.fr, icon: p.icon, amount: p.amount != null ? String(p.amount) : f.amount })}
+                    className="text-xs rounded-full border px-2.5 py-1.5"
+                    style={{ borderColor: theme.primary, color: theme.primary, backgroundColor: "white" }}
+                  >
+                    {p.icon} {lang === "en" ? p.en : p.fr}{p.amount != null ? <span className="text-slate-400"> · ~{money(p.amount, f.currency)}</span> : null}
+                  </button>
+                ))}
+              </div>
+              {emergency != null && <p className="text-[11px] text-slate-400 mt-1.5">{t(lang, "projectEmergencyHint")}</p>}
+            </div>
+          );
+        })()}
         <Field label={t(lang, "fieldTitle")}>
           <input className={inputCls} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} placeholder="Ex : Vacances au Japon" />
         </Field>
@@ -2826,7 +3646,7 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
           <IconPicker theme={theme} value={f.icon} onChange={(v) => setF({ ...f, icon: v })} options={PROJECT_ICONS} lang={lang} />
         </Field>
         <Field label={`${t(lang, "fieldProjectAmount")} (${f.currency})`}>
-          <input type="number" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
+          <input type="number" step="any" inputMode="decimal" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
         </Field>
         {lockedToPayday ? (
           <Field label={t(lang, "fieldProjectStart")}>
@@ -2842,6 +3662,19 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
         )}
         <Field label={t(lang, "fieldProjectEnd")}>
           <input type="date" className={selectCls} style={dateInputStyle} value={f.endDate} onChange={(e) => setF({ ...f, endDate: e.target.value })} />
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            {[6, 12, 24, 60].map((m) => (
+              <button
+                type="button"
+                key={m}
+                onClick={() => setF({ ...f, endDate: addMonthsFromToday(m) })}
+                className="text-xs rounded-full border px-2.5 py-1"
+                style={{ borderColor: "#e2e8f0", color: "#64748b", backgroundColor: "white" }}
+              >
+                {t(lang, "inDuration")} {durationLabel(m, lang)}
+              </button>
+            ))}
+          </div>
         </Field>
         {lockedToPayday ? (
           <Field label={t(lang, "fieldSavingFreq")}>
@@ -2894,13 +3727,13 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
         </AdvancedSection>
       </StepShell>
       {!hideList && (
-        <ListPreview items={items} onRemove={onRemove} render={(p) => `${p.title} — ${money(p.target, p.currency || state.currency)} — jusqu'au ${p.endDate}`} />
+        <ListPreview items={items} onRemove={onRemove} onEdit={onEditItem} editingId={editingId} render={(p) => `${p.title} — ${money(p.target, p.currency || state.currency)} — jusqu'au ${p.endDate}`} />
       )}
     </div>
   );
 });
 
-const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, hint, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList, showEssentialToggle }, ref) {
+const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, hint, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList, onEditItem, editingId, showEssentialToggle, suggestions }, ref) {
   const lang = state.language || "fr";
   const isEdit = !!editItem;
   const [f, setF] = useState(() => {
@@ -2975,11 +3808,26 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
   return (
     <div>
       <StepShell title={title} hint={hint} theme={theme} canSubmit={canSubmit} onSubmit={submit} buttonLabel={isEdit ? t(lang, "saveChanges") : undefined} lang={lang}>
+        {!isEdit && suggestions && (
+          <QuickChips
+            theme={theme}
+            lang={lang}
+            label={t(lang, "quickAddLabel")}
+            items={suggestions
+              .filter((sg) => !items.some((x) => x.title.toLowerCase() === (lang === "en" ? sg.en : sg.fr).toLowerCase()))
+              .map((sg) => ({
+                label: lang === "en" ? sg.en : sg.fr,
+                amount: sg.amount,
+                amountText: sg.amount != null ? money(Number(scaleAmount(sg.amount, f.currency)), f.currency) : "",
+              }))}
+            onPick={(it) => setF({ ...f, title: it.label, amount: it.amount != null ? scaleAmount(it.amount, f.currency) : f.amount })}
+          />
+        )}
         <Field label={t(lang, "fieldTitle")}>
           <input className={inputCls} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
         </Field>
         <Field label={`${t(lang, "fieldAmount")} (${f.currency})`}>
-          <input type="number" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
+          <input type="number" step="any" inputMode="decimal" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
         </Field>
         {perPaycheckAmount != null && (
           <div className="-mt-2 mb-3">
@@ -3004,7 +3852,7 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
                   <div key={idx} className="flex items-center gap-2">
                     <span className="text-xs text-slate-500 w-16 shrink-0">{t(lang, "paycheckLabel").replace("{n}", idx + 1)}</span>
                     <input
-                      type="number"
+                      type="number" step="any" inputMode="decimal"
                       className={inputCls}
                       value={v}
                       onChange={(e) => setSplitValue(idx, e.target.value)}
@@ -3071,16 +3919,18 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
         <ListPreview
           items={items}
           onRemove={onRemove}
+          onEdit={onEditItem}
+          editingId={editingId}
           render={(x) => x.startDate
-            ? `${x.title} — ${money(x.amount, state.currency)} (${x.period}) — ${x.startDate}`
-            : `${x.title} — ${x.day} — ${money(x.amount, state.currency)} (${x.period})`}
+            ? `${x.title} — ${money(x.amount, x.currency || state.currency)} (${x.period}) — ${x.startDate}`
+            : `${x.title} — ${money(x.amount, x.currency || state.currency)} (${x.period}) · ${lang === "en" ? "day" : "le"} ${x.day}`}
         />
       )}
     </div>
   );
 });
 
-const PaydaysStep = forwardRef(function PaydaysStep({ theme, state, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList }, ref) {
+const PaydaysStep = forwardRef(function PaydaysStep({ theme, state, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList, onEditItem, editingId }, ref) {
   const lang = state.language || "fr";
   const isEdit = !!editItem;
   const [f, setF] = useState(() => {
@@ -3114,7 +3964,7 @@ const PaydaysStep = forwardRef(function PaydaysStep({ theme, state, items, onAdd
           <input className={inputCls} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
         </Field>
         <Field label={`${t(lang, "fieldNetAmount")} (${f.currency})`}>
-          <input type="number" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
+          <input type="number" step="any" inputMode="decimal" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
         </Field>
         <Field label={t(lang, "fieldFrequency")}>
           <FreqButtons
@@ -3140,13 +3990,13 @@ const PaydaysStep = forwardRef(function PaydaysStep({ theme, state, items, onAdd
         </AdvancedSection>
       </StepShell>
       {!hideList && (
-        <ListPreview items={items} onRemove={onRemove} render={(x) => `${x.title} — ${money(x.amount, state.currency)} — ${x.frequency} — ${x.startDate}`} />
+        <ListPreview items={items} onRemove={onRemove} onEdit={onEditItem} editingId={editingId} render={(x) => `${x.title} — ${money(x.amount, state.currency)} — ${x.frequency} — ${x.startDate}`} />
       )}
     </div>
   );
 });
 
-const ExpenseStep = forwardRef(function ExpenseStep({ theme, state, items, onAdd, onSave, onRemove, editItem, hideList, onAddCategory }, ref) {
+const ExpenseStep = forwardRef(function ExpenseStep({ theme, state, items, onAdd, onSave, onRemove, editItem, hideList, onEditItem, editingId, onAddCategory }, ref) {
   const lang = state.language || "fr";
   const isEdit = !!editItem;
   const [f, setF] = useState(() => editItem ? {
@@ -3247,7 +4097,7 @@ const ExpenseStep = forwardRef(function ExpenseStep({ theme, state, items, onAdd
           </select>
         </Field>
         <Field label={`${t(lang, "fieldAmount")} (${f.currency})`}>
-          <input type="number" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
+          <input type="number" step="any" inputMode="decimal" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
         </Field>
         <Field label={t(lang, "fieldExpenseDate")}>
           <input type="date" className={selectCls} style={dateInputStyle} value={f.date} onChange={(e) => setF({ ...f, date: e.target.value })} />
@@ -3264,6 +4114,8 @@ const ExpenseStep = forwardRef(function ExpenseStep({ theme, state, items, onAdd
         <ListPreview
           items={items}
           onRemove={onRemove}
+          onEdit={onEditItem}
+          editingId={editingId}
           render={(x) => `${categories.find((c) => c.id === x.category)?.icon || ""} ${expenseCategoryLabel(x.category, lang, state)} — ${money(x.amount, x.currency || state.currency)} — ${x.date}${x.chargeAccount ? ` — ${x.chargeAccount}` : ""}`}
         />
       )}
@@ -3378,7 +4230,7 @@ function ReceiptScanner({ theme, state, onAddExpenses, lang }) {
                 />
                 <div className="flex gap-2">
                   <input
-                    type="number"
+                    type="number" step="any" inputMode="decimal"
                     className="w-24 text-sm rounded border border-slate-200 px-2 py-1"
                     value={item.amount}
                     onChange={(e) => updateField(idx, "amount", e.target.value)}
@@ -3420,7 +4272,7 @@ function ReceiptScanner({ theme, state, onAddExpenses, lang }) {
   );
 }
 
-const InvestmentsStep = forwardRef(function InvestmentsStep({ theme, state, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList }, ref) {
+const InvestmentsStep = forwardRef(function InvestmentsStep({ theme, state, items, onAdd, onSave, onRemove, editItem, duplicateFrom, hideList, onEditItem, editingId }, ref) {
   const lang = state.language || "fr";
   const isEdit = !!editItem;
   const [f, setF] = useState(() => {
@@ -3461,7 +4313,7 @@ const InvestmentsStep = forwardRef(function InvestmentsStep({ theme, state, item
         </Field>
         {!isEdit && (
           <Field label={`${t(lang, "fieldCurrentValue")} (${f.currency})`}>
-            <input type="number" className={inputCls} value={f.value} onChange={(e) => setF({ ...f, value: e.target.value })} />
+            <input type="number" step="any" inputMode="decimal" className={inputCls} value={f.value} onChange={(e) => setF({ ...f, value: e.target.value })} />
           </Field>
         )}
         {isEdit && (
@@ -3477,7 +4329,7 @@ const InvestmentsStep = forwardRef(function InvestmentsStep({ theme, state, item
         </AdvancedSection>
       </StepShell>
       {!hideList && (
-        <ListPreview items={items} onRemove={onRemove} render={(x) => `${x.title} (${x.type}) — ${money(x.value, x.currency || state.currency)}`} />
+        <ListPreview items={items} onRemove={onRemove} onEdit={onEditItem} editingId={editingId} render={(x) => `${x.title} (${x.type}) — ${money(x.value, x.currency || state.currency)}`} />
       )}
     </div>
   );
@@ -3525,6 +4377,211 @@ function RecapStep({ theme, state, onEdit }) {
 // ---------------------------------------------------------------------------
 // Calendrier
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Guide de démarrage : les étapes qui suivent l'inscription, à faire quand on veut
+// ---------------------------------------------------------------------------
+function setupStepsConfig(lang, state) {
+  const cur = (x) => x.currency || state.currency;
+  const rowRecurring = (x) => `${x.title} — ${money(x.amount, cur(x))} (${x.period})${x.startDate ? ` — ${x.startDate}` : x.day ? ` · ${lang === "en" ? "day" : "le"} ${x.day}` : ""}`;
+  return [
+    {
+      key: "paydays", field: "paydays", icon: Wallet, title: t(lang, "recapPaydays"),
+      need: t(lang, "guideNeedPaydays"), StepComp: PaydaysStep, extra: {},
+      renderRow: (x) => `${x.title} — ${money(x.amount, cur(x))} — ${x.frequency}${x.depositAccount ? ` → ${x.depositAccount}` : ""}`,
+    },
+    {
+      key: "bills", field: "bills", icon: Lightbulb, title: t(lang, "billsTitle"),
+      need: t(lang, "guideNeedBills"), StepComp: RecurringStep,
+      extra: { title: t(lang, "billsTitle"), hint: t(lang, "billsHint"), suggestions: BILL_SUGGESTIONS },
+      renderRow: rowRecurring,
+    },
+    {
+      key: "subscriptions", field: "subscriptions", icon: Coins, title: t(lang, "subscriptionsTitle"),
+      need: t(lang, "guideNeedSubs"), StepComp: RecurringStep,
+      extra: { title: t(lang, "subscriptionsTitle"), hint: t(lang, "subscriptionsHint"), showEssentialToggle: true, suggestions: SUBSCRIPTION_SUGGESTIONS },
+      renderRow: rowRecurring,
+    },
+    {
+      key: "debts", field: "debts", icon: CreditCard, title: t(lang, "debtsTitle"),
+      need: t(lang, "guideNeedDebts"), StepComp: DebtsStep, extra: {},
+      renderRow: (d) => d.kind === "renouvelable"
+        ? `${d.title} — ${money(d.amount, cur(d))}`
+        : `${d.title} — ${money(d.amount - d.paid, cur(d))} ${lang === "en" ? "left" : "restant"}${d.endDate ? ` — ${lang === "en" ? "until" : "jusqu'au"} ${d.endDate}` : ""}`,
+    },
+    {
+      key: "projects", field: "projects", icon: Target, title: t(lang, "projectsTitle"),
+      need: t(lang, "guideNeedProjects"), StepComp: ProjectsStep, extra: {},
+      renderRow: (p) => `${p.title} — ${money(p.target, cur(p))} — ${lang === "en" ? "by" : "avant le"} ${p.endDate}`,
+    },
+    {
+      key: "investments", field: "investments", icon: TrendingUp, title: t(lang, "investmentsTitle"),
+      need: t(lang, "guideNeedInvest"), StepComp: InvestmentsStep, extra: {},
+      renderRow: (x) => `${x.title} (${x.type}) — ${money(x.value, cur(x))}`,
+    },
+  ];
+}
+
+function SetupGuide({ theme, state, setState }) {
+  const lang = state.language || "fr";
+  const [openKey, setOpenKey] = useState(null);
+  const [confirmHide, setConfirmHide] = useState(false);
+  const steps = setupStepsConfig(lang, state);
+  const skipped = state.setupSkipped || {};
+  const isDone = (s) => state[s.field].length > 0;
+  const isSkipped = (s) => !isDone(s) && !!skipped[s.key];
+  const doneCount = steps.filter(isDone).length;
+  const settledCount = steps.filter((s) => isDone(s) || isSkipped(s)).length;
+  const next = steps.find((s) => !isDone(s) && !isSkipped(s));
+  const income = monthlyIncomeOf(state);
+  const setSkipped = (key, value) => setState((s) => ({ ...s, setupSkipped: { ...(s.setupSkipped || {}), [key]: value } }));
+  const hide = () => setState((s) => ({ ...s, setupGuide: false }));
+  const open = steps.find((s) => s.key === openKey);
+
+  return (
+    <>
+      <div className="bg-white rounded-xl shadow-sm p-4 mb-4" style={{ border: `1.5px solid ${theme.primary}33` }}>
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <div>
+            <h3 className="text-sm font-semibold" style={{ color: theme.text }}>
+              {settledCount === steps.length ? t(lang, "guideAllDone") : t(lang, "guideTitle")}
+            </h3>
+            <p className="text-xs text-slate-400">{t(lang, "guideProgress").replace("{n}", doneCount).replace("{total}", steps.length)}</p>
+          </div>
+          {confirmHide ? (
+            <span className="flex items-center gap-2 text-xs shrink-0">
+              <button onClick={() => setConfirmHide(false)} className="text-slate-500">{t(lang, "hhCancel")}</button>
+              <button onClick={hide} className="text-red-500 font-medium">{t(lang, "guideHide")}</button>
+            </span>
+          ) : (
+            <button onClick={() => setConfirmHide(true)} className="p-1 text-slate-300 shrink-0" aria-label={t(lang, "guideHide")}><X size={16} /></button>
+          )}
+        </div>
+        {confirmHide && <p className="text-xs text-slate-500 mb-2">{t(lang, "guideHideHint")}</p>}
+        <ProgressBar value={(settledCount / steps.length) * 100} color={theme.primary} />
+
+        {income > 0 && (
+          <div className="mt-3 rounded-lg p-3 text-xs" style={{ backgroundColor: theme.soft, color: theme.text }}>
+            <p className="font-medium mb-1">{t(lang, "guideIncomeLine").replace("{amount}", money(income, state.currency))}</p>
+            <p className="text-slate-500">
+              {t(lang, "guideRule")
+                .replace("{needs}", money(income * 0.5, state.currency))
+                .replace("{wants}", money(income * 0.3, state.currency))
+                .replace("{save}", money(income * 0.2, state.currency))}
+            </p>
+          </div>
+        )}
+
+        {next && (
+          <div className="mt-3 rounded-lg border p-3" style={{ borderColor: theme.primary }}>
+            <div className="flex items-center gap-2 mb-1">
+              <next.icon size={16} style={{ color: theme.primary }} />
+              <span className="text-sm font-medium" style={{ color: theme.text }}>{t(lang, "guideNextLabel")} {next.title}</span>
+            </div>
+            <p className="text-xs text-slate-500 mb-3">{next.need}</p>
+            <div className="flex gap-2">
+              <button onClick={() => setOpenKey(next.key)} className="flex-1 text-sm font-medium text-white px-3 py-2 rounded-lg" style={{ backgroundColor: theme.primary }}>
+                {t(lang, "guideStart")}
+              </button>
+              <button onClick={() => setSkipped(next.key, true)} className="text-xs text-slate-500 px-3 py-2 rounded-lg border border-slate-200">
+                {t(lang, "guideSkip")}
+              </button>
+            </div>
+          </div>
+        )}
+
+        <ul className="mt-3 divide-y divide-slate-100">
+          {steps.map((s) => {
+            const done = isDone(s);
+            const skip = isSkipped(s);
+            const Icon = s.icon;
+            return (
+              <li key={s.key}>
+                <button onClick={() => setOpenKey(s.key)} className="w-full flex items-center gap-3 py-2 text-left">
+                  <span
+                    className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 border"
+                    style={{ borderColor: done ? "#16A34A" : "#cbd5e1", backgroundColor: done ? "#16A34A" : "white" }}
+                  >
+                    {done && <Check size={12} color="white" />}
+                  </span>
+                  <Icon size={14} className="text-slate-400 shrink-0" />
+                  <span className="flex-1 text-sm" style={{ color: done ? "#94a3b8" : theme.text }}>{s.title}</span>
+                  <span className="text-xs text-slate-400">
+                    {done ? state[s.field].length : skip ? t(lang, "guideSkipped") : ""}
+                  </span>
+                  <ChevronRight size={14} className="text-slate-300" />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      {open && (
+        <ManageListSheet
+          sheetTitle={open.title}
+          theme={theme}
+          state={state}
+          setState={setState}
+          field={open.field}
+          StepComp={open.StepComp}
+          stepExtraProps={open.extra}
+          renderRow={open.renderRow}
+          startWithForm={state[open.field].length === 0}
+          onClose={() => setOpenKey(null)}
+        />
+      )}
+    </>
+  );
+}
+
+// Modification du montant d'UNE paie (salaire variable) ou de toutes les suivantes
+function PaydayOccurrenceSheet({ theme, lang, state, target, onSaveThis, onSaveAll, onReset, onClose }) {
+  const payday = state.paydays.find((p) => p.id === target.paydayId);
+  const [value, setValue] = useState(String(target.amount));
+  if (!payday) return null;
+  const cur = payday.currency || state.currency;
+  const num = Number(String(value).replace(",", "."));
+  const valid = value !== "" && Number.isFinite(num) && num >= 0;
+  const dateLabel = target.date.toLocaleDateString(lang === "en" ? "en-US" : "fr-FR", { weekday: "long", day: "numeric", month: "long" });
+  return (
+    <BottomSheet title={t(lang, "payEditTitle")} onClose={onClose}>
+      <p className="text-sm font-medium" style={{ color: theme.text }}>{payday.title}</p>
+      <p className="text-xs text-slate-400 mb-1">{t(lang, "payDateLabel").replace("{date}", dateLabel)}</p>
+      <p className="text-xs text-slate-500 mb-4">{t(lang, "payEditHint")}</p>
+      <label className="text-xs text-slate-500 block mb-1">{t(lang, "payThisAmount")} ({cur})</label>
+      <input
+        type="number"
+        step="any"
+        inputMode="decimal"
+        className={inputCls}
+        value={value}
+        autoFocus
+        onChange={(e) => setValue(e.target.value)}
+      />
+      <p className="text-[11px] text-slate-400 mt-1 mb-4">{t(lang, "payUsualAmount").replace("{amount}", money(payday.amount, cur))}</p>
+      <button
+        onClick={() => onSaveThis(num)}
+        disabled={!valid}
+        className="w-full text-sm font-medium text-white px-4 py-2.5 rounded-lg disabled:opacity-40"
+        style={{ backgroundColor: theme.primary }}
+      >
+        {t(lang, "paySaveThis")}
+      </button>
+      <button
+        onClick={() => onSaveAll(num)}
+        disabled={!valid}
+        className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border mt-2 disabled:opacity-40"
+        style={{ borderColor: theme.primary, color: theme.primary }}
+      >
+        {t(lang, "paySaveAll")}
+      </button>
+      {target.overridden && (
+        <button onClick={onReset} className="w-full text-xs underline text-slate-500 mt-3">{t(lang, "payReset")}</button>
+      )}
+    </BottomSheet>
+  );
+}
+
 function CalendarTab({ theme, state, setState, showToast }) {
   const lang = state.language || "fr";
   const [cursor, setCursor] = useState(() => {
@@ -3536,6 +4593,33 @@ function CalendarTab({ theme, state, setState, showToast }) {
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [addMode, setAddMode] = useState(null); // "payday" | "bill" | "subscription"
   const [showAllUpcoming, setShowAllUpcoming] = useState(false);
+  const [editingPay, setEditingPay] = useState(null); // { paydayId, dateKey, date, amount, overridden }
+
+  const openPayEdit = (e) => setEditingPay({ paydayId: e.paydayId, dateKey: e.dateKey, date: new Date(e.y, e.m, e.day), amount: e.amount, overridden: e.overridden });
+  const updatePayday = (fn) => setState((s) => ({ ...s, paydays: s.paydays.map((p) => (p.id === editingPay.paydayId ? fn(p) : p)) }));
+  const savePayThis = (value) => {
+    const key = editingPay.dateKey;
+    updatePayday((p) => ({ ...p, overrides: { ...(p.overrides || {}), [key]: value } }));
+    setEditingPay(null);
+  };
+  const savePayAll = (value) => {
+    const key = editingPay.dateKey;
+    updatePayday((p) => {
+      const ov = { ...(p.overrides || {}) };
+      delete ov[key];
+      return { ...p, amount: value, overrides: ov };
+    });
+    setEditingPay(null);
+  };
+  const resetPay = () => {
+    const key = editingPay.dateKey;
+    updatePayday((p) => {
+      const ov = { ...(p.overrides || {}) };
+      delete ov[key];
+      return { ...p, overrides: ov };
+    });
+    setEditingPay(null);
+  };
 
   const daysInMonth = new Date(cursor.y, cursor.m + 1, 0).getDate();
   const firstWeekday = (new Date(cursor.y, cursor.m, 1).getDay() + 6) % 7;
@@ -3550,7 +4634,10 @@ function CalendarTab({ theme, state, setState, showToast }) {
     state.paydays.forEach((p) => {
       if (!p.startDate || !p.frequency) return;
       if (occurrencesInMonth(p.startDate, p.frequency, y, m).includes(day)) {
-        list.push({ kind: "paie", title: p.title, amount: p.amount, owner: p.owner });
+        const dateKey = `${y}-${String(m + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+        const ov = p.overrides && p.overrides[dateKey];
+        const overridden = typeof ov === "number" && Number.isFinite(ov);
+        list.push({ kind: "paie", title: p.title, amount: overridden ? ov : p.amount, owner: p.owner, paydayId: p.id, dateKey, y, m, day, overridden });
       }
     });
 
@@ -3693,6 +4780,7 @@ function CalendarTab({ theme, state, setState, showToast }) {
 
   return (
     <div className="p-4 pb-24">
+      {state.setupGuide && <SetupGuide theme={theme} state={state} setState={setState} />}
       <div className="rounded-xl shadow-sm p-4 mb-4" style={{ backgroundColor: theme.primary }}>
         <p className="text-xs text-white opacity-80">{t(lang, "netWorthLabel")}</p>
         <p className="text-3xl font-semibold text-white">{money(netWorth.net, state.currency)}</p>
@@ -3744,19 +4832,26 @@ function CalendarTab({ theme, state, setState, showToast }) {
             {(showAllUpcoming ? upcomingEvents : upcomingEvents.slice(0, 3)).map((e, idx) => {
               const Icon = kindIcon[e.kind];
               const isIncome = e.kind === "paie";
+              const rowProps = isIncome
+                ? { role: "button", tabIndex: 0, onClick: () => openPayEdit(e), onKeyDown: (ev) => { if (ev.key === "Enter") openPayEdit(e); } }
+                : {};
               return (
-                <li key={idx} className="flex items-center gap-3 py-2.5">
+                <li key={idx} className={"flex items-center gap-3 py-2.5" + (isIncome ? " cursor-pointer" : "")} {...rowProps}>
                   <span className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: `${dotColor[e.kind]}1A` }}>
                     <Icon size={16} style={{ color: dotColor[e.kind] }} />
                   </span>
                   <span className="flex-1 min-w-0">
                     <span className="block text-sm font-medium truncate">{e.title}</span>
-                    <span className="block text-xs text-slate-400">{daysUntilLabel(e.daysUntil)}</span>
+                    <span className="block text-xs text-slate-400">
+                      {daysUntilLabel(e.daysUntil)}
+                      {e.overridden && <span className="ml-1.5 px-1.5 py-0.5 rounded text-[10px]" style={{ backgroundColor: "#FEF9C3", color: "#854D0E" }}>{t(lang, "payModified")}</span>}
+                    </span>
                   </span>
                   <span className="flex items-center gap-1.5 shrink-0">
                     <span className="text-sm font-medium" style={{ color: isIncome ? "#2E9E5B" : theme.text }}>
                       {isIncome ? "+" : "-"}{money(e.amount, state.currency)}
                     </span>
+                    {isIncome && <Pencil size={12} className="text-slate-400" />}
                     <span className="w-2 h-2 rounded-full" style={{ backgroundColor: dotColor[e.kind] }} />
                   </span>
                 </li>
@@ -3864,20 +4959,38 @@ function CalendarTab({ theme, state, setState, showToast }) {
           ) : (
             <ul className="space-y-2">
               {eventsForDay(selectedDay).map((e, idx) => (
-                <li key={idx} className="flex items-center justify-between text-sm">
+                <li
+                  key={idx}
+                  className={"flex items-center justify-between text-sm" + (e.kind === "paie" ? " cursor-pointer" : "")}
+                  {...(e.kind === "paie" ? { role: "button", tabIndex: 0, onClick: () => openPayEdit(e) } : {})}
+                >
                   <span className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full" style={{ backgroundColor: dotColor[e.kind] }} />
                     {e.title} <span className="text-slate-400">· {kindLabel[e.kind]}</span>
                     <OwnerBadge ownerId={e.owner} state={state} />
                   </span>
-                  <span className="font-medium" style={{ color: e.kind === "paie" ? "#2E9E5B" : theme.text }}>
+                  <span className="font-medium flex items-center gap-1.5" style={{ color: e.kind === "paie" ? "#2E9E5B" : theme.text }}>
                     {e.kind === "paie" ? "+" : "-"}{money(e.amount, state.currency)}
+                    {e.kind === "paie" && <Pencil size={12} className="text-slate-400" />}
                   </span>
                 </li>
               ))}
             </ul>
           )}
         </div>
+      )}
+
+      {editingPay && (
+        <PaydayOccurrenceSheet
+          theme={theme}
+          lang={lang}
+          state={state}
+          target={editingPay}
+          onSaveThis={savePayThis}
+          onSaveAll={savePayAll}
+          onReset={resetPay}
+          onClose={() => setEditingPay(null)}
+        />
       )}
 
       {showAddMenu && (
@@ -4267,7 +5380,7 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
               )}
               <div className="flex gap-2 mt-3">
                 <input
-                  type="number"
+                  type="number" step="any" inputMode="decimal"
                   placeholder="Montant"
                   className="flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
                   value={payInput[d.id] || ""}
@@ -4318,7 +5431,7 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
                   <p className="text-xs font-medium text-slate-600 mb-1.5">🎯 Rembourser plus vite ?</p>
                   <div className="flex gap-2">
                     <input
-                      type="number"
+                      type="number" step="any" inputMode="decimal"
                       placeholder="Rembourser en (mois)"
                       className="flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
                       value={goalInput[d.id] ?? (d.goalMonths || "")}
@@ -4553,7 +5666,7 @@ function ProjectsTab({ theme, state, setState, showToast }) {
               )}
               <div className="flex gap-2 mt-3">
                 <input
-                  type="number"
+                  type="number" step="any" inputMode="decimal"
                   placeholder="Montant"
                   className="flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
                   value={saveInput[p.id] || ""}
@@ -4847,7 +5960,7 @@ function InvestmentsTab({ theme, state, setState, showToast }) {
 
             <div className="flex gap-2 mt-3">
               <input
-                type="number"
+                type="number" step="any" inputMode="decimal"
                 placeholder={`Versement (${inv.currency || state.currency})`}
                 className="flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
                 value={contribInput[inv.id] || ""}
@@ -4865,7 +5978,7 @@ function InvestmentsTab({ theme, state, setState, showToast }) {
 
             <div className="flex gap-2 mt-3">
               <input
-                type="number"
+                type="number" step="any" inputMode="decimal"
                 placeholder={`Nouvelle valeur totale (${inv.currency || state.currency})`}
                 className="flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
                 value={updateInput[inv.id] || ""}
@@ -4930,7 +6043,7 @@ function InvestmentsTab({ theme, state, setState, showToast }) {
                 )}
                 <div className="flex gap-2 mt-3">
                   <input
-                    type="number"
+                    type="number" step="any" inputMode="decimal"
                     placeholder="Nouveau solde"
                     className="flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
                     value={childUpdateInput[c.id] || ""}
@@ -4983,7 +6096,7 @@ function InvestmentsTab({ theme, state, setState, showToast }) {
             <input className={inputCls} value={newChildAccount.title} onChange={(e) => setNewChildAccount((v) => ({ ...v, title: e.target.value }))} />
           </Field>
           <Field label={`Solde actuel (${state.currency})`}>
-            <input type="number" className={inputCls} value={newChildAccount.balance} onChange={(e) => setNewChildAccount((v) => ({ ...v, balance: e.target.value }))} />
+            <input type="number" step="any" inputMode="decimal" className={inputCls} value={newChildAccount.balance} onChange={(e) => setNewChildAccount((v) => ({ ...v, balance: e.target.value }))} />
           </Field>
           <button
             onClick={submitChildAccount}
@@ -5002,7 +6115,269 @@ function InvestmentsTab({ theme, state, setState, showToast }) {
 // ---------------------------------------------------------------------------
 // Réglages
 // ---------------------------------------------------------------------------
-function SettingsPanel({ theme, state, setState, onClose, onReset }) {
+// ---------------------------------------------------------------------------
+// Foyer partagé : plusieurs comptes (adresses e-mail différentes) sur les mêmes données
+// ---------------------------------------------------------------------------
+function hhErrorText(lang, code) {
+  const key = "hhErr_" + code;
+  const txt = t(lang, key);
+  return txt === key ? t(lang, "hhErr_generic") : txt;
+}
+function hhFormatCode(code) {
+  return code ? code.slice(0, 4) + "-" + code.slice(4) : "";
+}
+async function hhCopyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function LoadErrorScreen({ onRetry }) {
+  const lang = typeof navigator !== "undefined" && /^en/i.test(navigator.language || "") ? "en" : "fr";
+  return (
+    <div className="min-h-screen flex items-center justify-center p-5" style={{ backgroundColor: "#E6F4F1" }}>
+      <GlobalStyles />
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 text-center">
+        <h1 className="text-lg font-semibold mb-2">{t(lang, "syncLoadErrTitle")}</h1>
+        <p className="text-sm text-slate-500 leading-relaxed mb-5">{t(lang, "syncLoadErrBody")}</p>
+        <button onClick={onRetry} className="w-full text-sm font-medium text-white px-4 py-2.5 rounded-lg" style={{ backgroundColor: "#5BC2B4" }}>
+          {t(lang, "syncRetry")}
+        </button>
+        <button onClick={() => supabase.auth.signOut()} className="w-full text-sm text-slate-500 px-4 py-2.5 mt-1">
+          {t(lang, "hhSignOut")}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function JoinHouseholdSheet({ theme, lang, initialCode, hasOwnData, onSubmit, onClose }) {
+  const [code, setCode] = useState(initialCode || "");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const clean = code.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const submit = async () => {
+    if (clean.length < 8 || busy) return;
+    setBusy(true);
+    setErr("");
+    const r = await onSubmit(clean);
+    setBusy(false);
+    if (!r || !r.ok) setErr(hhErrorText(lang, r && r.error));
+  };
+  return (
+    <BottomSheet title={t(lang, "hhJoinTitle")} onClose={onClose}>
+      <p className="text-sm text-slate-500 mb-3">{t(lang, "hhJoinBody")}</p>
+      <input
+        className={inputCls + " text-center tracking-widest font-mono text-lg uppercase"}
+        placeholder="XXXX-XXXX"
+        value={code}
+        maxLength={12}
+        autoCapitalize="characters"
+        autoCorrect="off"
+        autoComplete="off"
+        spellCheck={false}
+        onChange={(e) => setCode(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && submit()}
+      />
+      {hasOwnData && (
+        <p className="text-xs rounded-lg px-3 py-2 mt-3" style={{ backgroundColor: "#FEF9C3", color: "#854D0E" }}>
+          {t(lang, "hhJoinWarnData")}
+        </p>
+      )}
+      {err && <p className="text-xs text-red-500 mt-3">{err}</p>}
+      <button
+        onClick={submit}
+        disabled={clean.length < 8 || busy}
+        className="w-full mt-4 text-sm font-medium text-white px-4 py-2.5 rounded-lg disabled:opacity-40"
+        style={{ backgroundColor: theme.primary }}
+      >
+        {busy ? t(lang, "hhJoining") : t(lang, "hhJoinConfirm")}
+      </button>
+    </BottomSheet>
+  );
+}
+
+function HouseholdSection({ theme, lang, household }) {
+  const { hh, session, refresh, createInvite, removeMember, leave, openJoin, saveMyName } = household;
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const [copied, setCopied] = useState("");
+  const [confirmLeave, setConfirmLeave] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(null);
+  const savedName = (session && session.user && session.user.user_metadata && session.user.user_metadata.display_name) || "";
+  const [name, setName] = useState(savedName);
+  const [nameSaved, setNameSaved] = useState(false);
+
+  // À l'ouverture, puis toutes les 8 s tant que cet écran est ouvert : on voit tout de suite
+  // quand la personne invitée a rejoint (ou quitté) le foyer.
+  useEffect(() => {
+    refresh();
+    const id = setInterval(refresh, 8000);
+    return () => clearInterval(id);
+  }, []);
+
+  if (!hh) return null;
+  const isMember = hh.role === "member";
+  const invite = hh.invite;
+  const link = invite ? `${window.location.origin}/?join=${invite.code}` : "";
+  const memberLabel = (m) => m.name || m.email || t(lang, "hhGuest");
+  const owner = hh.members.find((m) => m.is_owner);
+  const expires = invite ? new Date(invite.expires_at).toLocaleDateString(lang === "en" ? "en-US" : "fr-FR", { day: "numeric", month: "long" }) : "";
+
+  const makeInvite = async () => {
+    setBusy(true);
+    setErr("");
+    const r = await createInvite();
+    setBusy(false);
+    if (!r.ok) setErr(hhErrorText(lang, r.error));
+  };
+  const share = async () => {
+    const text = t(lang, "hhShareMessage").replace("{link}", link).replace("{code}", hhFormatCode(invite.code));
+    try {
+      if (navigator.share) {
+        await navigator.share({ text });
+        return;
+      }
+    } catch (e) {
+      if (e && e.name === "AbortError") return;
+    }
+    if (await hhCopyText(text)) { setCopied("share"); setTimeout(() => setCopied(""), 2000); }
+  };
+  const copyCode = async () => {
+    if (await hhCopyText(hhFormatCode(invite.code))) { setCopied("code"); setTimeout(() => setCopied(""), 2000); }
+  };
+  const doRemove = async (m) => {
+    setBusy(true);
+    const r = await removeMember(m.id);
+    setBusy(false);
+    setConfirmRemove(null);
+    if (!r.ok) setErr(hhErrorText(lang, r.error));
+  };
+  const doLeave = async () => {
+    setBusy(true);
+    const r = await leave();
+    setBusy(false);
+    if (!r.ok) { setErr(hhErrorText(lang, r.error)); setConfirmLeave(false); }
+  };
+  const doSaveName = async () => {
+    const r = await saveMyName(name.trim());
+    if (r.ok) { setNameSaved(true); setTimeout(() => setNameSaved(false), 2000); }
+    else setErr(hhErrorText(lang, "generic"));
+  };
+
+  const outline = { borderColor: theme.primary, color: theme.primary };
+
+  return (
+    <>
+      <h3 className="text-sm font-medium mb-2 flex items-center gap-2"><Users size={15} /> {t(lang, "hhTitle")}</h3>
+
+      {hh.role === "solo" && (
+        <>
+          <p className="text-xs text-slate-500 leading-relaxed mb-3">{t(lang, "hhIntro")}</p>
+          <div className="flex gap-2 mb-2">
+            <button onClick={makeInvite} disabled={busy} className="flex-1 text-sm font-medium px-3 py-2 rounded-lg border disabled:opacity-40" style={outline}>
+              {t(lang, "hhInviteButton")}
+            </button>
+            <button onClick={openJoin} className="flex-1 text-sm font-medium px-3 py-2 rounded-lg border" style={outline}>
+              {t(lang, "hhJoinButton")}
+            </button>
+          </div>
+        </>
+      )}
+
+      {!isMember && invite && (
+        <div className="rounded-xl p-4 mb-3 text-center" style={{ backgroundColor: theme.soft }}>
+          <p className="text-xs text-slate-500 mb-1">{t(lang, "hhYourCode")}</p>
+          <p className="text-2xl font-mono font-semibold tracking-widest mb-1" style={{ color: theme.text }}>{hhFormatCode(invite.code)}</p>
+          <p className="text-[11px] text-slate-500 mb-3">{t(lang, "hhCodeHint").replace("{date}", expires)}</p>
+          <div className="flex gap-2">
+            <button onClick={share} className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium text-white px-3 py-2 rounded-lg" style={{ backgroundColor: theme.primary }}>
+              <Share2 size={14} /> {copied === "share" ? t(lang, "hhCopied") : t(lang, "hhShare")}
+            </button>
+            <button onClick={copyCode} className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium px-3 py-2 rounded-lg border bg-white" style={outline}>
+              <Copy size={14} /> {copied === "code" ? t(lang, "hhCopied") : t(lang, "hhCopyCode")}
+            </button>
+          </div>
+          <button onClick={makeInvite} disabled={busy} className="text-xs underline text-slate-500 mt-3 disabled:opacity-40">{t(lang, "hhNewCode")}</button>
+        </div>
+      )}
+
+      {hh.role === "owner" && !invite && hh.members.length < 4 && (
+        <button onClick={makeInvite} disabled={busy} className="w-full text-sm font-medium px-3 py-2 rounded-lg border mb-3 disabled:opacity-40" style={outline}>
+          {t(lang, "hhInviteButton")}
+        </button>
+      )}
+
+      {isMember && owner && (
+        <p className="text-xs text-slate-500 leading-relaxed mb-3">{t(lang, "hhMemberInfo").replace("{owner}", memberLabel(owner))}</p>
+      )}
+
+      {hh.role !== "solo" && (
+        <>
+          <ul className="space-y-2 mb-3">
+            {hh.members.map((m) => {
+              const isMe = m.id === hh.me;
+              return (
+                <li key={m.id} className="bg-slate-50 rounded-lg px-3 py-2 text-sm">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="min-w-0 break-words">
+                      {memberLabel(m)}
+                      {m.name && m.email ? <span className="text-xs text-slate-400"> · {m.email}</span> : null}
+                      {isMe && <span className="text-xs text-slate-400"> · {t(lang, "hhYouBadge")}</span>}
+                      {m.is_owner && <span className="text-xs text-slate-400"> · {t(lang, "hhOwnerBadge")}</span>}
+                    </span>
+                    {hh.role === "owner" && !m.is_owner && (
+                      <button onClick={() => setConfirmRemove(m.id)} className="text-xs text-red-500 shrink-0 px-1">{t(lang, "hhRemove")}</button>
+                    )}
+                  </div>
+                  {confirmRemove === m.id && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-xs text-red-600 flex-1">{t(lang, "hhRemoveConfirm").replace("{name}", memberLabel(m))}</span>
+                      <button onClick={() => setConfirmRemove(null)} className="text-xs px-2 py-1 rounded border border-slate-300 text-slate-600">{t(lang, "hhCancel")}</button>
+                      <button onClick={() => doRemove(m)} disabled={busy} className="text-xs px-2 py-1 rounded bg-red-500 text-white disabled:opacity-40">{t(lang, "hhRemove")}</button>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+
+          <p className="text-[11px] text-slate-400 mb-3">{t(lang, "hhSharedNote")}</p>
+
+          <label className="text-xs text-slate-500 block mb-1">{t(lang, "hhMyName")}</label>
+          <div className="flex gap-2 mb-3">
+            <input className={inputCls} value={name} onChange={(e) => setName(e.target.value)} maxLength={40} />
+            <button onClick={doSaveName} disabled={name.trim() === savedName} className="text-sm font-medium px-3 py-2 rounded-lg border shrink-0 disabled:opacity-40" style={outline}>
+              {nameSaved ? t(lang, "hhSaved") : t(lang, "hhSave")}
+            </button>
+          </div>
+        </>
+      )}
+
+      {isMember && (
+        confirmLeave ? (
+          <div className="border border-red-200 rounded-lg p-3 mb-3">
+            <p className="text-sm text-red-600 mb-3">{t(lang, "hhLeaveConfirm").replace("{owner}", owner ? memberLabel(owner) : "")}</p>
+            <div className="flex gap-2">
+              <button onClick={() => setConfirmLeave(false)} className="flex-1 text-sm font-medium px-3 py-2 rounded-lg border border-slate-300 text-slate-600">{t(lang, "hhCancel")}</button>
+              <button onClick={doLeave} disabled={busy} className="flex-1 text-sm font-medium px-3 py-2 rounded-lg bg-red-500 text-white disabled:opacity-40">{t(lang, "hhLeave")}</button>
+            </div>
+          </div>
+        ) : (
+          <button onClick={() => setConfirmLeave(true)} className="w-full text-sm text-red-500 border border-red-200 rounded-lg py-2 mb-3">{t(lang, "hhLeave")}</button>
+        )
+      )}
+
+      {err && <p className="text-xs text-red-500 mb-3">{err}</p>}
+      <div className="mb-6" />
+    </>
+  );
+}
+
+function SettingsPanel({ theme, state, setState, onClose, onReset, household }) {
   const lang = state.language || "fr";
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -5184,6 +6559,8 @@ function SettingsPanel({ theme, state, setState, onClose, onReset }) {
           </>
         )}
 
+        {household && <HouseholdSection theme={theme} lang={lang} household={household} />}
+
         <h3 className="text-sm font-medium mb-2 flex items-center gap-2"><Download size={15} /> {t(lang, "yourDataTitle")}</h3>
         <p className="text-xs text-slate-400 mb-3">
           {t(lang, "yourDataHint")}
@@ -5235,9 +6612,14 @@ function SettingsPanel({ theme, state, setState, onClose, onReset }) {
           <ChevronRight size={16} className="text-slate-400" />
         </button>
 
-        {confirmingReset ? (
+        {household && household.hh && household.hh.role === "member" ? (
+          <p className="text-xs text-slate-400 text-center mb-1">{t(lang, "hhResetMember")}</p>
+        ) : confirmingReset ? (
           <div className="border border-red-200 rounded-lg p-3">
-            <p className="text-sm text-red-600 mb-3">Toutes les données seront supprimées et l'inscription recommencera. Confirmer ?</p>
+            <p className="text-sm text-red-600 mb-3">
+              Toutes les données seront supprimées et l'inscription recommencera.
+              {household && household.hh && household.hh.role === "owner" ? " " + t(lang, "hhResetWarn") : ""} Confirmer ?
+            </p>
             <div className="flex gap-2">
               <button onClick={() => setConfirmingReset(false)} className="flex-1 text-sm font-medium px-3 py-2 rounded-lg border border-slate-300 text-slate-600">
                 Annuler
@@ -5908,11 +7290,34 @@ function SereinApp() {
   const [splashDone, setSplashDone] = useState(false);
   const [session, setSession] = useState(undefined); // undefined = pas encore vérifié, null = pas connecté
   const [loadDone, setLoadDone] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const [showChangelog, setShowChangelog] = useState(false);
+  const [hh, setHh] = useState(null); // foyer : { role: solo|owner|member, ownerId, me, members, invite }
+  const [showJoin, setShowJoin] = useState(false);
+  const [joinCode, setJoinCode] = useState("");
+  const userId = session ? session.user.id : null;
 
   useEffect(() => {
     const t = setTimeout(() => setSplashDone(true), 1500);
     return () => clearTimeout(t);
+  }, []);
+
+  // Lien d'invitation (?join=CODE) : on garde le code de côté — il survit à la connexion par
+  // lien magique — puis on retire le paramètre de la barre d'adresse.
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("join");
+      if (code) {
+        localStorage.setItem("serein_pending_join", code);
+        params.delete("join");
+        const qs = params.toString();
+        window.history.replaceState({}, "", window.location.pathname + (qs ? "?" + qs : "") + window.location.hash);
+      }
+    } catch {
+      // ignore
+    }
   }, []);
 
   // Affiche automatiquement "Nouveautés" une seule fois par version, mais jamais à un tout
@@ -5943,113 +7348,298 @@ function SereinApp() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  // Charge les données de CET utilisateur depuis Supabase une fois connecté.
-  // Juste après une connexion par lien magique, la session peut mettre un instant à être
-  // pleinement reconnue par Supabase — une première lecture peut donc sembler "vide" alors
-  // que les données existent bien. On réessaie automatiquement avant de conclure qu'il n'y a
-  // vraiment rien, pour ne jamais écraser par erreur de vraies données avec un état neuf.
-  useEffect(() => {
-    if (!session) return;
-    let cancelled = false;
-    setLoadDone(false);
-    (async () => {
-      const attempt = async () => {
-        const { data, error } = await supabase
-          .from("app_state")
-          .select("data")
-          .eq("user_id", session.user.id)
-          .maybeSingle();
-        if (error) throw error;
-        return data;
-      };
-      let found = null;
-      for (let i = 0; i < 6 && !cancelled; i++) {
-        try {
-          found = await attempt();
-          if (found) break;
-        } catch {
-          // on réessaie
-        }
-        if (!found && i < 5) await new Promise((r) => setTimeout(r, 700));
-      }
-      if (cancelled) return;
-      // Fusionne avec l'état par défaut : si le compte a été créé avant l'ajout d'une
-      // fonctionnalité (ex. le journal de dépenses), le champ correspondant serait
-      // manquant dans les anciennes données sauvegardées — cette fusion lui donne une
-      // valeur par défaut sûre au lieu de faire planter l'appli.
-      setState(found ? { ...defaultState, ...found.data } : defaultState);
-      setLoadDone(true);
-    })();
-    return () => { cancelled = true; };
-  }, [session]);
-
-  // Sauvegarde à chaque changement, dans la ligne propre à cet utilisateur — mais jamais
-  // tant que le chargement initial n'est pas terminé, pour ne jamais risquer d'écraser de
-  // vraies données par un état neuf pas encore confirmé comme légitime.
-  //
-  // Deux renforcements contre la perte de données en fermant l'appli :
-  // 1. On "debounce" (regroupe) les sauvegardes pour éviter des dizaines de requêtes qui se
-  //    chevauchent quand on tape vite, la dernière pouvant se faire couper par les précédentes.
-  // 2. Si la page se ferme ou passe en arrière-plan AVANT que la sauvegarde en attente parte,
-  //    on force son envoi immédiatement avec `keepalive: true` — une option du navigateur qui
-  //    garantit que la requête continue même après la fermeture de l'onglet.
+  // --- Références partagées par la synchronisation ---------------------------------------
   const latestStateRef = useRef(state);
   const latestSessionRef = useRef(session);
+  const hhRef = useRef(null);
+  const loadDoneRef = useRef(false);
+  const baseRef = useRef(null); // { data, version } : dernier état connu côté serveur
   const saveTimerRef = useRef(null);
+  const retryTimerRef = useRef(null);
+  const syncQueueRef = useRef(Promise.resolve());
+  const pendingToastRef = useRef(null);
+  const genRef = useRef(0); // change à chaque (re)chargement : une opération lancée avant est ignorée
   const [saveStatus, setSaveStatus] = useState("idle"); // idle | saving | saved | error
   latestStateRef.current = state;
   latestSessionRef.current = session;
+  hhRef.current = hh;
+  loadDoneRef.current = loadDone;
 
-  const flushSave = (stateToSave, sessionToUse) => {
-    if (!stateToSave || !sessionToUse) return;
+  const withDefaults = (d) => ({ ...defaultState, ...d });
+  const reloadAll = () => setReloadKey((k) => k + 1);
+  // Une seule opération de synchronisation à la fois (enregistrement ou lecture)
+  const runExclusive = (fn) => {
+    const p = syncQueueRef.current.then(fn, fn);
+    syncQueueRef.current = p.then(() => {}, () => {});
+    return p;
+  };
+
+  const fetchHouseholdInfo = async () => {
+    const { data, error } = await supabase.rpc("household_info");
+    if (error || !data) return null;
+    const uidNow = latestSessionRef.current && latestSessionRef.current.user.id;
+    return { role: data.role, ownerId: data.owner_id || uidNow, me: uidNow, members: data.members || [], invite: data.invite || null };
+  };
+
+  // Charge le foyer puis les données de CE foyer (les siennes, ou celles de la personne qui
+  // l'a invité). Juste après une connexion par lien magique, la session peut mettre un instant
+  // à être reconnue : on réessaie avant de conclure qu'il n'y a vraiment rien, pour ne jamais
+  // écraser de vraies données par un état neuf. Et si la lecture échoue, on n'invente RIEN :
+  // on affiche un écran "Réessayer" plutôt que de repartir d'un état vide.
+  useEffect(() => {
+    if (!userId) return;
+    let cancelled = false;
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    genRef.current += 1;
+    setLoadDone(false);
+    setLoadError(false);
+    setState(null);
+    baseRef.current = null;
+    setHh(null);
+    (async () => {
+      try {
+        let info = null;
+        for (let i = 0; i < 3 && !info && !cancelled; i++) {
+          info = await fetchHouseholdInfo();
+          if (!info) await sleep(600);
+        }
+        if (cancelled) return;
+        if (!info) throw new Error("household_info");
+
+        let row = null;
+        let answered = false;
+        for (let i = 0; i < 6 && !row && !cancelled; i++) {
+          const { data, error } = await supabase.from("app_state").select("data, version").eq("user_id", info.ownerId).maybeSingle();
+          if (!error) {
+            answered = true;
+            if (data) row = data;
+          }
+          if (!row && i < 5) await sleep(700);
+        }
+        if (cancelled) return;
+        if (!answered) throw new Error("load");
+        if (!row && info.role === "member") throw new Error("household_data_missing");
+
+        baseRef.current = row ? { data: row.data, version: row.version } : { data: null, version: null };
+        setHh(info);
+        // Fusion avec l'état par défaut : un compte créé avant l'ajout d'une fonctionnalité
+        // reçoit une valeur par défaut sûre pour le champ manquant au lieu de faire planter l'appli.
+        setState(row ? withDefaults(row.data) : defaultState);
+        setLoadDone(true);
+
+        if (pendingToastRef.current) {
+          showToast(pendingToastRef.current);
+          pendingToastRef.current = null;
+        }
+        try {
+          const pending = localStorage.getItem("serein_pending_join");
+          if (pending) {
+            localStorage.removeItem("serein_pending_join");
+            if (info.role === "solo") {
+              setJoinCode(pending);
+              setShowJoin(true);
+            }
+          }
+        } catch {
+          // ignore
+        }
+      } catch {
+        if (!cancelled) setLoadError(true);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [userId, reloadKey]);
+
+  // Enregistre l'état local sans jamais écraser les changements d'une autre personne
+  // (voir pushState : version + fusion). Les changements faits pendant l'envoi sont conservés.
+  const pushNow = () =>
+    runExclusive(async () => {
+      const h = hhRef.current;
+      const base = baseRef.current;
+      const local = latestStateRef.current;
+      if (!h || !base || !local || !loadDoneRef.current) return false;
+      if (base.version != null && deepEqual(local, withDefaults(base.data))) {
+        setSaveStatus("saved");
+        return true;
+      }
+      const gen = genRef.current;
+      let res;
+      try {
+        res = await pushState(supabase, h.ownerId, base, local);
+      } catch (e) {
+        res = { ok: false, error: e };
+      }
+      if (gen !== genRef.current) return false; // rechargement en cours : ce résultat n'est plus d'actualité
+      if (res.ok) {
+        baseRef.current = { data: res.data, version: res.version };
+        if (res.merged) setState((prev) => (prev ? withDefaults(mergeStates(local, prev, res.data)) : prev));
+        setSaveStatus("saved");
+        return true;
+      }
+      if (res.exists) {
+        reloadAll();
+        return false;
+      }
+      setSaveStatus("error");
+      if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
+      retryTimerRef.current = setTimeout(() => { pushNow(); }, 10000);
+      if (h.role === "member") checkMembership();
+      return false;
+    });
+
+  // Va chercher les changements faits par l'autre personne (ou un autre appareil) et les fusionne.
+  const pollNow = () =>
+    runExclusive(async () => {
+      const h = hhRef.current;
+      const base = baseRef.current;
+      if (!h || !base || base.version == null || !loadDoneRef.current) return;
+      const gen = genRef.current;
+      const head = await supabase.from("app_state").select("version").eq("user_id", h.ownerId).maybeSingle();
+      if (head.error || gen !== genRef.current) return;
+      if (!head.data) {
+        if (h.role === "member") checkMembership();
+        return;
+      }
+      if (head.data.version === base.version) return;
+      const full = await supabase.from("app_state").select("data, version").eq("user_id", h.ownerId).maybeSingle();
+      if (full.error || !full.data || gen !== genRef.current) return;
+      const local = latestStateRef.current;
+      const merged = mergeStates(base.data || {}, local, full.data.data);
+      baseRef.current = { data: full.data.data, version: full.data.version };
+      setState((prev) => (prev ? withDefaults(mergeStates(local, prev, merged)) : prev));
+    });
+
+  // Le foyer a-t-il changé (retiré par le propriétaire, etc.) ? Si oui on recharge tout.
+  const checkMembership = async () => {
+    const next = await fetchHouseholdInfo();
+    const cur = hhRef.current;
+    if (!next || !cur) return null;
+    if (next.ownerId !== cur.ownerId) {
+      const l = (latestStateRef.current && latestStateRef.current.language) || "fr";
+      pendingToastRef.current = t(l, "hhNoLongerMember");
+      reloadAll();
+      return next;
+    }
+    setHh(next);
+    return next;
+  };
+
+  // Sauvegarde 600 ms après le dernier changement (on regroupe les frappes). Jamais avant la fin
+  // du chargement initial : on ne risque pas d'écraser de vraies données par un état neuf.
+  useEffect(() => {
+    if (!state || !userId || !loadDone) return;
+    setSaveStatus("saving");
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      saveTimerRef.current = null;
+      pushNow();
+    }, 600);
+    return () => {
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    };
+  }, [state, userId, loadDone]);
+
+  // Filet de sécurité : si l'onglet se ferme ou passe en arrière-plan pendant qu'une sauvegarde
+  // est en attente, on force l'envoi immédiat (keepalive = la requête continue même si la page
+  // se ferme). L'envoi est conditionnel à la version : il ne peut jamais écraser quelqu'un d'autre.
+  const flushSave = () => {
+    const s = latestStateRef.current;
+    const sess = latestSessionRef.current;
+    const h = hhRef.current;
+    const base = baseRef.current;
+    if (!s || !sess || !h || !base || base.version == null) return;
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    fetch(`${supabaseUrl}/rest/v1/app_state`, {
-      method: "POST",
+    fetch(`${supabaseUrl}/rest/v1/app_state?user_id=eq.${encodeURIComponent(h.ownerId)}&version=eq.${base.version}`, {
+      method: "PATCH",
       keepalive: true,
       headers: {
         "Content-Type": "application/json",
         apikey: supabaseAnonKey,
-        Authorization: `Bearer ${sessionToUse.access_token}`,
-        Prefer: "resolution=merge-duplicates",
+        Authorization: `Bearer ${sess.access_token}`,
       },
-      body: JSON.stringify({ user_id: sessionToUse.user.id, data: stateToSave, updated_at: new Date().toISOString() }),
+      body: JSON.stringify({ data: s }),
     }).catch(() => {});
   };
 
   useEffect(() => {
-    if (!state || !session || !loadDone) return;
-    setSaveStatus("saving");
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => {
-      supabase
-        .from("app_state")
-        .upsert({ user_id: session.user.id, data: state, updated_at: new Date().toISOString() })
-        .then(({ error }) => setSaveStatus(error ? "error" : "saved"))
-        .catch(() => setSaveStatus("error"));
-    }, 600);
-    return () => clearTimeout(saveTimerRef.current);
-  }, [state, session, loadDone]);
-
-  // Filet de sécurité : si l'onglet se ferme ou passe en arrière-plan pendant qu'une
-  // sauvegarde est en attente (ou vient de partir), on force l'envoi immédiat.
-  useEffect(() => {
     const handleFlush = () => {
       if (saveTimerRef.current) {
         clearTimeout(saveTimerRef.current);
-        flushSave(latestStateRef.current, latestSessionRef.current);
+        saveTimerRef.current = null;
+        flushSave();
       }
     };
     const handleVisibility = () => {
       if (document.hidden) handleFlush();
+      else pollNow();
     };
+    const handleOnline = () => { pushNow(); pollNow(); };
     document.addEventListener("visibilitychange", handleVisibility);
     window.addEventListener("pagehide", handleFlush);
+    window.addEventListener("online", handleOnline);
+    // Mise à jour automatique : on regarde toutes les 20 s si l'autre personne a modifié quelque chose
+    const interval = setInterval(() => {
+      if (!document.hidden) pollNow();
+    }, 20000);
     return () => {
       document.removeEventListener("visibilitychange", handleVisibility);
       window.removeEventListener("pagehide", handleFlush);
+      window.removeEventListener("online", handleOnline);
+      clearInterval(interval);
     };
   }, []);
+
+  // --- Actions du foyer (utilisées par les Réglages et l'écran d'accueil) ----------------
+  const rpcCall = async (fn, args) => {
+    const { data, error } = await supabase.rpc(fn, args);
+    if (error || !data) return { ok: false, error: "generic" };
+    return data;
+  };
+  const currentLang = () => (latestStateRef.current && latestStateRef.current.language) || "fr";
+  const household = {
+    hh,
+    session,
+    refresh: async () => { await checkMembership(); },
+    createInvite: async () => {
+      await pushNow(); // la ligne de données doit exister avant d'inviter
+      const r = await rpcCall("create_household_invite");
+      if (r.ok) await checkMembership();
+      return r;
+    },
+    removeMember: async (memberId) => {
+      const r = await rpcCall("remove_household_member", { p_member: memberId });
+      if (r.ok) await checkMembership();
+      return r;
+    },
+    leave: async () => {
+      await pushNow();
+      const r = await rpcCall("leave_household");
+      if (r.ok) {
+        pendingToastRef.current = t(currentLang(), "hhLeft");
+        setShowSettings(false);
+        reloadAll();
+      }
+      return r;
+    },
+    openJoin: () => { setJoinCode(""); setShowJoin(true); },
+    saveMyName: async (name) => {
+      const { error } = await supabase.auth.updateUser({ data: { display_name: name } });
+      return { ok: !error };
+    },
+  };
+  const joinHousehold = async (code) => {
+    await pushNow(); // ses propres données sont enregistrées avant de passer au foyer
+    const r = await rpcCall("join_household", { p_code: code });
+    if (r.ok) {
+      pendingToastRef.current = t(currentLang(), "hhJoined");
+      setShowJoin(false);
+      setShowSettings(false);
+      reloadAll();
+    }
+    return r;
+  };
 
   // Récupère les taux de change réels, une fois par jour ou quand la devise principale change.
   // Échec silencieux : si l'appel réseau est bloqué (ex. aperçu artefact) ou hors-ligne, on
@@ -6080,6 +7670,10 @@ function SereinApp() {
     return <LoginScreen />;
   }
 
+  if (loadError) {
+    return <LoadErrorScreen onRetry={() => { setLoadError(false); reloadAll(); }} />;
+  }
+
   if (!state) {
     return <SplashScreen />;
   }
@@ -6090,11 +7684,24 @@ function SereinApp() {
 
   if (!state.onboardingDone) {
     return (
-      <Onboarding
-        state={state}
-        setState={setState}
-        onFinish={() => setState((s) => ({ ...s, onboardingDone: true }))}
-      />
+      <>
+        <Onboarding
+          state={state}
+          setState={setState}
+          onFinish={() => setState((s) => ({ ...s, onboardingDone: true, setupGuide: true }))}
+          onHaveInvite={household.openJoin}
+        />
+        {showJoin && (
+          <JoinHouseholdSheet
+            theme={theme}
+            lang={state.language || "fr"}
+            initialCode={joinCode}
+            hasOwnData={false}
+            onSubmit={joinHousehold}
+            onClose={() => setShowJoin(false)}
+          />
+        )}
+      </>
     );
   }
 
@@ -6109,6 +7716,7 @@ function SereinApp() {
     { id: "aide", label: t(lang, "tabAide"), icon: Lightbulb },
   ];
 
+  const myDisplayName = (session.user.user_metadata && session.user.user_metadata.display_name) || state.userName;
   const profileLabel = state.profileType ? t(lang, `profile_${state.profileType}`) : null;
 
   return (
@@ -6118,7 +7726,7 @@ function SereinApp() {
         <div className="flex items-center gap-2.5">
           <img src={LOGO_SEREIN} alt="Serein" className="w-9 h-9 rounded-xl object-cover shadow-sm" />
           <div>
-            <h1 className="font-semibold text-lg">{state.userName ? `${t(lang, "hello")}, ${state.userName}` : t(lang, "appName")}</h1>
+            <h1 className="font-semibold text-lg">{myDisplayName ? `${t(lang, "hello")}, ${myDisplayName}` : t(lang, "appName")}</h1>
             {profileLabel && <p className="text-xs text-slate-400">{profileLabel} · {state.currency}</p>}
           </div>
         </div>
@@ -6166,11 +7774,23 @@ function SereinApp() {
           theme={theme}
           state={state}
           setState={setState}
+          household={household}
           onClose={() => setShowSettings(false)}
           onReset={() => {
             setState(defaultState);
             setShowSettings(false);
           }}
+        />
+      )}
+
+      {showJoin && (
+        <JoinHouseholdSheet
+          theme={theme}
+          lang={lang}
+          initialCode={joinCode}
+          hasOwnData={!!state.onboardingDone}
+          onSubmit={joinHousehold}
+          onClose={() => setShowJoin(false)}
         />
       )}
 
