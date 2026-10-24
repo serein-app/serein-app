@@ -113,8 +113,22 @@ const PRESET_THEME_IDS = ["serein", "ambre", "ametiste", "foret"];
 // depuis les Réglages. Pour publier une nouvelle version : augmenter
 // APP_VERSION et ajouter une entrée EN HAUT de ce tableau.
 // ---------------------------------------------------------------------------
-const APP_VERSION = "1.4.0";
+const APP_VERSION = "1.5.0";
 const CHANGELOG = [
+  {
+    version: "1.5.0",
+    date: "2026-10-23",
+    fr: [
+      "Répartition de chaque paie : dès que tu es payé, l'accueil te dit combien mettre sur quel compte (loyer, factures, abonnements, dettes, projets) et ce qu'il te reste à dépenser. Coche chaque virement fait.",
+      "Factures et abonnements : choisis « à l'échéance » ou « étalé sur mes paies » (ex. sport 60 $ → 30 $ + 30 $), et le compte où mettre l'argent de côté.",
+      "Les dépenses du calendrier indiquent quelle paie les finance : si ta paie tombe en semaine 1, l'abonnement en semaine 2 et la paie suivante en semaine 3, tu vois qu'il faut garder l'argent de la semaine 1.",
+    ],
+    en: [
+      "Paycheck split: as soon as you're paid, the home screen tells you how much to put in which account (rent, bills, subscriptions, debts, projects) and what's left to spend. Tick each transfer once done.",
+      "Bills and subscriptions: choose \"at due date\" or \"spread over my paychecks\" (e.g. gym $60 → $30 + $30), and the account to set the money aside in.",
+      "Calendar expenses show which paycheck funds them: if you're paid in week 1, the subscription is due in week 2 and the next paycheck is in week 3, you see that the week-1 money must be kept.",
+    ],
+  },
   {
     version: "1.4.0",
     date: "2026-10-20",
@@ -122,11 +136,15 @@ const CHANGELOG = [
       "Plus de découvert : indique le solde de ton compte et Serein rejoue jour par jour tes paies et tes prélèvements. Tu vois la date exacte où le compte risque de passer sous zéro, et pourquoi.",
       "Nouveau « Plan par paie » : pour chaque paie, ce qu'il faut garder de côté (factures, abonnements, dettes, projets), ton budget courses/loisirs et ce qui te reste vraiment. En rouge s'il manque de l'argent.",
       "Le conseiller de dettes tient compte de ta marge réelle : il ne te propose plus une mensualité qui ferait passer ton compte à découvert.",
+      "Projets : tu peux saisir ce que tu mets réellement de côté à chaque paie (ex. 350 $). Serein indique si l'objectif sera prêt à temps. Le versement conseillé est aussi corrigé : il comptait les mois entiers et surestimait quand la date limite était proche.",
+      "Le plan se recalcule en direct, sans bouton à valider.",
     ],
     en: [
       "No more overdrafts: enter your account balance and Serein replays your paychecks and payments day by day. You see the exact date your account could go below zero, and why.",
       "New \"Plan by paycheck\": for each paycheck, what to set aside (bills, subscriptions, debts, projects), your groceries/leisure budget and what you really have left. In red when money is missing.",
       "The debt advisor now accounts for your real margin: it no longer suggests a payment that would overdraw your account.",
+      "Projects: enter what you actually set aside each paycheck (e.g. $350). Serein tells you whether the goal will be ready on time. The suggested amount is also fixed: it counted whole months and overestimated when the deadline was close.",
+      "The plan recalculates live, with no button to confirm.",
     ],
   },
   {
@@ -676,6 +694,43 @@ const TRANSLATIONS = {
     hhMyName: "Mon prénom (affiché en haut de l'écran)",
     hhSave: "Enregistrer",
     hhSaved: "Enregistré",
+    allocCardRecent: "Paie du {date} reçue : où mettre l'argent ?",
+    allocCardNext: "Prochaine paie le {date} : ta répartition",
+    allocTo: "Vers {account}",
+    allocStay: "Reste sur ton compte courant (réservé)",
+    allocFree: "Libre à dépenser",
+    allocVariable: "Courses / loisirs",
+    allocSheetTitle: "Répartition de la paie",
+    allocIncome: "Paie du {date}",
+    allocProgress: "{n} sur {total} faits",
+    allocDueCaption: "À payer le {date} (avant ta prochaine paie du {next})",
+    allocSpreadCaption: "Étalé : part {i}/{n} du mois",
+    allocEdit: "Choisir comptes et mode",
+    allocEditDone: "Terminer",
+    allocAccountPh: "Compte (ex. Épargne loyer)",
+    allocModeSpread: "Étalé",
+    allocTip: "Astuce : appuie sur « Choisir comptes et mode » pour indiquer, ligne par ligne, sur quel compte mettre l'argent. Tu sauras alors quoi virer où à chaque paie.",
+    allocNoPlan: "Ajoute une paie et des factures pour voir ta répartition.",
+    allocOpen: "Répartir cette paie",
+    capFunded: "Financé par ta paie du {date}",
+    capSpread: "Étalé sur tes paies",
+    fundTitle: "Comment mettre de côté ?",
+    fundDue: "À l'échéance",
+    fundDueHint: "Tu gardes le montant sur la paie qui précède la date de paiement (ex. paie le 1er, abonnement le 8, prochaine paie le 15 : on garde sur celle du 1er).",
+    fundSpread: "Étalé sur mes paies",
+    fundSpreadHint: "Chaque paie met une part de côté. Ex. : {example}",
+    fundAccountLabel: "Compte où mettre l'argent de côté — optionnel",
+    planGroupSpread: "Mises de côté étalées",
+    projPlannedLabel: "Versement que tu fais à chaque paie (facultatif)",
+    projPlannedHint: "Laisse vide : Serein calcule {amount} par {freq} pour arriver à temps. Tu peux mettre le montant que tu veux, il te dira si ça suffit.",
+    projPlannedHintEmpty: "Indique le montant que tu mets réellement de côté à chaque paie : Serein te dit si ce sera prêt à temps.",
+    projOnTime: "À ce rythme, l'objectif est atteint vers le {date} : dans les temps ✔",
+    projLate: "À ce rythme, il manquera {amount} à la date limite. Il faudrait au moins {need} par paie.",
+    planFixShort: "Ajuste ci-dessous : baisse un versement de projet, le budget courses/loisirs, ou décale une dépense. Le plan se met à jour tout seul.",
+    planLiveHint: "Le plan se recalcule automatiquement dès que tu modifies un montant.",
+    planProjectsTitle: "Mes versements par paie",
+    planProjectsHint: "Tape ce que tu mets vraiment de côté à chaque paie (comme dans ton tableau). Sinon, Serein calcule le minimum pour être à temps.",
+    planProjectAuto: "Calcul automatique : {amount} par {freq} jusqu'au {date}.",
     cfNoBalanceTitle: "Évite le découvert",
     cfNoBalanceBody: "Indique le solde de ton compte : Serein prévoit jour par jour si tu risques d'être à découvert.",
     cfAlertTitle: "Découvert prévu le {date}",
@@ -687,10 +742,10 @@ const TRANSLATIONS = {
     cfStale: "Solde saisi il y a plus d'une semaine : mets-le à jour pour une prévision fiable.",
     planTitle: "Plan par paie",
     planIntro: "Pour ne jamais être à découvert : Serein rejoue tes paies et tes prélèvements jour par jour, et te montre pour chaque paie ce qu'il faut garder de côté.",
-    planBalanceLabel: "Solde actuel du compte",
+    planBalanceLabel: "Solde du compte aujourd'hui",
     planBalanceHint: "Le solde de ton compte courant aujourd'hui (celui qui reçoit ta paie).",
     planBalanceAsOf: "Solde enregistré le {date}. Mets-le à jour de temps en temps.",
-    planVariableLabel: "Budget courses, loisirs et imprévus par mois",
+    planVariableLabel: "Courses/loisirs par mois",
     planVariableHint: "Ce que tu dépenses « au quotidien » hors factures et abonnements (courses, sorties, essence…). Il est réparti sur chaque jour.",
     planSave: "Enregistrer et recalculer",
     planAlertDetail: "Avec {culprit}, le compte passe à {balance}. Point le plus bas : -{lowest}.",
@@ -1156,6 +1211,43 @@ const TRANSLATIONS = {
     hhMyName: "My first name (shown at the top of the screen)",
     hhSave: "Save",
     hhSaved: "Saved",
+    allocCardRecent: "Paycheck of {date} received: where to put the money?",
+    allocCardNext: "Next paycheck on {date}: your split",
+    allocTo: "To {account}",
+    allocStay: "Stays in your main account (reserved)",
+    allocFree: "Free to spend",
+    allocVariable: "Groceries / leisure",
+    allocSheetTitle: "Paycheck split",
+    allocIncome: "Paycheck of {date}",
+    allocProgress: "{n} of {total} done",
+    allocDueCaption: "Due on {date} (before your next paycheck on {next})",
+    allocSpreadCaption: "Spread: share {i}/{n} of the month",
+    allocEdit: "Choose accounts and mode",
+    allocEditDone: "Done",
+    allocAccountPh: "Account (e.g. Rent savings)",
+    allocModeSpread: "Spread",
+    allocTip: "Tip: tap \"Choose accounts and mode\" to set, line by line, which account the money goes to. You'll then know what to transfer where at each paycheck.",
+    allocNoPlan: "Add a paycheck and bills to see your split.",
+    allocOpen: "Split this paycheck",
+    capFunded: "Funded by your paycheck of {date}",
+    capSpread: "Spread over your paychecks",
+    fundTitle: "How to set money aside?",
+    fundDue: "At due date",
+    fundDueHint: "You keep the amount from the paycheck that comes before the payment date (e.g. paid on the 1st, subscription on the 8th, next paycheck on the 15th: kept from the 1st).",
+    fundSpread: "Spread over my paychecks",
+    fundSpreadHint: "Each paycheck sets a share aside. E.g.: {example}",
+    fundAccountLabel: "Account to set the money aside in — optional",
+    planGroupSpread: "Spread set-asides",
+    projPlannedLabel: "What you put aside each paycheck (optional)",
+    projPlannedHint: "Leave empty: Serein calculates {amount} per {freq} to be on time. You can enter any amount, it will tell you if it's enough.",
+    projPlannedHintEmpty: "Enter what you actually set aside each paycheck: Serein tells you if it will be ready on time.",
+    projOnTime: "At this pace, the goal is reached around {date}: on time ✔",
+    projLate: "At this pace you will be short {amount} at the deadline. You would need at least {need} per paycheck.",
+    planFixShort: "Adjust below: lower a project contribution, the groceries/leisure budget, or move an expense. The plan updates by itself.",
+    planLiveHint: "The plan recalculates automatically whenever you change an amount.",
+    planProjectsTitle: "My contributions per paycheck",
+    planProjectsHint: "Enter what you really set aside each paycheck (like in your spreadsheet). Otherwise Serein calculates the minimum to be on time.",
+    planProjectAuto: "Automatic calculation: {amount} per {freq} until {date}.",
     cfNoBalanceTitle: "Avoid overdrafts",
     cfNoBalanceBody: "Enter your account balance: Serein forecasts day by day whether you risk going overdrawn.",
     cfAlertTitle: "Overdraft expected on {date}",
@@ -1167,10 +1259,10 @@ const TRANSLATIONS = {
     cfStale: "Balance entered over a week ago: update it for a reliable forecast.",
     planTitle: "Plan by paycheck",
     planIntro: "To never be overdrawn: Serein replays your paychecks and payments day by day and shows, for each paycheck, what to set aside.",
-    planBalanceLabel: "Current account balance",
+    planBalanceLabel: "Account balance today",
     planBalanceHint: "Your checking account balance today (the one that receives your pay).",
     planBalanceAsOf: "Balance saved on {date}. Update it from time to time.",
-    planVariableLabel: "Groceries, leisure and unexpected, per month",
+    planVariableLabel: "Groceries/leisure per month",
     planVariableHint: "What you spend day to day apart from bills and subscriptions (groceries, outings, fuel…). It is spread over each day.",
     planSave: "Save and recalculate",
     planAlertDetail: "With {culprit}, the account goes to {balance}. Lowest point: -{lowest}.",
@@ -1654,18 +1746,43 @@ function amortizedInstallment(remaining, annualRatePct, periods, frequency) {
   return Math.ceil((remaining * r) / denom);
 }
 
+// Durée d'une période en jours, et nombre de versements réellement possibles d'ici une date limite
+// (compté en jours, pas en mois entiers : sinon une date limite à 8 semaines était comptée comme
+// « 1 mois » et le versement conseillé était presque doublé).
+function periodDays(frequency) {
+  if (frequency === "hebdomadaire") return 7;
+  if (frequency === "bi-hebdomadaire") return 14;
+  return 30.44;
+}
+function periodsUntil(endDateStr, frequency) {
+  const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+  const days = (new Date(endDateStr + "T00:00:00") - t0) / 86400000;
+  return Math.max(1, Math.round(days / periodDays(frequency)));
+}
 function debtInstallment(d) {
   if (d.paymentMode !== "recurrent" || !d.endDate) return 0;
   const remaining = Math.max(0, d.amount - d.paid);
-  const monthsLeft = monthsBetween(getToday(), d.endDate);
-  const periods = monthsLeft * periodsPerMonth(d.frequency);
+  const periods = periodsUntil(d.endDate, d.frequency);
   return amortizedInstallment(remaining, d.interestRate, periods, d.frequency);
 }
+// Versement par paie : celui que l'utilisateur a choisi (p.planned), sinon le montant calculé
 function projectInstallment(p) {
   if (!p.endDate) return 0;
+  if (Number(p.planned) > 0) return Number(p.planned);
   const remaining = Math.max(0, p.target - p.saved);
-  const monthsLeft = monthsBetween(getToday(), p.endDate);
-  return Math.ceil(remaining / (monthsLeft * periodsPerMonth(p.frequency)));
+  return Math.ceil(remaining / periodsUntil(p.endDate, p.frequency));
+}
+// Avec le versement choisi, le projet sera-t-il prêt à temps ?
+function projectPlanStatus(target, saved, planned, endDateStr, frequency) {
+  const remaining = Math.max(0, (Number(target) || 0) - (Number(saved) || 0));
+  const per = Number(planned);
+  if (!(per > 0) || !endDateStr) return null;
+  const periods = periodsUntil(endDateStr, frequency);
+  const needed = Math.ceil(remaining / per);
+  const finish = new Date(); finish.setHours(0, 0, 0, 0);
+  finish.setDate(finish.getDate() + Math.round(needed * periodDays(frequency)));
+  const shortfall = Math.max(0, remaining - per * periods);
+  return { onTime: shortfall <= 0.5, finish, shortfall, suggested: Math.ceil(remaining / periods) };
 }
 
 // Retourne les jours du mois (year/month, month = 0-11) où une occurrence tombe
@@ -1695,12 +1812,13 @@ function occurrencesInMonth(startDateStr, frequency, year, month) {
   if (cursor < monthStart) {
     const diffDays = Math.floor((monthStart - cursor) / 86400000);
     const steps = Math.floor(diffDays / stepDays);
-    cursor = new Date(cursor.getTime() + steps * stepDays * 86400000);
-    while (cursor < monthStart) cursor = new Date(cursor.getTime() + stepDays * 86400000);
+    cursor = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate() + steps * stepDays);
+    while (cursor < monthStart) cursor = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate() + stepDays);
   }
   while (cursor <= monthEnd) {
     days.push(cursor.getDate());
-    cursor = new Date(cursor.getTime() + stepDays * 86400000);
+    // jours calendaires (pas n×24 h) : sinon le changement d'heure décale les paies d'un jour
+    cursor = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate() + stepDays);
   }
   return days;
 }
@@ -3622,10 +3740,10 @@ const DebtsStep = forwardRef(function DebtsStep({ theme, state, items, onAdd, on
             </select>
           </Field>
           <Field label={t(lang, "fieldHoldingAccount")}>
-            <input className={inputCls} value={f.holdingAccount} onChange={(e) => setF({ ...f, holdingAccount: e.target.value })} placeholder={t(lang, "fieldHoldingAccountPlaceholder")} />
+            <input list="serein-accounts" className={inputCls} value={f.holdingAccount} onChange={(e) => setF({ ...f, holdingAccount: e.target.value })} placeholder={t(lang, "fieldHoldingAccountPlaceholder")} />
           </Field>
           <Field label={t(lang, "fieldChargeAccount")}>
-            <input className={inputCls} value={f.chargeAccount} onChange={(e) => setF({ ...f, chargeAccount: e.target.value })} placeholder={t(lang, "fieldChargeAccountPlaceholder")} />
+            <input list="serein-accounts" className={inputCls} value={f.chargeAccount} onChange={(e) => setF({ ...f, chargeAccount: e.target.value })} placeholder={t(lang, "fieldChargeAccountPlaceholder")} />
           </Field>
         </AdvancedSection>
       </StepShell>
@@ -3667,11 +3785,13 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
         frequency: primaryPayday?.frequency || "mensuel",
         currency: state.currency,
         holdingAccount: "",
+        planned: "",
       };
     }
     return {
       title: editItem ? src.title : "",
       icon: src.icon || PROJECT_ICONS[0],
+      planned: editItem && src.planned ? String(src.planned) : "",
       amount: editItem ? String(src.target) : "",
       startDate: src.startDate || getToday(),
       endDate: src.endDate || "",
@@ -3701,12 +3821,12 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
     // partir du 3, projet aux 2 semaines à partir du 10 : jamais le même jour).
     const frequency = lockedToPayday ? primaryPayday.frequency : f.frequency;
     const startDate = lockedToPayday ? primaryPayday.startDate : f.startDate;
-    const item = { title: f.title, icon: f.icon, target: Number(f.amount), term: f.term, owner: f.owner, currency: f.currency, startDate, endDate: f.endDate, frequency, holdingAccount: f.holdingAccount };
+    const item = { title: f.title, icon: f.icon, target: Number(f.amount), term: f.term, owner: f.owner, currency: f.currency, startDate, endDate: f.endDate, frequency, holdingAccount: f.holdingAccount, planned: Number(f.planned) > 0 ? Number(f.planned) : null };
     if (isEdit) {
       onSave(editItem.id, item);
     } else {
       onAdd({ ...item, saved: 0 });
-      setF({ title: "", icon: PROJECT_ICONS[0], amount: "", startDate: primaryPayday?.startDate || getToday(), endDate: "", term: "court", owner: "commun", frequency: primaryPayday?.frequency || "mensuel", currency: state.currency, holdingAccount: "" });
+      setF({ title: "", icon: PROJECT_ICONS[0], amount: "", startDate: primaryPayday?.startDate || getToday(), endDate: "", term: "court", owner: "commun", frequency: primaryPayday?.frequency || "mensuel", currency: state.currency, holdingAccount: "", planned: "" });
       setTermTouched(false);
     }
   };
@@ -3800,6 +3920,28 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
             <p className="text-xs mt-1.5" style={{ color: theme.danger }}>{t(lang, "noPaydayWarning")}</p>
           </Field>
         )}
+        {(() => {
+          const freq = lockedToPayday ? primaryPayday.frequency : f.frequency;
+          const saved = editItem ? editItem.saved || 0 : 0;
+          const target = Number(f.amount) || 0;
+          const auto = f.endDate && target > 0 ? projectInstallment({ target, saved, endDate: f.endDate, frequency: freq }) : null;
+          const st = projectPlanStatus(target, saved, f.planned, f.endDate, freq);
+          return (
+            <Field label={`${t(lang, "projPlannedLabel")} (${f.currency})`}>
+              <input type="number" step="any" inputMode="decimal" className={inputCls} value={f.planned} onChange={(e) => setF({ ...f, planned: e.target.value })} placeholder={auto ? String(auto) : ""} />
+              <p className="text-xs text-slate-400 mt-1.5">
+                {auto ? t(lang, "projPlannedHint").replace("{amount}", money(auto, f.currency)).replace("{freq}", freqLabel(freq)) : t(lang, "projPlannedHintEmpty")}
+              </p>
+              {st && (
+                <p className="text-xs mt-1.5 font-medium" style={{ color: st.onTime ? "#16A34A" : "#DC2626" }}>
+                  {st.onTime
+                    ? t(lang, "projOnTime").replace("{date}", st.finish.toLocaleDateString(lang === "en" ? "en-US" : "fr-FR", { day: "numeric", month: "long", year: "numeric" }))
+                    : t(lang, "projLate").replace("{amount}", money(Math.round(st.shortfall), f.currency)).replace("{need}", money(st.suggested, f.currency))}
+                </p>
+              )}
+            </Field>
+          );
+        })()}
         <Field label={termTouched ? t(lang, "termLabel") : t(lang, "termSuggested")}>
           <div className="flex gap-2">
             {TERMES.map((term) => (
@@ -3827,7 +3969,7 @@ const ProjectsStep = forwardRef(function ProjectsStep({ theme, state, items, onA
             </select>
           </Field>
           <Field label={t(lang, "fieldHoldingAccount")}>
-            <input className={inputCls} value={f.holdingAccount} onChange={(e) => setF({ ...f, holdingAccount: e.target.value })} placeholder={t(lang, "fieldHoldingAccountPlaceholder")} />
+            <input list="serein-accounts" className={inputCls} value={f.holdingAccount} onChange={(e) => setF({ ...f, holdingAccount: e.target.value })} placeholder={t(lang, "fieldHoldingAccountPlaceholder")} />
           </Field>
         </AdvancedSection>
       </StepShell>
@@ -3843,7 +3985,7 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
   const isEdit = !!editItem;
   const [f, setF] = useState(() => {
     const src = editItem || duplicateFrom;
-    if (!src) return { title: "", day: "", amount: "", period: "mensuel", month: "1", startDate: getToday(), owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "", essential: false, paycheckSplit: null };
+    if (!src) return { title: "", day: "", amount: "", period: "mensuel", month: "1", startDate: getToday(), owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "", essential: false, paycheckSplit: null, fund: "due" };
     return {
       title: editItem ? src.title : "",
       day: src.day != null ? String(src.day) : "",
@@ -3857,6 +3999,7 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
       chargeAccount: src.chargeAccount || "",
       essential: src.essential || false,
       paycheckSplit: src.paycheckSplit || null,
+      fund: src.fund === "spread" ? "spread" : "due",
     };
   });
   const usesStartDate = ["hebdomadaire", "bi-hebdomadaire", "bimestriel"].includes(f.period);
@@ -3874,6 +4017,9 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
   const paychecksPerPeriod = payFrequency && payFrequency !== f.period
     ? Math.round(periodsPerMonth(payFrequency) / periodsPerMonth(f.period))
     : 0;
+  // Choix « à l'échéance » / « étalé sur mes paies » : utile dès qu'il y a plusieurs paies par mois
+  const showFund = state.paydays.length > 0 && (state.paydays.length > 1 || (payFrequency && payFrequency !== "mensuel"));
+  const nPayMonth = Math.max(1, Math.round(payFrequency ? periodsPerMonth(payFrequency) : 1) * (state.paydays.length > 1 && payFrequency === "mensuel" ? state.paydays.length : 1));
   const canCustomSplit = perPaycheckAmount != null && paychecksPerPeriod >= 2 && paychecksPerPeriod <= 4;
   const [useCustomSplit, setUseCustomSplit] = useState(!!(editItem?.paycheckSplit?.length));
   const splitValues = f.paycheckSplit && f.paycheckSplit.length === paychecksPerPeriod
@@ -3886,7 +4032,7 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
     setF({ ...f, paycheckSplit: next });
   };
   const submit = () => {
-    const validSplit = useCustomSplit && canCustomSplit && splitValues.every((v) => v !== "" && !isNaN(Number(v)));
+    const validSplit = f.fund === "spread" && useCustomSplit && canCustomSplit && splitValues.every((v) => v !== "" && !isNaN(Number(v)));
     const base = {
       title: f.title,
       amount: Number(f.amount),
@@ -3897,6 +4043,7 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
       chargeAccount: f.chargeAccount,
       essential: f.essential,
       paycheckSplit: validSplit ? splitValues.map(Number) : null,
+      fund: showFund ? f.fund : "due",
     };
     const item = usesStartDate
       ? { ...base, startDate: f.startDate, day: null, month: null }
@@ -3905,7 +4052,7 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
       onSave(editItem.id, item);
     } else {
       onAdd(item);
-      setF({ title: "", day: "", amount: "", period: "mensuel", month: "1", startDate: getToday(), owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "", essential: false, paycheckSplit: null });
+      setF({ title: "", day: "", amount: "", period: "mensuel", month: "1", startDate: getToday(), owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "", essential: false, paycheckSplit: null, fund: "due" });
       setUseCustomSplit(false);
     }
   };
@@ -3934,44 +4081,6 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
         <Field label={`${t(lang, "fieldAmount")} (${f.currency})`}>
           <input type="number" step="any" inputMode="decimal" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
         </Field>
-        {perPaycheckAmount != null && (
-          <div className="-mt-2 mb-3">
-            <p className="text-xs text-slate-400">
-              {t(lang, "perPaycheckHint")
-                .replace("{amount}", money(perPaycheckAmount, f.currency))
-                .replace("{freq}", freqLabel(payFrequency))}
-            </p>
-            {canCustomSplit && (
-              <label className="flex items-center gap-2 mt-1.5 text-xs cursor-pointer" style={{ color: theme.primary }}>
-                <input
-                  type="checkbox"
-                  checked={useCustomSplit}
-                  onChange={(e) => setUseCustomSplit(e.target.checked)}
-                />
-                {t(lang, "customSplitToggle")}
-              </label>
-            )}
-            {useCustomSplit && canCustomSplit && (
-              <div className="mt-2 p-3 rounded-lg bg-slate-50 space-y-2">
-                {splitValues.map((v, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
-                    <span className="text-xs text-slate-500 w-16 shrink-0">{t(lang, "paycheckLabel").replace("{n}", idx + 1)}</span>
-                    <input
-                      type="number" step="any" inputMode="decimal"
-                      className={inputCls}
-                      value={v}
-                      onChange={(e) => setSplitValue(idx, e.target.value)}
-                      placeholder="0"
-                    />
-                  </div>
-                ))}
-                <p className="text-xs" style={{ color: Math.abs(splitTotal - Number(f.amount || 0)) < 0.01 ? "#16A34A" : theme.danger }}>
-                  {t(lang, "splitTotalLabel")} {money(splitTotal, f.currency)} / {money(Number(f.amount || 0), f.currency)}
-                </p>
-              </div>
-            )}
-          </div>
-        )}
         <Field label={t(lang, "fieldFrequency")}>
           <FreqButtons
             theme={theme}
@@ -3996,6 +4105,67 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
             </select>
           </Field>
         )}
+        {showFund && (
+          <Field label={t(lang, "fundTitle")}>
+            <div className="grid grid-cols-2 gap-2">
+              {["due", "spread"].map((m) => (
+                <button
+                  type="button"
+                  key={m}
+                  onClick={() => setF({ ...f, fund: m })}
+                  className="rounded-lg border px-2 py-2 text-xs"
+                  style={{
+                    borderColor: f.fund === m ? theme.primary : "#e2e8f0",
+                    backgroundColor: f.fund === m ? theme.soft : "white",
+                    color: f.fund === m ? theme.text : "#64748b",
+                  }}
+                >
+                  {m === "due" ? t(lang, "fundDue") : t(lang, "fundSpread")}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-slate-400 mt-1.5">
+              {f.fund === "due"
+                ? t(lang, "fundDueHint")
+                : t(lang, "fundSpreadHint").replace(
+                    "{example}",
+                    f.amount
+                      ? `${money(monthlyEquivalent(Number(f.amount), f.period), f.currency)} → ${Array.from({ length: nPayMonth }, () => money(monthlyEquivalent(Number(f.amount), f.period) / nPayMonth, f.currency)).join(" + ")}`
+                      : "60 → 30 + 30"
+                  )}
+            </p>
+            {f.fund === "spread" && (
+              <div className="mt-2">
+                <input
+                  list="serein-accounts"
+                  className={inputCls}
+                  value={f.holdingAccount}
+                  onChange={(e) => setF({ ...f, holdingAccount: e.target.value })}
+                  placeholder={t(lang, "fundAccountLabel")}
+                />
+                {canCustomSplit && (
+                  <label className="flex items-center gap-2 mt-2 text-xs cursor-pointer" style={{ color: theme.primary }}>
+                    <input type="checkbox" checked={useCustomSplit} onChange={(e) => setUseCustomSplit(e.target.checked)} />
+                    {t(lang, "customSplitToggle")}
+                  </label>
+                )}
+                {useCustomSplit && canCustomSplit && (
+                  <div className="mt-2 p-3 rounded-lg bg-slate-50 space-y-2">
+                    {splitValues.map((v, idx) => (
+                      <div key={idx} className="flex items-center gap-2">
+                        <span className="text-xs text-slate-500 w-16 shrink-0">{t(lang, "paycheckLabel").replace("{n}", idx + 1)}</span>
+                        <input type="number" step="any" inputMode="decimal" className={inputCls} value={v} onChange={(e) => setSplitValue(idx, e.target.value)} placeholder="0" />
+                      </div>
+                    ))}
+                    <p className="text-xs" style={{ color: Math.abs(splitTotal - Number(f.amount || 0)) < 0.01 ? "#16A34A" : theme.danger }}>
+                      {t(lang, "splitTotalLabel")} {money(splitTotal, f.currency)} / {money(Number(f.amount || 0), f.currency)}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </Field>
+        )}
         <OwnerSelect theme={theme} state={state} value={f.owner} onChange={(v) => setF({ ...f, owner: v })} />
         <AdvancedSection theme={theme} lang={lang}>
           {showEssentialToggle && (
@@ -4012,11 +4182,11 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
               {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
             </select>
           </Field>
-          <Field label={t(lang, "fieldHoldingAccount")}>
-            <input className={inputCls} value={f.holdingAccount} onChange={(e) => setF({ ...f, holdingAccount: e.target.value })} placeholder={t(lang, "fieldHoldingAccountPlaceholder")} />
-          </Field>
+          {!(showFund && f.fund === "spread") && <Field label={t(lang, "fieldHoldingAccount")}>
+            <input list="serein-accounts" className={inputCls} value={f.holdingAccount} onChange={(e) => setF({ ...f, holdingAccount: e.target.value })} placeholder={t(lang, "fieldHoldingAccountPlaceholder")} />
+          </Field>}
           <Field label={t(lang, "fieldChargeAccount")}>
-            <input className={inputCls} value={f.chargeAccount} onChange={(e) => setF({ ...f, chargeAccount: e.target.value })} placeholder={t(lang, "fieldChargeAccountPlaceholder")} />
+            <input list="serein-accounts" className={inputCls} value={f.chargeAccount} onChange={(e) => setF({ ...f, chargeAccount: e.target.value })} placeholder={t(lang, "fieldChargeAccountPlaceholder")} />
           </Field>
         </AdvancedSection>
       </StepShell>
@@ -4211,7 +4381,7 @@ const ExpenseStep = forwardRef(function ExpenseStep({ theme, state, items, onAdd
           <input className={inputCls} value={f.note} onChange={(e) => setF({ ...f, note: e.target.value })} placeholder={t(lang, "fieldExpenseNotePlaceholder")} />
         </Field>
         <Field label={t(lang, "fieldChargeAccount")}>
-          <input className={inputCls} value={f.chargeAccount} onChange={(e) => setF({ ...f, chargeAccount: e.target.value })} placeholder={t(lang, "fieldChargeAccountPlaceholder")} />
+          <input list="serein-accounts" className={inputCls} value={f.chargeAccount} onChange={(e) => setF({ ...f, chargeAccount: e.target.value })} placeholder={t(lang, "fieldChargeAccountPlaceholder")} />
         </Field>
         <OwnerSelect theme={theme} state={state} value={f.owner} onChange={(v) => setF({ ...f, owner: v })} />
       </StepShell>
@@ -4687,6 +4857,9 @@ function PaydayOccurrenceSheet({ theme, lang, state, target, onSaveThis, onSaveA
   );
 }
 
+function itemMeta(x) {
+  return { itemId: x.id, fund: x.fund === "spread" ? "spread" : "due", account: String(x.holdingAccount || x.chargeAccount || "").trim() };
+}
 // Tous les événements d'un jour (paies, factures, abonnements, dettes, projets) — sans filtre de propriétaire
 function buildEventsOn(state, y, m, day) {
   const list = [];
@@ -4704,22 +4877,22 @@ function buildEventsOn(state, y, m, day) {
   state.subscriptions.forEach((s) => {
     if (s.startDate) {
       if (occurrencesInMonth(s.startDate, s.period, y, m).includes(day)) {
-        list.push({ kind: "abonnement", title: s.title, amount: s.amount, owner: s.owner, currency: s.currency });
+        list.push({ kind: "abonnement", title: s.title, amount: s.amount, owner: s.owner, currency: s.currency, ...itemMeta(s) });
       }
     } else {
       const monthMatches = s.period === "mensuel" || (s.period === "annuel" && s.month === m + 1);
-      if (s.day === day && monthMatches) list.push({ kind: "abonnement", title: s.title, amount: s.amount, owner: s.owner, currency: s.currency });
+      if (s.day === day && monthMatches) list.push({ kind: "abonnement", title: s.title, amount: s.amount, owner: s.owner, currency: s.currency, ...itemMeta(s) });
     }
   });
 
   state.bills.forEach((b) => {
     if (b.startDate) {
       if (occurrencesInMonth(b.startDate, b.period, y, m).includes(day)) {
-        list.push({ kind: "facture", title: b.title, amount: b.amount, owner: b.owner, currency: b.currency });
+        list.push({ kind: "facture", title: b.title, amount: b.amount, owner: b.owner, currency: b.currency, ...itemMeta(b) });
       }
     } else {
       const monthMatches = b.period === "mensuel" || (b.period === "annuel" && b.month === m + 1);
-      if (b.day === day && monthMatches) list.push({ kind: "facture", title: b.title, amount: b.amount, owner: b.owner, currency: b.currency });
+      if (b.day === day && monthMatches) list.push({ kind: "facture", title: b.title, amount: b.amount, owner: b.owner, currency: b.currency, ...itemMeta(b) });
     }
   });
 
@@ -4727,13 +4900,13 @@ function buildEventsOn(state, y, m, day) {
     if (d.paymentMode === "unique" && d.dueDate) {
       const dd = new Date(d.dueDate + "T00:00:00");
       if (dd.getFullYear() === y && dd.getMonth() === m && dd.getDate() === day) {
-        list.push({ kind: "dette", title: d.title, amount: d.amount - d.paid, owner: d.owner, currency: d.currency });
+        list.push({ kind: "dette", title: d.title, amount: d.amount - d.paid, owner: d.owner, currency: d.currency, ...itemMeta(d) });
       }
     } else if (d.paymentMode === "recurrent" && d.startDate && d.frequency && d.endDate) {
       const occDate = new Date(y, m, day);
       const endD = new Date(d.endDate + "T00:00:00");
       if (occDate <= endD && occurrencesInMonth(d.startDate, d.frequency, y, m).includes(day)) {
-        list.push({ kind: "dette", title: d.title, amount: debtInstallment(d), owner: d.owner, currency: d.currency });
+        list.push({ kind: "dette", title: d.title, amount: debtInstallment(d), owner: d.owner, currency: d.currency, ...itemMeta(d) });
       }
     }
   });
@@ -4751,7 +4924,7 @@ function buildEventsOn(state, y, m, day) {
     const occDate = new Date(y, m, day);
     const endD = new Date(p.endDate + "T00:00:00");
     if (occDate <= endD && occurrencesInMonth(effStartDate, effFrequency, y, m).includes(day)) {
-      list.push({ kind: "projet", title: p.title, amount: projectInstallment(p), owner: p.owner, currency: p.currency });
+      list.push({ kind: "projet", title: p.title, amount: projectInstallment(p), owner: p.owner, currency: p.currency, ...itemMeta(p) });
     }
   });
   return list;
@@ -4763,6 +4936,10 @@ function buildEventsOn(state, y, m, day) {
 // chaque paie pour couvrir ce qui sort avant la suivante (comme un tableau « plan par paie »).
 // ---------------------------------------------------------------------------
 const DAY_MS = 86400000;
+// Décale une date de n jours CALENDAIRES (et non n×24 h : le passage à l'heure d'hiver ferait doubler un jour)
+function shiftDays(d, n) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+}
 function ymdOf(d) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
@@ -4807,16 +4984,16 @@ function projectCashflow(state, horizonDays = 60) {
   const today = startOfToday();
   let start = cb.asOf ? new Date(cb.asOf + "T00:00:00") : today;
   if (isNaN(start.getTime()) || start > today) start = today;
-  const oldest = new Date(today.getTime() - 45 * DAY_MS);
+  const oldest = shiftDays(today, -45);
   if (start < oldest) start = oldest;
   const stale = (today - new Date((cb.asOf || ymdOf(today)) + "T00:00:00")) / DAY_MS > 7;
   const daily = (Number(state.variableMonthly) || 0) / 30.4;
-  const end = new Date(today.getTime() + horizonDays * DAY_MS);
+  const end = shiftDays(today, horizonDays);
   let bal = cb.amount;
   const days = [];
   let lowest = null;
   let firstNegative = null;
-  for (let d = new Date(start); d <= end; d = new Date(d.getTime() + DAY_MS)) {
+  for (let d = new Date(start); d <= end; d = shiftDays(d, 1)) {
     const events = buildEventsOn(state, d.getFullYear(), d.getMonth(), d.getDate());
     events.forEach((e) => { bal += signedEventAmount(e, state); });
     bal -= daily;
@@ -4831,40 +5008,259 @@ function projectCashflow(state, horizonDays = 60) {
   return { days: days.filter((r) => r.date >= today), lowest, firstNegative, stale, nextPay: nextPay ? nextPay.date : null };
 }
 
-// Plan « par paie » : pour chaque paie, ce qui sort jusqu'à la paie suivante.
+// Dates de paie (sans doublon) entre deux dates
+function payDatesBetween(state, from, to) {
+  const out = [];
+  for (let d = new Date(from); d <= to; d = shiftDays(d, 1)) {
+    if (buildEventsOn(state, d.getFullYear(), d.getMonth(), d.getDate()).some((e) => e.kind === "paie")) out.push(new Date(d));
+  }
+  return out;
+}
+const KIND_FIELD = { facture: "bills", abonnement: "subscriptions", dette: "debts", projet: "projects" };
+
+// Plan « par paie » : pour chaque paie, la liste des sommes à mettre de côté (avec le compte), soit
+// à l'échéance (tout ce qui tombe avant la paie suivante), soit étalées sur les paies du mois.
 function buildPaycheckPlan(state, count = 6) {
   const today = startOfToday();
-  const from = new Date(today.getTime() - 40 * DAY_MS);
-  const to = new Date(today.getTime() + 260 * DAY_MS);
+  const f0 = shiftDays(today, -40);
+  const from = new Date(f0.getFullYear(), f0.getMonth(), 1);
+  const t0 = shiftDays(today, 260);
+  const to = new Date(t0.getFullYear(), t0.getMonth() + 1, 0);
   const daily = (Number(state.variableMonthly) || 0) / 30.4;
+  const conv = (amount, cur) => toMainCurrency(amount, cur || state.currency, state);
   const byDate = [];
-  for (let d = new Date(from); d <= to; d = new Date(d.getTime() + DAY_MS)) {
+  for (let d = new Date(from); d <= to; d = shiftDays(d, 1)) {
     byDate.push({ date: new Date(d), events: buildEventsOn(state, d.getFullYear(), d.getMonth(), d.getDate()) });
   }
   const payDates = byDate.filter((r) => r.events.some((e) => e.kind === "paie")).map((r) => r.date);
-  if (!payDates.length) return [];
+  if (payDates.length < 2) return [];
   let startIdx = 0;
   payDates.forEach((pd, i) => { if (pd <= today) startIdx = i; });
+  const spreadItems = [
+    ...state.bills.filter((x) => x.fund === "spread").map((x) => ["facture", x]),
+    ...state.subscriptions.filter((x) => x.fund === "spread").map((x) => ["abonnement", x]),
+  ];
   const periods = [];
   for (let i = startIdx; i < Math.min(payDates.length - 1, startIdx + count); i++) {
     const ps = payDates[i], pe = payDates[i + 1];
     const rows = byDate.filter((r) => r.date >= ps && r.date < pe);
-    const incomes = [], fixed = [], debts = [], projects = [];
+    const incomes = [];
+    const lines = [];
     rows.forEach((r) => r.events.forEach((e) => {
-      const item = { title: e.title, amount: Math.abs(signedEventAmount(e, state)), date: r.date };
-      if (e.kind === "paie") incomes.push(item);
-      else if (e.kind === "dette") debts.push(item);
-      else if (e.kind === "projet") projects.push(item);
-      else fixed.push(item);
+      const amount = Math.abs(signedEventAmount(e, state));
+      if (e.kind === "paie") { incomes.push({ title: e.title, amount, date: r.date }); return; }
+      if ((e.kind === "facture" || e.kind === "abonnement") && e.fund === "spread") return; // géré plus bas (étalé)
+      lines.push({ key: `${e.kind}:${e.itemId}:${ymdOf(r.date)}`, kind: e.kind, itemId: e.itemId, title: e.title, amount, account: e.account || "", date: r.date, mode: "due" });
     }));
+    // Mises de côté étalées : une part à chaque paie du mois
+    const sameMonth = payDates.filter((d) => d.getFullYear() === ps.getFullYear() && d.getMonth() === ps.getMonth());
+    const idx = Math.max(0, sameMonth.findIndex((d) => d.getTime() === ps.getTime()));
+    const n = Math.max(1, sameMonth.length);
+    spreadItems.forEach(([kind, x]) => {
+      const custom = Array.isArray(x.paycheckSplit) && x.paycheckSplit.length === n ? Number(x.paycheckSplit[idx]) : NaN;
+      const amount = Number.isFinite(custom) ? conv(custom, x.currency) : conv(monthlyEquivalent(x.amount, x.period), x.currency) / n;
+      lines.push({ key: `${kind}:${x.id}:spread`, kind, itemId: x.id, title: x.title, amount, account: String(x.holdingAccount || x.chargeAccount || "").trim(), date: null, mode: "spread", spreadIdx: idx + 1, spreadN: n });
+    });
+    lines.sort((a, b) => (a.date ? a.date.getTime() : Infinity) - (b.date ? b.date.getTime() : Infinity));
     const sum = (arr) => arr.reduce((a, x) => a + x.amount, 0);
+    const income = sum(incomes);
+    const reserved = sum(lines);
     const days = Math.round((pe - ps) / DAY_MS);
     const variable = daily * days;
-    const income = sum(incomes);
-    const reserved = sum(fixed) + sum(debts) + sum(projects);
-    periods.push({ start: ps, end: pe, current: ps <= today && today < pe, incomes, fixed, debts, projects, income, fixedTotal: sum(fixed), debtTotal: sum(debts), projectTotal: sum(projects), variable, reserved, left: income - reserved - variable, days });
+    periods.push({
+      key: ymdOf(ps), start: ps, end: pe, current: ps <= today && today < pe, incomes, lines, income, reserved, variable, days,
+      left: income - reserved - variable,
+    });
   }
   return periods;
+}
+
+// Regroupe les lignes par compte de destination (les lignes sans compte restent sur le compte courant)
+function groupLinesByAccount(lines) {
+  const map = new Map();
+  lines.forEach((l) => {
+    const k = l.account || "";
+    if (!map.has(k)) map.set(k, { account: k, lines: [], total: 0 });
+    const g = map.get(k);
+    g.lines.push(l);
+    g.total += l.amount;
+  });
+  const named = [...map.values()].filter((g) => g.account).sort((a, b) => b.total - a.total);
+  const stay = map.get("");
+  return stay ? [...named, stay] : named;
+}
+function accountNames(state) {
+  const set = new Set();
+  [...state.bills, ...state.subscriptions, ...state.debts, ...state.projects].forEach((x) => {
+    if (x.holdingAccount && x.holdingAccount.trim()) set.add(x.holdingAccount.trim());
+    if (x.chargeAccount && x.chargeAccount.trim()) set.add(x.chargeAccount.trim());
+  });
+  return [...set];
+}
+
+// Répartition d'une paie : où mettre l'argent, avec cases à cocher « fait »
+function AllocationSheet({ theme, state, setState, startKey, onClose }) {
+  const lang = state.language || "fr";
+  const cur = state.currency;
+  const plan = useMemo(() => buildPaycheckPlan(state, 10), [state]);
+  const [pos, setPos] = useState(() => Math.max(0, plan.findIndex((p) => p.key === startKey)));
+  const [editing, setEditing] = useState(false);
+  const p = plan[Math.min(pos, plan.length - 1)];
+  if (!p) {
+    return (
+      <BottomSheet title={t(lang, "allocSheetTitle")} onClose={onClose}>
+        <p className="text-sm text-slate-400">{t(lang, "allocNoPlan")}</p>
+      </BottomSheet>
+    );
+  }
+  const done = state.allocDone || {};
+  const doneKey = (l) => `${p.key}|${l.key}`;
+  const toggle = (l) => setState((s) => ({ ...s, allocDone: { ...(s.allocDone || {}), [doneKey(l)]: !(s.allocDone || {})[doneKey(l)] } }));
+  const updateItem = (l, patch) => setState((s) => {
+    const field = KIND_FIELD[l.kind];
+    return { ...s, [field]: s[field].map((x) => (x.id === l.itemId ? { ...x, ...patch } : x)) };
+  });
+  const groups = groupLinesByAccount(p.lines);
+  const nDone = p.lines.filter((l) => done[doneKey(l)]).length;
+  const negative = p.left < -0.5;
+  const names = accountNames(state);
+  const noAccountAtAll = p.lines.length > 0 && p.lines.every((l) => !l.account);
+  const caption = (l) => {
+    if (l.mode === "spread") return t(lang, "allocSpreadCaption").replace("{i}", l.spreadIdx).replace("{n}", l.spreadN);
+    return t(lang, "allocDueCaption").replace("{date}", shortDate(l.date, lang)).replace("{next}", shortDate(p.end, lang));
+  };
+  const canMode = (l) => l.kind === "facture" || l.kind === "abonnement";
+
+  return (
+    <BottomSheet title={t(lang, "allocSheetTitle")} onClose={onClose}>
+      <div className="flex items-center justify-between mb-3">
+        <button disabled={pos <= 0} onClick={() => setPos(pos - 1)} className="p-2 rounded-lg disabled:opacity-30" aria-label="‹"><ChevronRight size={18} className="rotate-180" /></button>
+        <div className="text-center">
+          <p className="text-sm font-semibold" style={{ color: theme.text }}>{t(lang, "allocIncome").replace("{date}", shortDate(p.start, lang))}</p>
+          <p className="text-xs" style={{ color: "#2E9E5B" }}>+{money(p.income, cur)}{p.current ? ` · ${t(lang, "planCurrent")}` : ""}</p>
+        </div>
+        <button disabled={pos >= plan.length - 1} onClick={() => setPos(pos + 1)} className="p-2 rounded-lg disabled:opacity-30" aria-label="›"><ChevronRight size={18} /></button>
+      </div>
+      <p className="text-[11px] text-slate-400 mb-3 text-center">{t(lang, "planUntil").replace("{date}", shortDate(p.end, lang))}</p>
+
+      {p.lines.length > 0 && <p className="text-xs text-slate-500 mb-2">{t(lang, "allocProgress").replace("{n}", nDone).replace("{total}", p.lines.length)}</p>}
+      {noAccountAtAll && !editing && <p className="text-xs rounded-lg p-2 mb-3" style={{ backgroundColor: theme.soft, color: theme.text }}>{t(lang, "allocTip")}</p>}
+      <datalist id="serein-accounts-sheet">{names.map((n) => <option key={n} value={n} />)}</datalist>
+
+      {groups.map((g) => (
+        <div key={g.account || "_stay"} className="rounded-xl border border-slate-100 mb-3 overflow-hidden">
+          <div className="flex items-center justify-between px-3 py-2" style={{ backgroundColor: theme.soft }}>
+            <span className="text-sm font-semibold" style={{ color: theme.text }}>
+              {g.account ? t(lang, "allocTo").replace("{account}", g.account) : t(lang, "allocStay")}
+            </span>
+            <span className="text-sm font-semibold" style={{ color: theme.text }}>{money(g.total, cur)}</span>
+          </div>
+          <ul className="divide-y divide-slate-100">
+            {g.lines.map((l) => {
+              const isDone = !!done[doneKey(l)];
+              return (
+                <li key={l.key} className="px-3 py-2">
+                  <div className="flex items-start gap-2.5">
+                    <button onClick={() => toggle(l)} className="mt-0.5 w-5 h-5 rounded-full border flex items-center justify-center shrink-0" style={{ borderColor: isDone ? "#16A34A" : "#cbd5e1", backgroundColor: isDone ? "#16A34A" : "white" }} aria-label="ok">
+                      {isDone && <Check size={12} color="white" />}
+                    </button>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between gap-2">
+                        <span className="text-sm truncate" style={{ color: isDone ? "#94a3b8" : theme.text, textDecoration: isDone ? "line-through" : "none" }}>{l.title}</span>
+                        <span className="text-sm font-medium shrink-0" style={{ color: isDone ? "#94a3b8" : theme.text }}>{money(l.amount, cur)}</span>
+                      </div>
+                      <p className="text-[11px] text-slate-400">{caption(l)}</p>
+                      {editing && (
+                        <div className="flex gap-2 mt-1.5">
+                          <input
+                            list="serein-accounts-sheet"
+                            className="flex-1 min-w-0 rounded-lg border px-2 py-1.5 text-xs"
+                            style={{ borderColor: "#e2e8f0" }}
+                            defaultValue={l.account}
+                            placeholder={t(lang, "allocAccountPh")}
+                            onBlur={(e) => { if (e.target.value.trim() !== l.account) updateItem(l, { holdingAccount: e.target.value.trim() }); }}
+                          />
+                          {canMode(l) && (
+                            <select
+                              className="rounded-lg border px-2 py-1.5 text-xs"
+                              style={{ borderColor: "#e2e8f0" }}
+                              value={l.mode}
+                              onChange={(e) => updateItem(l, { fund: e.target.value })}
+                            >
+                              <option value="due">{t(lang, "fundDue")}</option>
+                              <option value="spread">{t(lang, "allocModeSpread")}</option>
+                            </select>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
+
+      <div className="rounded-xl p-3 text-sm mb-3" style={{ backgroundColor: "#F8FAFC" }}>
+        {p.variable > 0.5 && (
+          <div className="flex justify-between text-slate-600">
+            <span>{t(lang, "allocVariable")}</span>
+            <span>{money(p.variable, cur)}</span>
+          </div>
+        )}
+        <div className="flex justify-between font-semibold mt-1" style={{ color: negative ? "#DC2626" : "#16A34A" }}>
+          <span>{t(lang, "allocFree")}</span>
+          <span>{negative ? "-" : ""}{money(Math.abs(p.left), cur)}</span>
+        </div>
+        {negative && <p className="text-xs mt-1" style={{ color: "#DC2626" }}>{t(lang, "planShort").replace("{amount}", money(Math.abs(p.left), cur))}</p>}
+      </div>
+
+      {p.lines.length > 0 && (
+        <button onClick={() => setEditing((v) => !v)} className="w-full text-sm font-medium px-4 py-2.5 rounded-lg border" style={{ borderColor: theme.primary, color: theme.primary }}>
+          {editing ? t(lang, "allocEditDone") : t(lang, "allocEdit")}
+        </button>
+      )}
+    </BottomSheet>
+  );
+}
+
+// Carte d'accueil : paie reçue récemment (ou à venir) et où mettre l'argent
+function AllocationCard({ theme, state, onOpen }) {
+  const lang = state.language || "fr";
+  const cur = state.currency;
+  const plan = useMemo(() => buildPaycheckPlan(state, 3), [state]);
+  if (!plan.length || state.bills.length + state.subscriptions.length + state.debts.length + state.projects.length === 0) return null;
+  const today = startOfToday();
+  const curP = plan.find((x) => x.current);
+  const recent = curP && (today - curP.start) / DAY_MS <= 2;
+  const target = recent ? curP : plan.find((x) => x.start > today) || curP;
+  if (!target || !target.lines.length) return null;
+  const groups = groupLinesByAccount(target.lines);
+  const done = state.allocDone || {};
+  const nDone = target.lines.filter((l) => done[`${target.key}|${l.key}`]).length;
+  const title = (recent ? t(lang, "allocCardRecent") : t(lang, "allocCardNext")).replace("{date}", shortDate(target.start, lang));
+  return (
+    <button onClick={() => onOpen(target.key)} className="w-full text-left bg-white rounded-xl shadow-sm p-4 mb-4" style={{ border: `1.5px solid ${theme.primary}55` }}>
+      <span className="flex items-center justify-between gap-2">
+        <span className="text-sm font-semibold" style={{ color: theme.text }}>{title}</span>
+        <ChevronRight size={16} className="text-slate-400" />
+      </span>
+      <span className="block mt-2 space-y-1">
+        {groups.slice(0, 4).map((g) => (
+          <span key={g.account || "_stay"} className="flex justify-between text-xs text-slate-600">
+            <span className="truncate pr-2">{g.account ? t(lang, "allocTo").replace("{account}", g.account) : t(lang, "allocStay")}</span>
+            <span className="font-medium" style={{ color: theme.text }}>{money(g.total, cur)}</span>
+          </span>
+        ))}
+        <span className="flex justify-between text-xs pt-1 border-t border-slate-100" style={{ color: target.left < -0.5 ? "#DC2626" : "#16A34A" }}>
+          <span>{t(lang, "allocFree")}</span>
+          <span className="font-medium">{target.left < -0.5 ? "-" : ""}{money(Math.abs(target.left), cur)}</span>
+        </span>
+      </span>
+      {recent && <span className="block text-[11px] text-slate-400 mt-1.5">{t(lang, "allocProgress").replace("{n}", nDone).replace("{total}", target.lines.length)}</span>}
+    </button>
+  );
 }
 
 function CashflowCard({ theme, state, onOpen }) {
@@ -4901,7 +5297,7 @@ function CashflowCard({ theme, state, onOpen }) {
   );
 }
 
-function PaycheckCard({ theme, state, p }) {
+function PaycheckCard({ theme, state, p, onAllocate }) {
   const lang = state.language || "fr";
   const [open, setOpen] = useState(false);
   const cur = state.currency;
@@ -4909,9 +5305,9 @@ function PaycheckCard({ theme, state, p }) {
     <div className="mt-2">
       <p className="text-[11px] font-medium text-slate-400 mb-1">{label}</p>
       <ul className="space-y-0.5">
-        {items.map((it, i) => (
-          <li key={i} className="flex justify-between text-xs text-slate-600">
-            <span className="truncate pr-2">{it.title} <span className="text-slate-400">· {shortDate(it.date, lang)}</span></span>
+        {items.map((it) => (
+          <li key={it.key} className="flex justify-between text-xs text-slate-600">
+            <span className="truncate pr-2">{it.title} <span className="text-slate-400">· {it.date ? shortDate(it.date, lang) : t(lang, "capSpread")}</span></span>
             <span>{money(it.amount, cur)}</span>
           </li>
         ))}
@@ -4919,6 +5315,10 @@ function PaycheckCard({ theme, state, p }) {
     </div>
   );
   const negative = p.left < -0.5;
+  const fixed = p.lines.filter((l) => (l.kind === "facture" || l.kind === "abonnement") && l.mode === "due");
+  const spread = p.lines.filter((l) => l.mode === "spread");
+  const debts = p.lines.filter((l) => l.kind === "dette");
+  const projects = p.lines.filter((l) => l.kind === "projet");
   return (
     <div className="bg-white rounded-xl shadow-sm p-4 mb-3" style={{ border: p.current ? `1.5px solid ${theme.primary}` : "1px solid #f1f5f9" }}>
       <div className="flex items-center justify-between">
@@ -4948,14 +5348,22 @@ function PaycheckCard({ theme, state, p }) {
       </div>
       {negative && <p className="text-xs mt-2" style={{ color: "#DC2626" }}>{t(lang, "planShort").replace("{amount}", money(Math.abs(p.left), cur))}</p>}
 
-      <button onClick={() => setOpen((v) => !v)} className="text-xs font-medium mt-2" style={{ color: theme.primary }}>
-        {open ? t(lang, "planHideDetail") : t(lang, "planShowDetail")}
-      </button>
+      <div className="flex items-center justify-between mt-2">
+        <button onClick={() => setOpen((v) => !v)} className="text-xs font-medium" style={{ color: theme.primary }}>
+          {open ? t(lang, "planHideDetail") : t(lang, "planShowDetail")}
+        </button>
+        {onAllocate && p.lines.length > 0 && (
+          <button onClick={() => onAllocate(p.key)} className="text-xs font-medium px-2.5 py-1 rounded-full text-white" style={{ backgroundColor: theme.primary }}>
+            {t(lang, "allocOpen")}
+          </button>
+        )}
+      </div>
       {open && (
         <div>
-          <Group label={t(lang, "planGroupFixed")} items={p.fixed} />
-          <Group label={t(lang, "planGroupDebts")} items={p.debts} />
-          <Group label={t(lang, "planGroupSavings")} items={p.projects} />
+          <Group label={t(lang, "planGroupFixed")} items={fixed} />
+          <Group label={t(lang, "planGroupSpread")} items={spread} />
+          <Group label={t(lang, "planGroupDebts")} items={debts} />
+          <Group label={t(lang, "planGroupSavings")} items={projects} />
         </div>
       )}
     </div>
@@ -4967,71 +5375,104 @@ function PaycheckPlanSheet({ theme, state, setState, onClose }) {
   const cb = state.cashBalance;
   const [balance, setBalance] = useState(cb && typeof cb.amount === "number" ? String(cb.amount) : "");
   const [variable, setVariable] = useState(state.variableMonthly ? String(state.variableMonthly) : "");
-  const [saved, setSaved] = useState(false);
+  const [allocKey, setAllocKey] = useState(null);
   const cf = useMemo(() => projectCashflow(state, 60), [state]);
   const plan = useMemo(() => buildPaycheckPlan(state, 6), [state]);
   const cur = state.currency;
   const num = (v) => Number(String(v).replace(",", "."));
-  const balOk = balance !== "" && Number.isFinite(num(balance));
 
-  const save = () => {
-    setState((s) => ({
-      ...s,
-      cashBalance: balOk ? { amount: num(balance), asOf: getToday() } : s.cashBalance,
-      variableMonthly: variable !== "" && Number.isFinite(num(variable)) ? Math.max(0, num(variable)) : 0,
-    }));
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  // Tout se recalcule en direct : pas de bouton « enregistrer »
+  const changeBalance = (v) => {
+    setBalance(v);
+    if (v !== "" && Number.isFinite(num(v))) setState((s) => ({ ...s, cashBalance: { amount: num(v), asOf: getToday() } }));
+  };
+  const changeVariable = (v) => {
+    setVariable(v);
+    const n = v === "" ? 0 : num(v);
+    if (Number.isFinite(n)) setState((s) => ({ ...s, variableMonthly: Math.max(0, n) }));
+  };
+  const setPlanned = (id, v) => {
+    const n = v === "" ? null : num(v);
+    setState((s) => ({ ...s, projects: s.projects.map((x) => (x.id === id ? { ...x, planned: n != null && Number.isFinite(n) && n > 0 ? n : null } : x)) }));
   };
 
   const chartData = cf ? cf.days.map((r) => ({ d: shortDate(r.date, lang), v: Math.round(r.balance) })) : [];
   const culprit = cf && cf.firstNegative ? cf.firstNegative.events.filter((e) => e.kind !== "paie").sort((a, b) => signedEventAmount(a, state) - signedEventAmount(b, state))[0] : null;
+  const projects = state.projects.filter((p) => p.endDate);
 
   return (
     <BottomSheet title={t(lang, "planTitle")} onClose={onClose}>
-      <p className="text-xs text-slate-500 mb-4">{t(lang, "planIntro")}</p>
+      {cf ? (
+        cf.firstNegative ? (
+          <div className="rounded-lg p-3 text-sm mb-4" style={{ backgroundColor: "#FEF2F2", color: "#991B1B" }}>
+            <p className="font-semibold">{t(lang, "cfAlertTitle").replace("{date}", shortDate(cf.firstNegative.date, lang))}</p>
+            <p className="text-xs mt-1">
+              {t(lang, "planAlertDetail")
+                .replace("{balance}", money(Math.round(cf.firstNegative.balance), cur))
+                .replace("{culprit}", culprit ? `${culprit.title} (${money(Math.round(Math.abs(signedEventAmount(culprit, state))), cur)})` : "—")
+                .replace("{lowest}", money(Math.abs(Math.round(cf.lowest.balance)), cur))}
+              {cf.nextPay ? " " + t(lang, "planNextPay").replace("{date}", shortDate(cf.nextPay, lang)) + "." : ""}
+            </p>
+            <p className="text-xs mt-2">{t(lang, "planFixShort")}</p>
+          </div>
+        ) : (
+          <div className="rounded-lg p-3 text-sm mb-4" style={{ backgroundColor: "#F0FDF4", color: "#166534" }}>
+            <p className="font-semibold">{t(lang, "cfOkTitle")}</p>
+            <p className="text-xs mt-1">{t(lang, "cfOkBody").replace("{amount}", money(Math.round(cf.lowest.balance), cur)).replace("{date}", shortDate(cf.lowest.date, lang))}</p>
+          </div>
+        )
+      ) : (
+        <p className="text-xs text-slate-500 mb-4">{t(lang, "planIntro")}</p>
+      )}
 
-      <label className="block mb-3">
-        <span className="block text-sm font-medium mb-1 text-slate-600">{t(lang, "planBalanceLabel")} ({cur})</span>
-        <input type="number" step="any" inputMode="decimal" className={inputCls} value={balance} onChange={(e) => setBalance(e.target.value)} placeholder="Ex : 850" />
-        <span className="block text-[11px] text-slate-400 mt-1">
-          {cb && cb.asOf ? t(lang, "planBalanceAsOf").replace("{date}", shortDate(new Date(cb.asOf + "T00:00:00"), lang)) : t(lang, "planBalanceHint")}
-        </span>
-      </label>
-      <label className="block mb-3">
-        <span className="block text-sm font-medium mb-1 text-slate-600">{t(lang, "planVariableLabel")} ({cur})</span>
-        <input type="number" step="any" inputMode="decimal" className={inputCls} value={variable} onChange={(e) => setVariable(e.target.value)} placeholder="Ex : 600" />
-        <span className="block text-[11px] text-slate-400 mt-1">{t(lang, "planVariableHint")}</span>
-      </label>
-      <button onClick={save} className="w-full text-sm font-medium text-white px-4 py-2.5 rounded-lg mb-5" style={{ backgroundColor: theme.primary }}>
-        {saved ? t(lang, "hhSaved") : t(lang, "planSave")}
-      </button>
+      <div className="grid grid-cols-2 gap-3 mb-1">
+        <label className="block">
+          <span className="block text-xs font-medium mb-1 text-slate-600">{t(lang, "planBalanceLabel")}</span>
+          <input type="number" step="any" inputMode="decimal" className={inputCls} value={balance} onChange={(e) => changeBalance(e.target.value)} placeholder="Ex : 850" />
+        </label>
+        <label className="block">
+          <span className="block text-xs font-medium mb-1 text-slate-600">{t(lang, "planVariableLabel")}</span>
+          <input type="number" step="any" inputMode="decimal" className={inputCls} value={variable} onChange={(e) => changeVariable(e.target.value)} placeholder="Ex : 600" />
+        </label>
+      </div>
+      <p className="text-[11px] text-slate-400 mb-5">{t(lang, "planLiveHint")}</p>
+
+      {projects.length > 0 && (
+        <div className="mb-5">
+          <h3 className="text-sm font-semibold mb-0.5" style={{ color: theme.text }}>{t(lang, "planProjectsTitle")}</h3>
+          <p className="text-[11px] text-slate-400 mb-2">{t(lang, "planProjectsHint")}</p>
+          {projects.map((pr) => {
+            const pcur = pr.currency || cur;
+            const auto = projectInstallment({ ...pr, planned: null });
+            const st = projectPlanStatus(pr.target, pr.saved, pr.planned, pr.endDate, pr.frequency);
+            return (
+              <div key={pr.id} className="rounded-lg border border-slate-100 p-3 mb-2">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm truncate" style={{ color: theme.text }}>{pr.icon || "🎯"} {pr.title}</span>
+                  <input
+                    type="number" step="any" inputMode="decimal"
+                    className="w-24 rounded-lg border px-2 py-1.5 text-sm text-right"
+                    style={{ borderColor: "#e2e8f0" }}
+                    value={pr.planned || ""}
+                    placeholder={String(auto)}
+                    onChange={(e) => setPlanned(pr.id, e.target.value)}
+                  />
+                </div>
+                <p className="text-[11px] mt-1" style={{ color: st ? (st.onTime ? "#16A34A" : "#DC2626") : "#94a3b8" }}>
+                  {st
+                    ? st.onTime
+                      ? t(lang, "projOnTime").replace("{date}", st.finish.toLocaleDateString(lang === "en" ? "en-US" : "fr-FR", { day: "numeric", month: "long", year: "numeric" }))
+                      : t(lang, "projLate").replace("{amount}", money(Math.round(st.shortfall), pcur)).replace("{need}", money(st.suggested, pcur))
+                    : t(lang, "planProjectAuto").replace("{amount}", money(auto, pcur)).replace("{freq}", freqLabel(pr.frequency)).replace("{date}", pr.endDate)}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {cf && (
         <div className="mb-5">
-          {cf.firstNegative ? (
-            <div className="rounded-lg p-3 text-sm mb-3" style={{ backgroundColor: "#FEF2F2", color: "#991B1B" }}>
-              <p className="font-semibold">{t(lang, "cfAlertTitle").replace("{date}", shortDate(cf.firstNegative.date, lang))}</p>
-              <p className="text-xs mt-1">
-                {t(lang, "planAlertDetail")
-                  .replace("{balance}", money(Math.round(cf.firstNegative.balance), cur))
-                  .replace("{culprit}", culprit ? `${culprit.title} (${money(Math.round(Math.abs(signedEventAmount(culprit, state))), cur)})` : "—")
-                  .replace("{lowest}", money(Math.abs(Math.round(cf.lowest.balance)), cur))}
-                {cf.nextPay ? " " + t(lang, "planNextPay").replace("{date}", shortDate(cf.nextPay, lang)) + "." : ""}
-              </p>
-              <p className="text-xs mt-2 font-medium">{t(lang, "planFixTitle")}</p>
-              <ul className="text-xs list-disc pl-4 mt-0.5 space-y-0.5">
-                <li>{t(lang, "planFix1")}</li>
-                <li>{t(lang, "planFix2")}</li>
-                <li>{t(lang, "planFix3")}</li>
-              </ul>
-            </div>
-          ) : (
-            <div className="rounded-lg p-3 text-sm mb-3" style={{ backgroundColor: "#F0FDF4", color: "#166534" }}>
-              <p className="font-semibold">{t(lang, "cfOkTitle")}</p>
-              <p className="text-xs mt-1">{t(lang, "cfOkBody").replace("{amount}", money(Math.round(cf.lowest.balance), cur)).replace("{date}", shortDate(cf.lowest.date, lang))}</p>
-            </div>
-          )}
           <div className="h-40">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData} margin={{ top: 5, right: 8, left: 0, bottom: 0 }}>
@@ -5052,8 +5493,9 @@ function PaycheckPlanSheet({ theme, state, setState, onClose }) {
       {plan.length === 0 ? (
         <p className="text-sm text-slate-400">{t(lang, "planNoPaydays")}</p>
       ) : (
-        plan.map((p, i) => <PaycheckCard key={i} theme={theme} state={state} p={p} />)
+        plan.map((p) => <PaycheckCard key={p.key} theme={theme} state={state} p={p} onAllocate={(k) => setAllocKey(k)} />)
       )}
+      {allocKey && <AllocationSheet theme={theme} state={state} setState={setState} startKey={allocKey} onClose={() => setAllocKey(null)} />}
     </BottomSheet>
   );
 }
@@ -5070,6 +5512,18 @@ function CalendarTab({ theme, state, setState, showToast }) {
   const [addMode, setAddMode] = useState(null); // "payday" | "bill" | "subscription"
   const [showAllUpcoming, setShowAllUpcoming] = useState(false);
   const [showPlan, setShowPlan] = useState(false);
+  const [allocKey, setAllocKey] = useState(null);
+  // Dates de paie proches : sert à indiquer quelle paie finance chaque dépense
+  const payDateList = useMemo(() => {
+    const t0 = startOfToday();
+    return payDatesBetween(state, shiftDays(t0, -60), shiftDays(t0, 120));
+  }, [state.paydays]);
+  const fundingCaption = (e, date) => {
+    if (!["facture", "abonnement", "dette"].includes(e.kind) || !payDateList.length) return null;
+    if (e.fund === "spread") return t(lang, "capSpread");
+    const prev = [...payDateList].reverse().find((d) => d <= date);
+    return prev ? t(lang, "capFunded").replace("{date}", shortDate(prev, lang)) : null;
+  };
   const [editingPay, setEditingPay] = useState(null); // { paydayId, dateKey, date, amount, overridden }
 
   const openPayEdit = (e) => setEditingPay({ paydayId: e.paydayId, dateKey: e.dateKey, date: new Date(e.y, e.m, e.day), amount: e.amount, overridden: e.overridden });
@@ -5192,6 +5646,8 @@ function CalendarTab({ theme, state, setState, showToast }) {
 
   return (
     <div className="p-4 pb-24">
+      <AllocationCard theme={theme} state={state} onOpen={(k) => setAllocKey(k)} />
+      {allocKey && <AllocationSheet theme={theme} state={state} setState={setState} startKey={allocKey} onClose={() => setAllocKey(null)} />}
       <CashflowCard theme={theme} state={state} onOpen={() => setShowPlan(true)} />
       {showPlan && <PaycheckPlanSheet theme={theme} state={state} setState={setState} onClose={() => setShowPlan(false)} />}
       {state.setupGuide && <SetupGuide theme={theme} state={state} setState={setState} />}
@@ -5260,6 +5716,12 @@ function CalendarTab({ theme, state, setState, showToast }) {
                       {daysUntilLabel(e.daysUntil)}
                       {e.overridden && <span className="ml-1.5 px-1.5 py-0.5 rounded text-[10px]" style={{ backgroundColor: "#FEF9C3", color: "#854D0E" }}>{t(lang, "payModified")}</span>}
                     </span>
+                    {fundingCaption(e, e.date) && <span className="block text-[11px] text-slate-400">{fundingCaption(e, e.date)}</span>}
+                    {isIncome && (
+                      <button type="button" onClick={(ev) => { ev.stopPropagation(); setAllocKey(e.dateKey); }} className="text-[11px] font-medium mt-0.5" style={{ color: theme.primary }}>
+                        {t(lang, "allocOpen")} →
+                      </button>
+                    )}
                   </span>
                   <span className="flex items-center gap-1.5 shrink-0">
                     <span className="text-sm font-medium" style={{ color: isIncome ? "#2E9E5B" : theme.text }}>
@@ -5375,7 +5837,7 @@ function CalendarTab({ theme, state, setState, showToast }) {
               {eventsForDay(selectedDay).map((e, idx) => (
                 <li
                   key={idx}
-                  className={"flex items-center justify-between text-sm" + (e.kind === "paie" ? " cursor-pointer" : "")}
+                  className={"flex flex-wrap items-center justify-between text-sm" + (e.kind === "paie" ? " cursor-pointer" : "")}
                   {...(e.kind === "paie" ? { role: "button", tabIndex: 0, onClick: () => openPayEdit(e) } : {})}
                 >
                   <span className="flex items-center gap-2">
@@ -5387,6 +5849,15 @@ function CalendarTab({ theme, state, setState, showToast }) {
                     {e.kind === "paie" ? "+" : "-"}{money(e.amount, state.currency)}
                     {e.kind === "paie" && <Pencil size={12} className="text-slate-400" />}
                   </span>
+                  {(() => {
+                    const cap = fundingCaption(e, new Date(cursor.y, cursor.m, selectedDay));
+                    return cap ? <span className="basis-full text-[11px] text-slate-400 pl-4">{cap}</span> : null;
+                  })()}
+                  {e.kind === "paie" && (
+                    <button type="button" onClick={(ev) => { ev.stopPropagation(); setAllocKey(e.dateKey); }} className="basis-full text-left text-[11px] font-medium pl-4" style={{ color: theme.primary }}>
+                      {t(lang, "allocOpen")} →
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -8168,6 +8639,7 @@ function SereinApp() {
       {tab === "investments" && <InvestmentsTab theme={theme} state={state} setState={setState} showToast={showToast} />}
       {tab === "aide" && <AideTab theme={theme} state={state} />}
 
+      <datalist id="serein-accounts">{accountNames(state).map((n) => <option key={n} value={n} />)}</datalist>
       <Toast toast={toast} onDismiss={() => setToast(null)} />
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 flex justify-around py-2">
