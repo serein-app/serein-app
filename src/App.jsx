@@ -113,8 +113,20 @@ const PRESET_THEME_IDS = ["serein", "ambre", "ametiste", "foret"];
 // depuis les Réglages. Pour publier une nouvelle version : augmenter
 // APP_VERSION et ajouter une entrée EN HAUT de ce tableau.
 // ---------------------------------------------------------------------------
-const APP_VERSION = "1.5.0";
+const APP_VERSION = "1.6.0";
 const CHANGELOG = [
+  {
+    version: "1.6.0",
+    date: "2026-10-25",
+    fr: [
+      "Abonnements avec logos : choisis Netflix, Amazon, Spotify, Disney+, ChatGPT, salle de sport… dans un catalogue avec recherche. Le titre, un montant moyen et le logo se remplissent en un geste.",
+      "Les logos apparaissent aussi dans le calendrier, la répartition de paie et tes listes. Même principe pour les factures (Bell, Hydro-Québec, Orange, EDF…).",
+    ],
+    en: [
+      "Subscriptions with logos: pick Netflix, Amazon, Spotify, Disney+, ChatGPT, gym… from a searchable catalog. The title, an average amount and the logo are filled in with one tap.",
+      "Logos also show in the calendar, the paycheck split and your lists. Same for bills (Bell, Hydro-Québec, Orange, EDF…).",
+    ],
+  },
   {
     version: "1.5.0",
     date: "2026-10-23",
@@ -529,7 +541,7 @@ const TRANSLATIONS = {
     comingSoonTitle: "À venir sur la vraie appli",
     comingSoonText: "Prévu pour une prochaine mise à jour : verrouillage par Face ID ou code à l'ouverture, et des rappels automatiques envoyés sur ton téléphone avant chaque échéance (facture, dette, abonnement) — pas seulement un affichage dans le calendrier.",
     privacyPolicy: "Politique de confidentialité",
-    privacyPolicyBody: "Voici où en sont réellement tes données.\n\nCE QUE NOUS COLLECTONS\nUniquement ce que tu entres toi-même : prénom, dettes, projets, abonnements, factures, revenus, investissements, et la composition de ton foyer si tu la renseignes — plus ton adresse courriel pour la connexion.\n\nOÙ C'EST STOCKÉ\nTes données sont hébergées par Supabase, dans une base sécurisée, accessible uniquement par toi grâce à ton compte (et par les personnes que tu invites dans ton foyer, voir ci-dessous). La connexion se fait par lien envoyé à ton courriel, sans mot de passe à retenir.\n\nCE QUE NOUS NE FAISONS PAS\nNous ne vendons ni ne partageons tes données à des fins publicitaires. Aucune publicité dans l'application. Aucun suivi analytique caché.\n\nFOYER PARTAGÉ\nSi tu invites quelqu'un dans ton foyer, cette personne accède à toutes les données du foyer depuis son propre compte et voit ton adresse courriel dans la liste des membres. Tu peux la retirer à tout moment, et elle peut quitter le foyer quand elle veut. L'invitation se fait par un code à usage unique, valable 7 jours.\n\nTES DROITS DÈS MAINTENANT\nTu peux exporter toutes tes données à tout moment (CSV, sauvegarde complète) juste au-dessus dans ces réglages, te déconnecter, ou réinitialiser complètement l'application.\n\nPOUR LA SUITE\nUne politique de confidentialité complète et conforme à la loi sera publiée séparément et remplacera ce résumé.",
+    privacyPolicyBody: "Voici où en sont réellement tes données.\n\nCE QUE NOUS COLLECTONS\nUniquement ce que tu entres toi-même : prénom, dettes, projets, abonnements, factures, revenus, investissements, et la composition de ton foyer si tu la renseignes — plus ton adresse courriel pour la connexion.\n\nOÙ C'EST STOCKÉ\nTes données sont hébergées par Supabase, dans une base sécurisée, accessible uniquement par toi grâce à ton compte (et par les personnes que tu invites dans ton foyer, voir ci-dessous). La connexion se fait par lien envoyé à ton courriel, sans mot de passe à retenir.\n\nCE QUE NOUS NE FAISONS PAS\nNous ne vendons ni ne partageons tes données à des fins publicitaires. Aucune publicité dans l'application. Aucun suivi analytique caché.\n\nFOYER PARTAGÉ\nSi tu invites quelqu'un dans ton foyer, cette personne accède à toutes les données du foyer depuis son propre compte et voit ton adresse courriel dans la liste des membres. Tu peux la retirer à tout moment, et elle peut quitter le foyer quand elle veut. L'invitation se fait par un code à usage unique, valable 7 jours.\n\nLOGOS DES SERVICES\nLes logos (Netflix, Spotify…) sont affichés depuis un service public d'icônes (Google ou DuckDuckGo). Ce service reçoit uniquement le nom de domaine du logo demandé (par exemple netflix.com) : jamais ton nom, ton courriel ni tes montants.\n\nTES DROITS DÈS MAINTENANT\nTu peux exporter toutes tes données à tout moment (CSV, sauvegarde complète) juste au-dessus dans ces réglages, te déconnecter, ou réinitialiser complètement l'application.\n\nPOUR LA SUITE\nUne politique de confidentialité complète et conforme à la loi sera publiée séparément et remplacera ce résumé.",
     privacyPolicyClose: "Fermer",
     whatsNewTitle: "Nouveautés 🎉",
     whatsNewIntro: "Voici ce qui a changé depuis ta dernière visite :",
@@ -694,6 +706,12 @@ const TRANSLATIONS = {
     hhMyName: "Mon prénom (affiché en haut de l'écran)",
     hhSave: "Enregistrer",
     hhSaved: "Enregistré",
+    pickerSearch: "Rechercher un service (Netflix, Spotify, Bell…)",
+    pickerAll: "Tous",
+    pickerAlready: "Déjà ajouté",
+    pickerNone: "Aucun service trouvé : saisis simplement le nom ci-dessous.",
+    pickerMore: "Voir {n} autres services",
+    pickerRemoveLogo: "Retirer le logo",
     allocCardRecent: "Paie du {date} reçue : où mettre l'argent ?",
     allocCardNext: "Prochaine paie le {date} : ta répartition",
     allocTo: "Vers {account}",
@@ -1046,7 +1064,7 @@ const TRANSLATIONS = {
     comingSoonTitle: "Coming to the real app",
     comingSoonText: "Planned for an upcoming update: Face ID or passcode lock on opening, and automatic reminders sent to your phone before each due date (bill, debt, subscription) — not just a passive display in the calendar.",
     privacyPolicy: "Privacy Policy",
-    privacyPolicyBody: "Here's where your data actually stands.\n\nWHAT WE COLLECT\nOnly what you enter yourself: first name, debts, projects, subscriptions, bills, income, investments, and your household composition if you fill it in — plus your email for sign-in.\n\nWHERE IT'S STORED\nYour data is hosted by Supabase, in a secure database, accessible only by you through your account (and by the people you invite into your household, see below). Sign-in happens via a link sent to your email, no password to remember.\n\nWHAT WE DON'T DO\nWe never sell or share your data for advertising purposes. No ads in the app. No hidden analytics tracking.\n\nSHARED HOUSEHOLD\nIf you invite someone into your household, that person can access all of the household's data from their own account and sees your email address in the members list. You can remove them at any time, and they can leave whenever they want. Invitations use a single-use code valid for 7 days.\n\nYOUR RIGHTS RIGHT NOW\nYou can export all your data at any time (CSV, full backup) just above in these settings, sign out, or fully reset the app.\n\nWHAT'S NEXT\nA complete, legally compliant privacy policy will be published separately and will replace this summary.",
+    privacyPolicyBody: "Here's where your data actually stands.\n\nWHAT WE COLLECT\nOnly what you enter yourself: first name, debts, projects, subscriptions, bills, income, investments, and your household composition if you fill it in — plus your email for sign-in.\n\nWHERE IT'S STORED\nYour data is hosted by Supabase, in a secure database, accessible only by you through your account (and by the people you invite into your household, see below). Sign-in happens via a link sent to your email, no password to remember.\n\nWHAT WE DON'T DO\nWe never sell or share your data for advertising purposes. No ads in the app. No hidden analytics tracking.\n\nSHARED HOUSEHOLD\nIf you invite someone into your household, that person can access all of the household's data from their own account and sees your email address in the members list. You can remove them at any time, and they can leave whenever they want. Invitations use a single-use code valid for 7 days.\n\nSERVICE LOGOS\nLogos (Netflix, Spotify…) are displayed from a public icon service (Google or DuckDuckGo). That service only receives the domain name of the requested logo (e.g. netflix.com): never your name, email or amounts.\n\nYOUR RIGHTS RIGHT NOW\nYou can export all your data at any time (CSV, full backup) just above in these settings, sign out, or fully reset the app.\n\nWHAT'S NEXT\nA complete, legally compliant privacy policy will be published separately and will replace this summary.",
     privacyPolicyClose: "Close",
     whatsNewTitle: "What's new 🎉",
     whatsNewIntro: "Here's what changed since your last visit:",
@@ -1211,6 +1229,12 @@ const TRANSLATIONS = {
     hhMyName: "My first name (shown at the top of the screen)",
     hhSave: "Save",
     hhSaved: "Saved",
+    pickerSearch: "Search a service (Netflix, Spotify, Bell…)",
+    pickerAll: "All",
+    pickerAlready: "Already added",
+    pickerNone: "No service found: just type the name below.",
+    pickerMore: "See {n} more services",
+    pickerRemoveLogo: "Remove logo",
     allocCardRecent: "Paycheck of {date} received: where to put the money?",
     allocCardNext: "Next paycheck on {date}: your split",
     allocTo: "To {account}",
@@ -2279,6 +2303,189 @@ const SUBSCRIPTION_SUGGESTIONS = [
   { fr: "Salle de sport", en: "Gym", amount: 35 },
   { fr: "Stockage cloud", en: "Cloud storage", amount: 3 },
 ];
+// ---------------------------------------------------------------------------
+// Catalogue de services (abonnements, forfaits…) avec logo. Les logos ne sont PAS embarqués dans
+// l'appli : ils sont affichés depuis un service public d'icônes à partir du nom de domaine, avec
+// une pastille (initiale) si l'image est introuvable. Montants = repères moyens à ajuster.
+// ---------------------------------------------------------------------------
+const SERVICE_CATEGORIES = {
+  video: { fr: "Vidéo", en: "Video" },
+  music: { fr: "Musique", en: "Music" },
+  games: { fr: "Jeux", en: "Games" },
+  cloud: { fr: "Cloud & logiciels", en: "Cloud & software" },
+  sport: { fr: "Sport", en: "Fitness" },
+  news: { fr: "Presse & lecture", en: "News & reading" },
+  services: { fr: "Services", en: "Services" },
+  telecom: { fr: "Mobile & internet", en: "Mobile & internet" },
+  energy: { fr: "Énergie & assurance", en: "Energy & insurance" },
+};
+const SUBSCRIPTION_CATALOG = [
+  { name: "Netflix", domain: "netflix.com", amount: 15, cat: "video" },
+  { name: "Amazon Prime", domain: "amazon.com", amount: 9, cat: "video" },
+  { name: "Disney+", domain: "disneyplus.com", amount: 11, cat: "video" },
+  { name: "Crave", domain: "crave.ca", amount: 12, cat: "video", region: "CA" },
+  { name: "Canal+", domain: "canalplus.com", amount: 20, cat: "video", region: "FR" },
+  { name: "Apple TV+", domain: "tv.apple.com", amount: 10, cat: "video" },
+  { name: "Paramount+", domain: "paramountplus.com", amount: 9, cat: "video" },
+  { name: "Max", domain: "max.com", amount: 12, cat: "video" },
+  { name: "YouTube Premium", domain: "youtube.com", amount: 14, cat: "video" },
+  { name: "Crunchyroll", domain: "crunchyroll.com", amount: 9, cat: "video" },
+  { name: "Twitch", domain: "twitch.tv", amount: 9, cat: "video" },
+  { name: "Spotify", domain: "spotify.com", amount: 11, cat: "music" },
+  { name: "Apple Music", domain: "music.apple.com", amount: 11, cat: "music" },
+  { name: "Deezer", domain: "deezer.com", amount: 11, cat: "music", region: "FR" },
+  { name: "Amazon Music", domain: "music.amazon.com", amount: 10, cat: "music" },
+  { name: "YouTube Music", domain: "music.youtube.com", amount: 11, cat: "music" },
+  { name: "Tidal", domain: "tidal.com", amount: 11, cat: "music" },
+  { name: "Audible", domain: "audible.com", amount: 15, cat: "music" },
+  { name: "Xbox Game Pass", domain: "xbox.com", amount: 14, cat: "games" },
+  { name: "PlayStation Plus", domain: "playstation.com", amount: 11, cat: "games" },
+  { name: "Nintendo Switch Online", domain: "nintendo.com", amount: 4, cat: "games" },
+  { name: "EA Play", domain: "ea.com", amount: 5, cat: "games" },
+  { name: "iCloud+", domain: "icloud.com", amount: 3, cat: "cloud" },
+  { name: "Google One", domain: "one.google.com", amount: 3, cat: "cloud" },
+  { name: "Dropbox", domain: "dropbox.com", amount: 12, cat: "cloud" },
+  { name: "Microsoft 365", domain: "microsoft.com", amount: 10, cat: "cloud" },
+  { name: "Adobe", domain: "adobe.com", amount: 25, cat: "cloud" },
+  { name: "ChatGPT", domain: "chatgpt.com", amount: 20, cat: "cloud" },
+  { name: "Claude", domain: "claude.ai", amount: 20, cat: "cloud" },
+  { name: "Notion", domain: "notion.so", amount: 10, cat: "cloud" },
+  { name: "Canva", domain: "canva.com", amount: 13, cat: "cloud" },
+  { name: "1Password", domain: "1password.com", amount: 4, cat: "cloud" },
+  { name: "NordVPN", domain: "nordvpn.com", amount: 5, cat: "cloud" },
+  { name: "Proton", domain: "proton.me", amount: 5, cat: "cloud" },
+  { name: "Duolingo", domain: "duolingo.com", amount: 14, cat: "cloud" },
+  { name: "Planet Fitness", domain: "planetfitness.com", amount: 15, cat: "sport", region: "CA" },
+  { name: "GoodLife Fitness", domain: "goodlifefitness.com", amount: 40, cat: "sport", region: "CA" },
+  { name: "Basic-Fit", domain: "basic-fit.com", amount: 25, cat: "sport", region: "FR" },
+  { name: "Fitness Park", domain: "fitnesspark.fr", amount: 30, cat: "sport", region: "FR" },
+  { name: "Strava", domain: "strava.com", amount: 10, cat: "sport" },
+  { name: "Peloton", domain: "onepeloton.com", amount: 15, cat: "sport" },
+  { name: "La Presse", domain: "lapresse.ca", amount: 10, cat: "news", region: "CA" },
+  { name: "Le Monde", domain: "lemonde.fr", amount: 10, cat: "news", region: "FR" },
+  { name: "The New York Times", domain: "nytimes.com", amount: 10, cat: "news" },
+  { name: "Medium", domain: "medium.com", amount: 5, cat: "news" },
+  { name: "Uber One", domain: "uber.com", amount: 10, cat: "services" },
+  { name: "DoorDash", domain: "doordash.com", amount: 10, cat: "services", region: "CA" },
+];
+const BILL_CATALOG = [
+  { name: "Bell", domain: "bell.ca", amount: 80, cat: "telecom", region: "CA" },
+  { name: "Rogers", domain: "rogers.com", amount: 80, cat: "telecom", region: "CA" },
+  { name: "Telus", domain: "telus.com", amount: 80, cat: "telecom", region: "CA" },
+  { name: "Vidéotron", domain: "videotron.com", amount: 80, cat: "telecom", region: "CA" },
+  { name: "Fido", domain: "fido.ca", amount: 50, cat: "telecom", region: "CA" },
+  { name: "Koodo", domain: "koodomobile.com", amount: 50, cat: "telecom", region: "CA" },
+  { name: "Orange", domain: "orange.fr", amount: 30, cat: "telecom", region: "FR" },
+  { name: "Free", domain: "free.fr", amount: 20, cat: "telecom", region: "FR" },
+  { name: "SFR", domain: "sfr.fr", amount: 30, cat: "telecom", region: "FR" },
+  { name: "Bouygues Telecom", domain: "bouyguestelecom.fr", amount: 30, cat: "telecom", region: "FR" },
+  { name: "Hydro-Québec", domain: "hydroquebec.com", amount: 90, cat: "energy", region: "CA" },
+  { name: "EDF", domain: "edf.fr", amount: 90, cat: "energy", region: "FR" },
+  { name: "Engie", domain: "engie.fr", amount: 90, cat: "energy", region: "FR" },
+  { name: "Desjardins", domain: "desjardins.com", amount: 110, cat: "energy", region: "CA" },
+  { name: "Intact", domain: "intact.ca", amount: 110, cat: "energy", region: "CA" },
+  { name: "MAIF", domain: "maif.fr", amount: 60, cat: "energy", region: "FR" },
+];
+const normText = (v) => String(v || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+// Logo d'un service : image publique par nom de domaine, sinon pastille avec l'initiale
+function BrandLogo({ domain, name, size = 36, radius = 8 }) {
+  const [stage, setStage] = useState(domain ? 0 : 2);
+  useEffect(() => { setStage(domain ? 0 : 2); }, [domain]);
+  if (domain && stage < 2) {
+    const src = stage === 0
+      ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128`
+      : `https://icons.duckduckgo.com/ip3/${encodeURIComponent(domain)}.ico`;
+    return (
+      <img
+        src={src}
+        alt=""
+        referrerPolicy="no-referrer"
+        loading="lazy"
+        width={size}
+        height={size}
+        onError={() => setStage((v) => v + 1)}
+        style={{ width: size, height: size, borderRadius: radius, objectFit: "contain", backgroundColor: "#fff", flexShrink: 0 }}
+      />
+    );
+  }
+  const letter = (name || domain || "?").trim().charAt(0).toUpperCase();
+  let h = 0;
+  for (const ch of String(name || domain || "")) h = (h * 31 + ch.charCodeAt(0)) % 360;
+  return (
+    <span
+      className="inline-flex items-center justify-center font-semibold shrink-0"
+      style={{ width: size, height: size, borderRadius: radius, backgroundColor: `hsl(${h} 55% 90%)`, color: `hsl(${h} 45% 30%)`, fontSize: Math.round(size * 0.45) }}
+    >
+      {letter}
+    </span>
+  );
+}
+
+// Sélecteur de services avec logos : recherche + catégories ; les services d'une autre région passent en dernier
+function ServicePicker({ theme, lang, currency, catalog, existingTitles, onPick }) {
+  const [query, setQuery] = useState("");
+  const [cat, setCat] = useState("all");
+  const [showAll, setShowAll] = useState(false);
+  const region = currency === "CAD" ? "CA" : currency === "EUR" ? "FR" : null;
+  // ordre du catalogue (les plus courants d'abord) ; les services d'une autre région passent en dernier
+  const rank = (x) => (!x.region || !region || x.region === region ? 0 : 1);
+  const sorted = useMemo(() => catalog.map((x, i) => ({ x, i })).sort((a, b) => rank(a.x) - rank(b.x) || a.i - b.i).map((o) => o.x), [catalog, region]);
+  const cats = [...new Set(catalog.map((x) => x.cat))];
+  const q = normText(query);
+  const taken = new Set(existingTitles.map(normText));
+  const filtered = sorted.filter((x) => (cat === "all" || x.cat === cat) && (!q || normText(x.name).includes(q)));
+  const limit = q || cat !== "all" || showAll ? 60 : 12;
+  const shown = filtered.slice(0, limit);
+  return (
+    <div className="mb-4">
+      <input
+        className={inputCls}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder={t(lang, "pickerSearch")}
+        aria-label={t(lang, "pickerSearch")}
+      />
+      <div className="flex gap-1.5 overflow-x-auto py-2 -mx-1 px-1">
+        {[["all", t(lang, "pickerAll")], ...cats.map((c) => [c, SERVICE_CATEGORIES[c][lang === "en" ? "en" : "fr"]])].map(([id, label]) => (
+          <button
+            type="button"
+            key={id}
+            onClick={() => setCat(id)}
+            className="text-xs rounded-full border px-2.5 py-1 whitespace-nowrap"
+            style={{ borderColor: cat === id ? theme.primary : "#e2e8f0", backgroundColor: cat === id ? theme.soft : "white", color: cat === id ? theme.text : "#64748b" }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      <div className="grid grid-cols-4 gap-2">
+        {shown.map((x) => {
+          const used = taken.has(normText(x.name));
+          return (
+            <button
+              type="button"
+              key={x.name}
+              onClick={() => onPick(x)}
+              className="flex flex-col items-center gap-1 rounded-xl border p-2 text-center"
+              style={{ borderColor: "#e2e8f0", backgroundColor: "white", opacity: used ? 0.45 : 1 }}
+              title={used ? t(lang, "pickerAlready") : x.name}
+            >
+              <BrandLogo domain={x.domain} name={x.name} size={34} radius={9} />
+              <span className="text-[10px] leading-tight text-slate-600 break-words w-full line-clamp-2">{x.name}</span>
+            </button>
+          );
+        })}
+      </div>
+      {filtered.length === 0 && <p className="text-xs text-slate-400 mt-2">{t(lang, "pickerNone")}</p>}
+      {!q && cat === "all" && !showAll && filtered.length > limit && (
+        <button type="button" onClick={() => setShowAll(true)} className="text-xs font-medium mt-2" style={{ color: theme.primary }}>
+          {t(lang, "pickerMore").replace("{n}", filtered.length - limit)}
+        </button>
+      )}
+    </div>
+  );
+}
 const BILL_SUGGESTIONS = [
   { fr: "Loyer", en: "Rent", amount: null },
   { fr: "Électricité", en: "Electricity", amount: 80 },
@@ -3349,7 +3556,7 @@ function ListPreview({ items, onRemove, onEdit, editingId, render }) {
             className="flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm"
             style={{ backgroundColor: editingId === it.id ? "#FEF9C3" : "#F8FAFC" }}
           >
-            <span className="min-w-0 break-words">{render(it)}</span>
+            <span className="min-w-0 break-words flex items-center gap-2">{it.logo && <BrandLogo domain={it.logo} name={it.title} size={22} radius={6} />}<span className="min-w-0">{render(it)}</span></span>
             <span className="shrink-0 flex items-center gap-1">
               {onEdit && (
                 <button type="button" onClick={() => onEdit(it.id)} className="p-1.5 rounded-md text-slate-400 hover:bg-slate-100" aria-label="Modifier">
@@ -3985,7 +4192,7 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
   const isEdit = !!editItem;
   const [f, setF] = useState(() => {
     const src = editItem || duplicateFrom;
-    if (!src) return { title: "", day: "", amount: "", period: "mensuel", month: "1", startDate: getToday(), owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "", essential: false, paycheckSplit: null, fund: "due" };
+    if (!src) return { title: "", day: "", amount: "", period: "mensuel", month: "1", startDate: getToday(), owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "", essential: false, paycheckSplit: null, fund: "due", logo: "" };
     return {
       title: editItem ? src.title : "",
       day: src.day != null ? String(src.day) : "",
@@ -4000,6 +4207,7 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
       essential: src.essential || false,
       paycheckSplit: src.paycheckSplit || null,
       fund: src.fund === "spread" ? "spread" : "due",
+      logo: editItem ? src.logo || "" : "",
     };
   });
   const usesStartDate = ["hebdomadaire", "bi-hebdomadaire", "bimestriel"].includes(f.period);
@@ -4044,6 +4252,7 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
       essential: f.essential,
       paycheckSplit: validSplit ? splitValues.map(Number) : null,
       fund: showFund ? f.fund : "due",
+      logo: f.logo || null,
     };
     const item = usesStartDate
       ? { ...base, startDate: f.startDate, day: null, month: null }
@@ -4052,7 +4261,7 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
       onSave(editItem.id, item);
     } else {
       onAdd(item);
-      setF({ title: "", day: "", amount: "", period: "mensuel", month: "1", startDate: getToday(), owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "", essential: false, paycheckSplit: null, fund: "due" });
+      setF({ title: "", day: "", amount: "", period: "mensuel", month: "1", startDate: getToday(), owner: "commun", currency: state.currency, holdingAccount: "", chargeAccount: "", essential: false, paycheckSplit: null, fund: "due", logo: "" });
       setUseCustomSplit(false);
     }
   };
@@ -4060,7 +4269,17 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
   return (
     <div>
       <StepShell title={title} hint={hint} theme={theme} canSubmit={canSubmit} onSubmit={submit} buttonLabel={isEdit ? t(lang, "saveChanges") : undefined} lang={lang}>
-        {!isEdit && suggestions && (
+        {!isEdit && (
+          <ServicePicker
+            theme={theme}
+            lang={lang}
+            currency={state.currency}
+            catalog={showEssentialToggle ? SUBSCRIPTION_CATALOG : BILL_CATALOG}
+            existingTitles={items.map((x) => x.title)}
+            onPick={(sv) => setF({ ...f, title: sv.name, amount: scaleAmount(sv.amount, f.currency), logo: sv.domain })}
+          />
+        )}
+        {!isEdit && suggestions && !showEssentialToggle && (
           <QuickChips
             theme={theme}
             lang={lang}
@@ -4076,7 +4295,13 @@ const RecurringStep = forwardRef(function RecurringStep({ theme, state, title, h
           />
         )}
         <Field label={t(lang, "fieldTitle")}>
-          <input className={inputCls} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
+          <div className="flex items-center gap-2">
+            {f.logo && <BrandLogo domain={f.logo} name={f.title} size={36} radius={9} />}
+            <input className={inputCls} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
+          </div>
+          {f.logo && (
+            <button type="button" onClick={() => setF({ ...f, logo: "" })} className="text-[11px] text-slate-400 underline mt-1">{t(lang, "pickerRemoveLogo")}</button>
+          )}
         </Field>
         <Field label={`${t(lang, "fieldAmount")} (${f.currency})`}>
           <input type="number" step="any" inputMode="decimal" className={inputCls} value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
@@ -4858,7 +5083,7 @@ function PaydayOccurrenceSheet({ theme, lang, state, target, onSaveThis, onSaveA
 }
 
 function itemMeta(x) {
-  return { itemId: x.id, fund: x.fund === "spread" ? "spread" : "due", account: String(x.holdingAccount || x.chargeAccount || "").trim() };
+  return { itemId: x.id, fund: x.fund === "spread" ? "spread" : "due", account: String(x.holdingAccount || x.chargeAccount || "").trim(), logo: x.logo || "" };
 }
 // Tous les événements d'un jour (paies, factures, abonnements, dettes, projets) — sans filtre de propriétaire
 function buildEventsOn(state, y, m, day) {
@@ -5050,7 +5275,7 @@ function buildPaycheckPlan(state, count = 6) {
       const amount = Math.abs(signedEventAmount(e, state));
       if (e.kind === "paie") { incomes.push({ title: e.title, amount, date: r.date }); return; }
       if ((e.kind === "facture" || e.kind === "abonnement") && e.fund === "spread") return; // géré plus bas (étalé)
-      lines.push({ key: `${e.kind}:${e.itemId}:${ymdOf(r.date)}`, kind: e.kind, itemId: e.itemId, title: e.title, amount, account: e.account || "", date: r.date, mode: "due" });
+      lines.push({ key: `${e.kind}:${e.itemId}:${ymdOf(r.date)}`, kind: e.kind, itemId: e.itemId, title: e.title, amount, account: e.account || "", logo: e.logo || "", date: r.date, mode: "due" });
     }));
     // Mises de côté étalées : une part à chaque paie du mois
     const sameMonth = payDates.filter((d) => d.getFullYear() === ps.getFullYear() && d.getMonth() === ps.getMonth());
@@ -5059,7 +5284,7 @@ function buildPaycheckPlan(state, count = 6) {
     spreadItems.forEach(([kind, x]) => {
       const custom = Array.isArray(x.paycheckSplit) && x.paycheckSplit.length === n ? Number(x.paycheckSplit[idx]) : NaN;
       const amount = Number.isFinite(custom) ? conv(custom, x.currency) : conv(monthlyEquivalent(x.amount, x.period), x.currency) / n;
-      lines.push({ key: `${kind}:${x.id}:spread`, kind, itemId: x.id, title: x.title, amount, account: String(x.holdingAccount || x.chargeAccount || "").trim(), date: null, mode: "spread", spreadIdx: idx + 1, spreadN: n });
+      lines.push({ key: `${kind}:${x.id}:spread`, kind, itemId: x.id, title: x.title, amount, account: String(x.holdingAccount || x.chargeAccount || "").trim(), logo: x.logo || "", date: null, mode: "spread", spreadIdx: idx + 1, spreadN: n });
     });
     lines.sort((a, b) => (a.date ? a.date.getTime() : Infinity) - (b.date ? b.date.getTime() : Infinity));
     const sum = (arr) => arr.reduce((a, x) => a + x.amount, 0);
@@ -5166,7 +5391,7 @@ function AllocationSheet({ theme, state, setState, startKey, onClose }) {
                     </button>
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between gap-2">
-                        <span className="text-sm truncate" style={{ color: isDone ? "#94a3b8" : theme.text, textDecoration: isDone ? "line-through" : "none" }}>{l.title}</span>
+                        <span className="text-sm truncate flex items-center gap-1.5" style={{ color: isDone ? "#94a3b8" : theme.text, textDecoration: isDone ? "line-through" : "none" }}>{l.logo && <BrandLogo domain={l.logo} name={l.title} size={18} radius={5} />}{l.title}</span>
                         <span className="text-sm font-medium shrink-0" style={{ color: isDone ? "#94a3b8" : theme.text }}>{money(l.amount, cur)}</span>
                       </div>
                       <p className="text-[11px] text-slate-400">{caption(l)}</p>
@@ -5707,9 +5932,15 @@ function CalendarTab({ theme, state, setState, showToast }) {
                 : {};
               return (
                 <li key={idx} className={"flex items-center gap-3 py-2.5" + (isIncome ? " cursor-pointer" : "")} {...rowProps}>
-                  <span className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: `${dotColor[e.kind]}1A` }}>
-                    <Icon size={16} style={{ color: dotColor[e.kind] }} />
-                  </span>
+                  {e.logo ? (
+                    <span className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border border-slate-100 bg-white">
+                      <BrandLogo domain={e.logo} name={e.title} size={28} radius={6} />
+                    </span>
+                  ) : (
+                    <span className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: `${dotColor[e.kind]}1A` }}>
+                      <Icon size={16} style={{ color: dotColor[e.kind] }} />
+                    </span>
+                  )}
                   <span className="flex-1 min-w-0">
                     <span className="block text-sm font-medium truncate">{e.title}</span>
                     <span className="block text-xs text-slate-400">
@@ -5841,7 +6072,7 @@ function CalendarTab({ theme, state, setState, showToast }) {
                   {...(e.kind === "paie" ? { role: "button", tabIndex: 0, onClick: () => openPayEdit(e) } : {})}
                 >
                   <span className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: dotColor[e.kind] }} />
+                    {e.logo ? <BrandLogo domain={e.logo} name={e.title} size={20} radius={5} /> : <span className="w-2 h-2 rounded-full" style={{ backgroundColor: dotColor[e.kind] }} />}
                     {e.title} <span className="text-slate-400">· {kindLabel[e.kind]}</span>
                     <OwnerBadge ownerId={e.owner} state={state} />
                   </span>
