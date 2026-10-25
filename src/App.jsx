@@ -113,8 +113,14 @@ const PRESET_THEME_IDS = ["serein", "ambre", "ametiste", "foret"];
 // depuis les Réglages. Pour publier une nouvelle version : augmenter
 // APP_VERSION et ajouter une entrée EN HAUT de ce tableau.
 // ---------------------------------------------------------------------------
-const APP_VERSION = "1.6.0";
+const APP_VERSION = "1.6.1";
 const CHANGELOG = [
+  {
+    version: "1.6.1",
+    date: "2026-10-25",
+    fr: ["Les abonnements et factures déjà saisis (Netflix, Spotify, Bell…) affichent maintenant leur logo automatiquement, sans avoir à les ressaisir."],
+    en: ["Subscriptions and bills you already entered (Netflix, Spotify, Bell…) now show their logo automatically, with no need to re-enter them."],
+  },
   {
     version: "1.6.0",
     date: "2026-10-25",
@@ -2388,6 +2394,18 @@ const BILL_CATALOG = [
 ];
 const normText = (v) => String(v || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
+// Logo d'un élément : celui choisi dans le catalogue, sinon reconnu d'après le titre (ex. « Netflix »)
+let LOGO_BY_NAME = null;
+function logoFor(item) {
+  if (!item) return "";
+  if (item.logo) return item.logo;
+  if (!LOGO_BY_NAME) {
+    LOGO_BY_NAME = new Map();
+    [...SUBSCRIPTION_CATALOG, ...BILL_CATALOG].forEach((c) => LOGO_BY_NAME.set(normText(c.name), c.domain));
+  }
+  return LOGO_BY_NAME.get(normText(item.title)) || "";
+}
+
 // Logo d'un service : image publique par nom de domaine, sinon pastille avec l'initiale
 function BrandLogo({ domain, name, size = 36, radius = 8 }) {
   const [stage, setStage] = useState(domain ? 0 : 2);
@@ -3556,7 +3574,7 @@ function ListPreview({ items, onRemove, onEdit, editingId, render }) {
             className="flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm"
             style={{ backgroundColor: editingId === it.id ? "#FEF9C3" : "#F8FAFC" }}
           >
-            <span className="min-w-0 break-words flex items-center gap-2">{it.logo && <BrandLogo domain={it.logo} name={it.title} size={22} radius={6} />}<span className="min-w-0">{render(it)}</span></span>
+            <span className="min-w-0 break-words flex items-center gap-2">{logoFor(it) && <BrandLogo domain={logoFor(it)} name={it.title} size={22} radius={6} />}<span className="min-w-0">{render(it)}</span></span>
             <span className="shrink-0 flex items-center gap-1">
               {onEdit && (
                 <button type="button" onClick={() => onEdit(it.id)} className="p-1.5 rounded-md text-slate-400 hover:bg-slate-100" aria-label="Modifier">
@@ -5083,7 +5101,7 @@ function PaydayOccurrenceSheet({ theme, lang, state, target, onSaveThis, onSaveA
 }
 
 function itemMeta(x) {
-  return { itemId: x.id, fund: x.fund === "spread" ? "spread" : "due", account: String(x.holdingAccount || x.chargeAccount || "").trim(), logo: x.logo || "" };
+  return { itemId: x.id, fund: x.fund === "spread" ? "spread" : "due", account: String(x.holdingAccount || x.chargeAccount || "").trim(), logo: logoFor(x) };
 }
 // Tous les événements d'un jour (paies, factures, abonnements, dettes, projets) — sans filtre de propriétaire
 function buildEventsOn(state, y, m, day) {
@@ -5284,7 +5302,7 @@ function buildPaycheckPlan(state, count = 6) {
     spreadItems.forEach(([kind, x]) => {
       const custom = Array.isArray(x.paycheckSplit) && x.paycheckSplit.length === n ? Number(x.paycheckSplit[idx]) : NaN;
       const amount = Number.isFinite(custom) ? conv(custom, x.currency) : conv(monthlyEquivalent(x.amount, x.period), x.currency) / n;
-      lines.push({ key: `${kind}:${x.id}:spread`, kind, itemId: x.id, title: x.title, amount, account: String(x.holdingAccount || x.chargeAccount || "").trim(), logo: x.logo || "", date: null, mode: "spread", spreadIdx: idx + 1, spreadN: n });
+      lines.push({ key: `${kind}:${x.id}:spread`, kind, itemId: x.id, title: x.title, amount, account: String(x.holdingAccount || x.chargeAccount || "").trim(), logo: logoFor(x), date: null, mode: "spread", spreadIdx: idx + 1, spreadN: n });
     });
     lines.sort((a, b) => (a.date ? a.date.getTime() : Infinity) - (b.date ? b.date.getTime() : Infinity));
     const sum = (arr) => arr.reduce((a, x) => a + x.amount, 0);
