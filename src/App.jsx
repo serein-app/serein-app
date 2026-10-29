@@ -113,8 +113,32 @@ const PRESET_THEME_IDS = ["serein", "ambre", "ametiste", "foret"];
 // depuis les Réglages. Pour publier une nouvelle version : augmenter
 // APP_VERSION et ajouter une entrée EN HAUT de ce tableau.
 // ---------------------------------------------------------------------------
-const APP_VERSION = "1.6.1";
+const APP_VERSION = "1.8.0";
 const CHANGELOG = [
+  {
+    version: "1.8.0",
+    date: "2026-10-29",
+    fr: [
+      "Investissements : tu peux maintenant retirer de l'argent d'un compte (épargne, crypto…). La valeur baisse, mais ce n'est pas compté comme une perte : tes gains restent justes.",
+      "Le graphique d'un investissement montre aussi, en pointillés, l'argent que tu y as réellement mis, pour voir d'un coup d'œil ce qui est gain ou retrait.",
+    ],
+    en: [
+      "Investments: you can now withdraw money from an account (savings, crypto…). The value goes down, but it's not counted as a loss: your gains stay accurate.",
+      "An investment's chart now also shows, dotted, the money you actually put in, so you can see at a glance what is gain and what is withdrawal.",
+    ],
+  },
+  {
+    version: "1.7.0",
+    date: "2026-10-25",
+    fr: ["« Où va ton argent » : touche une catégorie pour la déplier et voir précisément quels abonnements, factures, dettes ou projets la composent, avec leurs jours de prélèvement et le compte concerné. Tes dépenses saisies (courses, sorties…) y apparaissent aussi."],
+    en: ["\"Where your money goes\": tap a category to expand it and see exactly which subscriptions, bills, debts or projects make it up, with their payment days and account. Your logged expenses (groceries, outings…) show up too."],
+  },
+  {
+    version: "1.6.2",
+    date: "2026-10-25",
+    fr: ["Accueil réorganisé : « Prochains jours » passe en premier, suivi de la répartition de la prochaine paie et de l'alerte de découvert. Le graphique « Où va ton argent » est maintenant sous le calendrier."],
+    en: ["Home screen reorganized: \"Upcoming days\" comes first, followed by the next paycheck split and the overdraft alert. The \"Where your money goes\" chart is now below the calendar."],
+  },
   {
     version: "1.6.1",
     date: "2026-10-25",
@@ -712,6 +736,20 @@ const TRANSLATIONS = {
     hhMyName: "Mon prénom (affiché en haut de l'écran)",
     hhSave: "Enregistrer",
     hhSaved: "Enregistré",
+    invModeAdd: "Ajouter de l'argent",
+    invModeOut: "Retirer de l'argent",
+    invAmountIn: "Montant versé",
+    invAmountOut: "Montant retiré",
+    invBtnIn: "+ Versement",
+    invBtnOut: "− Retrait",
+    invHintIn: "Tu as ajouté de ton argent ? Utilise ceci : ça s'ajoute à la valeur actuelle.",
+    invHintOut: "Tu as retiré de l'argent (ou de la crypto) ? La valeur du compte baisse, mais ça n'est pas compté comme une perte : tes gains restent justes.",
+    invOverdraw: "Le retrait dépasse la valeur actuelle du compte.",
+    invWithdrawn: "Retrait de {amount} enregistré",
+    invAdded: "Versement de {amount} ajouté",
+    invChartLegend: "Ligne pleine : valeur du compte · pointillés : argent que tu y as mis",
+    whereExpenses: "Dépenses saisies",
+    whereDays: "le {days}",
     pickerSearch: "Rechercher un service (Netflix, Spotify, Bell…)",
     pickerAll: "Tous",
     pickerAlready: "Déjà ajouté",
@@ -1235,6 +1273,20 @@ const TRANSLATIONS = {
     hhMyName: "My first name (shown at the top of the screen)",
     hhSave: "Save",
     hhSaved: "Saved",
+    invModeAdd: "Add money",
+    invModeOut: "Withdraw money",
+    invAmountIn: "Amount added",
+    invAmountOut: "Amount withdrawn",
+    invBtnIn: "+ Deposit",
+    invBtnOut: "− Withdraw",
+    invHintIn: "Added some of your own money? Use this: it adds to the current value.",
+    invHintOut: "Withdrew money (or crypto)? The account value goes down, but it is not counted as a loss: your gains stay accurate.",
+    invOverdraw: "The withdrawal exceeds the account's current value.",
+    invWithdrawn: "Withdrawal of {amount} recorded",
+    invAdded: "Deposit of {amount} added",
+    invChartLegend: "Solid line: account value · dotted: money you put in",
+    whereExpenses: "Logged expenses",
+    whereDays: "day {days}",
     pickerSearch: "Search a service (Netflix, Spotify, Bell…)",
     pickerAll: "All",
     pickerAlready: "Already added",
@@ -1542,6 +1594,26 @@ async function pushState(supabase, ownerId, base, local) {
   return { ok: false, error: new Error("conflict_retries_exhausted") };
 }
 // <SYNC-ENGINE-END>
+
+// Mouvement d'argent sur un investissement : versement (+) ou retrait (−).
+// Un retrait baisse la valeur du compte MAIS pas comme une perte : l'argent « mis » (base de coût)
+// baisse dans la même proportion, donc le gain (valeur − argent mis) et son pourcentage restent justes.
+// ex. épargne 1000 $ (mis 1000) − retrait 200 → valeur 800, mis 800, gain 0.
+// ex. crypto 1500 $ (mis 1000) − retrait 300 → valeur 1200, mis 800, gain +400 (+50 %, inchangé).
+function applyInvestmentFlow(inv, amount, mode) {
+  const r2 = (n) => Math.round(n * 100) / 100;
+  const contributed = inv.contributed ?? inv.value;
+  const history = inv.history || [];
+  if (mode === "out") {
+    const amt = Math.min(Math.max(0, amount), Math.max(0, inv.value));
+    const value = r2(inv.value - amt);
+    const mine = inv.value > 0 ? r2(contributed * (value / inv.value)) : 0;
+    return { ...inv, value, contributed: mine, history: [...history, { date: getToday(), value, contributed: mine, flow: -amt }] };
+  }
+  const value = r2(inv.value + amount);
+  const mine = r2(contributed + amount);
+  return { ...inv, value, contributed: mine, history: [...history, { date: getToday(), value, contributed: mine, flow: amount }] };
+}
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
@@ -5858,20 +5930,40 @@ function CalendarTab({ theme, state, setState, showToast }) {
     return { income, expense };
   }, [cursor, state, ownerFilter]);
 
-  // Répartition des dépenses par catégorie — pour le jour sélectionné, ou pour tout le mois si aucun jour choisi
+  // Répartition des dépenses par catégorie — pour le jour sélectionné, ou pour tout le mois si aucun jour choisi.
+  // Chaque catégorie garde le détail (quel abonnement, quelle facture, quel projet… et quels jours).
+  const [openKinds, setOpenKinds] = useState({});
   const breakdown = useMemo(() => {
-    const totals = { abonnement: 0, facture: 0, dette: 0, projet: 0 };
-    if (selectedDay) {
-      eventsForDay(selectedDay).forEach((e) => { if (totals[e.kind] !== undefined) totals[e.kind] += e.amount; });
-    } else {
-      for (let d = 1; d <= daysInMonth; d++) {
-        eventsForDay(d).forEach((e) => { if (totals[e.kind] !== undefined) totals[e.kind] += e.amount; });
-      }
-    }
-    return Object.entries(totals)
-      .filter(([, v]) => v > 0)
-      .map(([kind, value]) => ({ kind, value, label: kindLabel[kind], color: dotColor[kind] }));
-  }, [cursor, state, ownerFilter, selectedDay]);
+    const groups = { abonnement: new Map(), facture: new Map(), dette: new Map(), projet: new Map(), depense: new Map() };
+    const addEvent = (e, day) => {
+      const g = groups[e.kind];
+      if (!g) return;
+      const key = String(e.itemId || e.title);
+      if (!g.has(key)) g.set(key, { title: e.title, logo: e.logo || "", amount: 0, days: [], account: e.account || "" });
+      const it = g.get(key);
+      it.amount += e.amount;
+      it.days.push(day);
+    };
+    if (selectedDay) eventsForDay(selectedDay).forEach((e) => addEvent(e, selectedDay));
+    else for (let d = 1; d <= daysInMonth; d++) eventsForDay(d).forEach((e) => addEvent(e, d));
+    // Dépenses saisies par l'utilisateur (courses, sorties…), regroupées par catégorie
+    const cats = allExpenseCategories(state);
+    (state.expenses || []).forEach((x) => {
+      if (!x.date) return;
+      const [yy, mm, dd] = x.date.split("-").map(Number);
+      if (yy !== cursor.y || mm - 1 !== cursor.m || (selectedDay && dd !== selectedDay)) return;
+      if (HAS_OWNERS.includes(state.profileType) && ownerFilter !== "all" && x.owner !== ownerFilter) return;
+      const g = groups.depense;
+      if (!g.has(x.category)) g.set(x.category, { title: expenseCategoryLabel(x.category, lang, state), emoji: cats.find((c) => c.id === x.category)?.icon || "🧾", amount: 0, days: [], account: "" });
+      const it = g.get(x.category);
+      it.amount += toMainCurrency(x.amount, x.currency || state.currency, state);
+      it.days.push(dd);
+    });
+    const meta = { ...Object.fromEntries(Object.keys(kindLabel).map((k) => [k, { label: kindLabel[k], color: dotColor[k] }])), depense: { label: t(lang, "whereExpenses"), color: "#F59E0B" } };
+    return Object.entries(groups)
+      .map(([kind, map]) => ({ kind, items: [...map.values()].sort((x, y) => y.amount - x.amount), value: [...map.values()].reduce((acc, it) => acc + it.amount, 0), label: meta[kind].label, color: meta[kind].color }))
+      .filter((g) => g.value > 0);
+  }, [cursor, state, ownerFilter, selectedDay, lang]);
   const breakdownTotal = breakdown.reduce((a, b) => a + b.value, 0);
 
   // Patrimoine net : ce qui est mis de côté (investissements + épargne projets) moins ce qu'il reste à rembourser
@@ -5889,9 +5981,7 @@ function CalendarTab({ theme, state, setState, showToast }) {
 
   return (
     <div className="p-4 pb-24">
-      <AllocationCard theme={theme} state={state} onOpen={(k) => setAllocKey(k)} />
       {allocKey && <AllocationSheet theme={theme} state={state} setState={setState} startKey={allocKey} onClose={() => setAllocKey(null)} />}
-      <CashflowCard theme={theme} state={state} onOpen={() => setShowPlan(true)} />
       {showPlan && <PaycheckPlanSheet theme={theme} state={state} setState={setState} onClose={() => setShowPlan(false)} />}
       {state.setupGuide && <SetupGuide theme={theme} state={state} setState={setState} />}
       <div className="rounded-xl shadow-sm p-4 mb-4" style={{ backgroundColor: theme.primary }}>
@@ -5997,42 +6087,8 @@ function CalendarTab({ theme, state, setState, showToast }) {
         </div>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
-        <h3 className="text-sm font-medium mb-1" style={{ color: theme.text }}>
-          {selectedDay ? `Où va ton argent — le ${selectedDay} ${monthsFor(lang)[cursor.m]}` : "Où va ton argent — ce mois-ci"}
-        </h3>
-        {selectedDay && (
-          <button onClick={() => setSelectedDay(null)} className="text-xs mb-2" style={{ color: theme.primary }}>
-            ← Revenir à la vue du mois
-          </button>
-        )}
-        {breakdownTotal === 0 ? (
-          <p className="text-sm text-slate-400 py-4 text-center">Rien à répartir {selectedDay ? "pour ce jour" : "ce mois-ci"}.</p>
-        ) : (
-          <div className="flex items-center gap-3">
-            <div className="w-28 h-28 shrink-0">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={breakdown} dataKey="value" nameKey="label" innerRadius={28} outerRadius={50} paddingAngle={2}>
-                    {breakdown.map((b) => <Cell key={b.kind} fill={b.color} />)}
-                  </Pie>
-                  <Tooltip formatter={(v) => money(v, state.currency)} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <ul className="flex-1 space-y-1.5">
-              {breakdown.map((b) => (
-                <li key={b.kind} className="flex items-center justify-between text-xs">
-                  <span className="flex items-center gap-1.5 text-slate-600">
-                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: b.color }} /> {b.label}
-                  </span>
-                  <span className="text-slate-400">{money(b.value, state.currency)} · {Math.round((b.value / breakdownTotal) * 100)}%</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
+      <AllocationCard theme={theme} state={state} onOpen={(k) => setAllocKey(k)} />
+      <CashflowCard theme={theme} state={state} onOpen={() => setShowPlan(true)} />
 
       <div className="grid grid-cols-7 gap-1 text-center text-xs text-slate-400 mb-1">
         {weekdaysFor(lang).map((j, i) => <div key={i}>{j}</div>)}
@@ -6113,6 +6169,73 @@ function CalendarTab({ theme, state, setState, showToast }) {
           )}
         </div>
       )}
+
+      <div className="mt-4" />
+      <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
+        <h3 className="text-sm font-medium mb-1" style={{ color: theme.text }}>
+          {selectedDay ? `Où va ton argent — le ${selectedDay} ${monthsFor(lang)[cursor.m]}` : "Où va ton argent — ce mois-ci"}
+        </h3>
+        {selectedDay && (
+          <button onClick={() => setSelectedDay(null)} className="text-xs mb-2" style={{ color: theme.primary }}>
+            ← Revenir à la vue du mois
+          </button>
+        )}
+        {breakdownTotal === 0 ? (
+          <p className="text-sm text-slate-400 py-4 text-center">Rien à répartir {selectedDay ? "pour ce jour" : "ce mois-ci"}.</p>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <div className="w-32 h-32 mx-auto shrink-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={breakdown} dataKey="value" nameKey="label" innerRadius={28} outerRadius={50} paddingAngle={2}>
+                    {breakdown.map((b) => <Cell key={b.kind} fill={b.color} />)}
+                  </Pie>
+                  <Tooltip formatter={(v) => money(v, state.currency)} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <ul className="w-full min-w-0 space-y-1">
+              {breakdown.map((b) => {
+                const open = !!openKinds[b.kind];
+                return (
+                  <li key={b.kind}>
+                    <button
+                      type="button"
+                      onClick={() => setOpenKinds((o) => ({ ...o, [b.kind]: !o[b.kind] }))}
+                      className="w-full flex items-center justify-between gap-2 text-xs py-1"
+                      aria-expanded={open}
+                    >
+                      <span className="flex items-center gap-1.5 text-slate-600 min-w-0">
+                        <ChevronRight size={12} className={open ? "rotate-90" : ""} style={{ transition: "transform 0.15s" }} />
+                        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: b.color }} />
+                        <span className="truncate">{b.label}</span>
+                      </span>
+                      <span className="text-slate-400 shrink-0">{money(b.value, state.currency)} · {Math.round((b.value / breakdownTotal) * 100)}%</span>
+                    </button>
+                    {open && (
+                      <ul className="mt-0.5 mb-1.5 ml-1 pl-3 space-y-2" style={{ borderLeft: `2px solid ${b.color}55` }}>
+                        {b.items.map((it, idx) => (
+                          <li key={idx} className="flex items-center gap-2">
+                            {it.logo ? <BrandLogo domain={it.logo} name={it.title} size={20} radius={5} /> : logoFor({ title: it.title }) ? <BrandLogo domain={logoFor({ title: it.title })} name={it.title} size={20} radius={5} /> : it.emoji ? <span className="w-5 text-center text-sm">{it.emoji}</span> : <span className="w-2 h-2 rounded-full shrink-0 ml-1.5" style={{ backgroundColor: b.color }} />}
+                            <span className="flex-1 min-w-0">
+                              <span className="block text-xs text-slate-700 truncate">{it.title}</span>
+                              <span className="block text-[10px] text-slate-400 truncate">
+                                {!selectedDay && it.days.length > 0 ? t(lang, "whereDays").replace("{days}", [...it.days].sort((x, y) => x - y).join(" · ")) : ""}
+                                {it.account ? `${!selectedDay && it.days.length > 0 ? " · " : ""}→ ${it.account}` : ""}
+                              </span>
+                            </span>
+                            <span className="text-xs font-medium shrink-0" style={{ color: theme.text }}>{money(it.amount, state.currency)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+      </div>
 
       {editingPay && (
         <PaydayOccurrenceSheet
@@ -6869,6 +6992,7 @@ function InvestmentsTab({ theme, state, setState, showToast }) {
   const lang = state.language || "fr";
   const [updateInput, setUpdateInput] = useState({});
   const [contribInput, setContribInput] = useState({});
+  const [flowMode, setFlowMode] = useState({});
   const [childUpdateInput, setChildUpdateInput] = useState({});
   const [ownerFilter, setOwnerFilter] = useState("all");
   const [showAddInvestment, setShowAddInvestment] = useState(false);
@@ -6899,7 +7023,7 @@ function InvestmentsTab({ theme, state, setState, showToast }) {
       ...s,
       investments: s.investments.map((inv) =>
         inv.id === id
-          ? { ...inv, value: val, history: [...inv.history, { date: getToday(), value: val }] }
+          ? { ...inv, value: val, history: [...inv.history, { date: getToday(), value: val, contributed: inv.contributed ?? inv.value }] }
           : inv
       ),
     }));
@@ -6909,30 +7033,25 @@ function InvestmentsTab({ theme, state, setState, showToast }) {
     }
   };
 
-  // Un versement ajoute de l'argent (le tien) — contrairement à "Mettre à jour", qui reflète
-  // un changement dû au marché. On garde les deux séparés pour pouvoir calculer le vrai gain
-  // (valeur actuelle moins tout ce que tu as toi-même versé), pas un mélange des deux.
-  const addContribution = (id) => {
+  // Versement (j'ajoute de l'argent) ou retrait (je retire de l'argent) : ce n'est pas un gain/une
+  // perte du marché — contrairement à "Mettre à jour". On garde les deux séparés pour calculer le
+  // vrai gain (valeur actuelle − argent mis), jamais un mélange des deux.
+  const applyFlow = (id) => {
     const amt = Number(contribInput[id]);
-    if (!amt) return;
-    const previousState = state;
+    if (!(amt > 0)) return;
+    const mode = flowMode[id] === "out" ? "out" : "in";
     const inv = state.investments.find((i) => i.id === id);
-    setState((s) => ({
-      ...s,
-      investments: s.investments.map((inv) =>
-        inv.id === id
-          ? {
-              ...inv,
-              value: inv.value + amt,
-              contributed: (inv.contributed ?? inv.value) + amt,
-              history: [...inv.history, { date: getToday(), value: inv.value + amt }],
-            }
-          : inv
-      ),
-    }));
+    if (!inv) return;
+    if (mode === "out" && amt > inv.value + 0.005) {
+      if (showToast) showToast(t(lang, "invOverdraw"));
+      return;
+    }
+    const previousState = state;
+    setState((s) => ({ ...s, investments: s.investments.map((x) => (x.id === id ? applyInvestmentFlow(x, amt, mode) : x)) }));
     setContribInput((v) => ({ ...v, [id]: "" }));
     if (showToast) {
-      showToast(`Versement de ${money(amt, inv?.currency || state.currency)} ajouté`, () => setState(previousState));
+      const key = mode === "out" ? "invWithdrawn" : "invAdded";
+      showToast(t(lang, key).replace("{amount}", money(amt, inv.currency || state.currency)), () => setState(previousState));
     }
   };
 
@@ -7085,30 +7204,52 @@ function InvestmentsTab({ theme, state, setState, showToast }) {
                     <YAxis tick={{ fontSize: 9 }} width={40} />
                     <Tooltip formatter={(v) => money(v, inv.currency || state.currency)} labelFormatter={(l) => l} />
                     <Line type="monotone" dataKey="value" stroke={theme.secondary} strokeWidth={2} dot={{ r: 2 }} />
+                    {inv.history.some((h) => h.contributed != null) && (
+                      <Line type="stepAfter" dataKey="contributed" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="4 3" dot={false} connectNulls isAnimationActive={false} />
+                    )}
                   </LineChart>
                 </ResponsiveContainer>
               </div>
             ) : (
               <p className="text-xs text-slate-400">Ajoute une nouvelle valeur pour voir l'évolution.</p>
             )}
+            {inv.history.length >= 2 && inv.history.some((h) => h.contributed != null) && (
+              <p className="text-[10px] text-slate-400 mt-0.5">{t(lang, "invChartLegend")}</p>
+            )}
 
-            <div className="flex gap-2 mt-3">
+            <div className="flex gap-1.5 mt-3 mb-2">
+              {["in", "out"].map((m) => {
+                const active = (flowMode[inv.id] || "in") === m;
+                return (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => setFlowMode((v) => ({ ...v, [inv.id]: m }))}
+                    className="flex-1 text-xs font-medium px-3 py-1.5 rounded-lg"
+                    style={{ backgroundColor: active ? (m === "in" ? theme.secondary : "#DC2626") : "white", color: active ? "white" : "#64748b", border: `1px solid ${active ? (m === "in" ? theme.secondary : "#DC2626") : "#e2e8f0"}` }}
+                  >
+                    {m === "in" ? t(lang, "invModeAdd") : t(lang, "invModeOut")}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="flex gap-2">
               <input
                 type="number" step="any" inputMode="decimal"
-                placeholder={`Versement (${inv.currency || state.currency})`}
+                placeholder={`${(flowMode[inv.id] || "in") === "out" ? t(lang, "invAmountOut") : t(lang, "invAmountIn")} (${inv.currency || state.currency})`}
                 className="flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
                 value={contribInput[inv.id] || ""}
                 onChange={(e) => setContribInput((v) => ({ ...v, [inv.id]: e.target.value }))}
               />
               <button
-                onClick={() => addContribution(inv.id)}
+                onClick={() => applyFlow(inv.id)}
                 className="text-xs font-medium px-3 py-1.5 rounded-lg text-white"
-                style={{ backgroundColor: theme.secondary }}
+                style={{ backgroundColor: (flowMode[inv.id] || "in") === "out" ? "#DC2626" : theme.secondary }}
               >
-                + Versement
+                {(flowMode[inv.id] || "in") === "out" ? t(lang, "invBtnOut") : t(lang, "invBtnIn")}
               </button>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1">Tu as ajouté de ton argent ? Utilise ceci — ça s'ajoute à la valeur actuelle.</p>
+            <p className="text-[11px] text-slate-400 mt-1">{(flowMode[inv.id] || "in") === "out" ? t(lang, "invHintOut") : t(lang, "invHintIn")}</p>
 
             <div className="flex gap-2 mt-3">
               <input
