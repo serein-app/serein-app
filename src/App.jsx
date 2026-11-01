@@ -113,8 +113,36 @@ const PRESET_THEME_IDS = ["serein", "ambre", "ametiste", "foret"];
 // depuis les Réglages. Pour publier une nouvelle version : augmenter
 // APP_VERSION et ajouter une entrée EN HAUT de ce tableau.
 // ---------------------------------------------------------------------------
-const APP_VERSION = "1.8.0";
+const APP_VERSION = "2.0.0";
 const CHANGELOG = [
+  {
+    version: "2.0.0",
+    date: "2026-11-01",
+    fr: [
+      "Nouveau chiffre vedette en haut de l'accueil : ce que tu peux dépenser d'ici ta prochaine paie, en vert, orange ou rouge selon ta situation.",
+      "Jour de paie : une carte « Ta paie est arrivée » te guide pour ranger l'argent. Coche chaque virement (un clic par compte) et suis ta progression, jusqu'au message « Paie rangée ».",
+      "Des boutons plus simples et cohérents partout : Paiement, Dépense, Ajouter, Retirer, Enregistrer. Un seul mot par action.",
+      "Placements : « Ajouter » et « Retirer » directement, sans choisir un mode d'abord.",
+    ],
+    en: [
+      "New headline figure at the top of the home screen: what you can spend until your next paycheck, green, orange or red depending on your situation.",
+      "Payday: a “Your paycheck is in” card walks you through putting the money away. Tick each transfer (one tap per account) and follow your progress up to the “Paycheck sorted” message.",
+      "Simpler, consistent buttons everywhere: Payment, Expense, Add, Withdraw, Save. One word per action.",
+      "Investments: “Add” and “Withdraw” directly, no need to pick a mode first.",
+    ],
+  },
+  {
+    version: "1.9.0",
+    date: "2026-11-01",
+    fr: [
+      "Cartes de crédit : tu peux saisir directement le solde affiché par ta banque (« Mettre à jour le solde »). Serein calcule la différence et l'ajoute à l'historique. Pratique quand le solde varie tous les jours.",
+      "Boutons « + Achat » (en rouge) et « − Paiement » (en vert) plus lisibles, et le crédit disponible s'affiche sous la barre de limite.",
+    ],
+    en: [
+      "Credit cards: you can now enter the balance shown by your bank directly (\"Update the balance\"). Serein calculates the difference and adds it to the history. Handy when the balance changes every day.",
+      "Clearer \"+ Purchase\" (red) and \"− Payment\" (green) buttons, and available credit is shown under the limit bar.",
+    ],
+  },
   {
     version: "1.8.0",
     date: "2026-10-29",
@@ -449,7 +477,7 @@ const TRANSLATIONS = {
     parentsP1: "Parent 1",
     parentsP2: "Parent 2",
     parentsAdd2: "Ajouter un parent 2",
-    parentsRemove2: "Retirer le parent 2",
+    parentsRemove2: "Supprimer le parent 2",
     childrenTitle: "Vos enfants",
     childrenHint: "Au Canada, un REEE (régime enregistré d'épargne-études) est un compte d'épargne dédié aux enfants avec subventions gouvernementales — tu peux en créer un ici pour le suivre.",
     childrenAddBtn: "Ajouter cet enfant",
@@ -482,9 +510,17 @@ const TRANSLATIONS = {
     currentBalanceLabel: "de solde actuel",
     utilizedLabel: "de la limite utilisés",
     creditLimitOf: "Limite :",
-    purchaseAction: "Achat",
+    purchaseAction: "Dépense",
     paymentAction: "Paiement",
-    revolvingMovementHint: "« Achat » augmente le solde (nouvelle dépense), « Paiement » le réduit.",
+    revolvingMovementHint: "« Dépense » augmente le solde, « Paiement » le réduit.",
+    revSetTitle: "Mettre à jour le solde",
+    revSetPlaceholder: "Solde actuel de la carte",
+    revSetBtn: "Mettre à jour",
+    revSetHint: "Entre le solde affiché par ta banque : Serein calcule la différence.",
+    revBalanceUpdated: "Solde mis à jour : {amount}",
+    balanceUpdateAction: "Mise à jour du solde",
+    creditAvailable: "Crédit disponible : {amount}",
+    creditOver: "Limite dépassée de {amount}",
     fieldDebtTotal: "Montant total de la dette",
     fieldDebtRemaining: "Montant qu'il reste à payer aujourd'hui — laisse vide si rien n'est encore remboursé",
     fieldInterestRate: "Taux d'intérêt annuel (%) — optionnel, ex : carte de crédit, hypothèque",
@@ -600,7 +636,7 @@ const TRANSLATIONS = {
     concerns: "Concerne",
     common: "Commun",
     me: "Moi",
-    saveChanges: "Enregistrer les modifications",
+    saveChanges: "Enregistrer",
     add: "Ajouter",
     projectsTitle: "Tes projets",
     projectsHint: "Mariage, vacances, achat… courts, moyens ou longs termes.",
@@ -726,8 +762,8 @@ const TRANSLATIONS = {
     hhYouBadge: "toi",
     hhOwnerBadge: "propriétaire",
     hhGuest: "Invité·e",
-    hhRemove: "Retirer",
-    hhRemoveConfirm: "Retirer {name} du foyer ?",
+    hhRemove: "Exclure",
+    hhRemoveConfirm: "Exclure {name} du foyer ?",
     hhCancel: "Annuler",
     hhLeave: "Quitter le foyer",
     hhLeaveConfirm: "Tu retrouveras ton espace personnel d'avant. Les données du foyer restent chez {owner} : rien n'est copié ni supprimé. Quitter le foyer ?",
@@ -740,10 +776,19 @@ const TRANSLATIONS = {
     invModeOut: "Retirer de l'argent",
     invAmountIn: "Montant versé",
     invAmountOut: "Montant retiré",
-    invBtnIn: "+ Versement",
-    invBtnOut: "− Retrait",
-    invHintIn: "Tu as ajouté de ton argent ? Utilise ceci : ça s'ajoute à la valeur actuelle.",
-    invHintOut: "Tu as retiré de l'argent (ou de la crypto) ? La valeur du compte baisse, mais ça n'est pas compté comme une perte : tes gains restent justes.",
+    invBtnIn: "Ajouter",
+    invBtnOut: "Retirer",
+    invHintIn: "S'ajoute à la valeur actuelle.",
+    invHintOut: "Un retrait n'est pas une perte : tes gains restent justes.",
+    amountPh: "Montant",
+    moneyAdd: "Ajouter",
+    moneyWithdraw: "Retirer",
+    debtCorrect: "Correction",
+    debtCorrectHint: "Erreur de saisie ? « Correction » retire ce montant des paiements.",
+    projMoveHint: "« Retirer » ajuste ce qui est vraiment mis de côté (ex. hôtel payé d'avance).",
+    invUpdateHint: "Le marché a bougé ? Entre la valeur totale actuelle.",
+    invAmountPh: "Montant",
+    invNewValuePh: "Nouvelle valeur totale",
     invOverdraw: "Le retrait dépasse la valeur actuelle du compte.",
     invWithdrawn: "Retrait de {amount} enregistré",
     invAdded: "Versement de {amount} ajouté",
@@ -755,7 +800,7 @@ const TRANSLATIONS = {
     pickerAlready: "Déjà ajouté",
     pickerNone: "Aucun service trouvé : saisis simplement le nom ci-dessous.",
     pickerMore: "Voir {n} autres services",
-    pickerRemoveLogo: "Retirer le logo",
+    pickerRemoveLogo: "Supprimer le logo",
     allocCardRecent: "Paie du {date} reçue : où mettre l'argent ?",
     allocCardNext: "Prochaine paie le {date} : ta répartition",
     allocTo: "Vers {account}",
@@ -768,7 +813,7 @@ const TRANSLATIONS = {
     allocDueCaption: "À payer le {date} (avant ta prochaine paie du {next})",
     allocSpreadCaption: "Étalé : part {i}/{n} du mois",
     allocEdit: "Choisir comptes et mode",
-    allocEditDone: "Terminer",
+    allocEditDone: "Terminé",
     allocAccountPh: "Compte (ex. Épargne loyer)",
     allocModeSpread: "Étalé",
     allocTip: "Astuce : appuie sur « Choisir comptes et mode » pour indiquer, ligne par ligne, sur quel compte mettre l'argent. Tu sauras alors quoi virer où à chaque paie.",
@@ -802,6 +847,22 @@ const TRANSLATIONS = {
     cfOkTitle: "Aucun découvert prévu",
     cfOkBody: "Point bas des 2 prochains mois : {amount} le {date}.",
     cfStale: "Solde saisi il y a plus d'une semaine : mets-le à jour pour une prévision fiable.",
+    heroLabel: "Disponible d'ici ta prochaine paie",
+    heroLabelNoPay: "Disponible sur les 60 prochains jours",
+    heroPerDay: "≈ {amount} par jour jusqu'à ta paie du {date}",
+    heroShort: "Il manque {amount} avant ta paie du {date}",
+    heroShortNoPay: "Découvert prévu le {date}",
+    heroFoot: "Après tes factures et tes dépenses courantes prévues.",
+    heroChipOk: "Tout va bien",
+    heroChipTight: "Un peu serré",
+    heroChipShort: "À surveiller",
+    heroEnterBalance: "Entrer mon solde",
+    allocRecentTitle: "Ta paie est arrivée 🎉",
+    allocCta: "Ranger ma paie",
+    allocAllDoneTitle: "Paie rangée, bravo !",
+    allocAllDoneSub: "Il te reste {amount} de libre jusqu'au {date}.",
+    allocPayEdit: "Le montant de la paie n'est pas bon ?",
+    allocTickGroup: "Cocher ce virement",
     planTitle: "Plan par paie",
     planIntro: "Pour ne jamais être à découvert : Serein rejoue tes paies et tes prélèvements jour par jour, et te montre pour chaque paie ce qu'il faut garder de côté.",
     planBalanceLabel: "Solde du compte aujourd'hui",
@@ -809,7 +870,7 @@ const TRANSLATIONS = {
     planBalanceAsOf: "Solde enregistré le {date}. Mets-le à jour de temps en temps.",
     planVariableLabel: "Courses/loisirs par mois",
     planVariableHint: "Ce que tu dépenses « au quotidien » hors factures et abonnements (courses, sorties, essence…). Il est réparti sur chaque jour.",
-    planSave: "Enregistrer et recalculer",
+    planSave: "Enregistrer",
     planAlertDetail: "Avec {culprit}, le compte passe à {balance}. Point le plus bas : -{lowest}.",
     planNextPay: "Prochaine paie le {date}",
     planFixTitle: "Pour l'éviter :",
@@ -861,8 +922,8 @@ const TRANSLATIONS = {
     payDateLabel: "Paie du {date}",
     payUsualAmount: "Montant habituel : {amount}",
     payThisAmount: "Montant de cette paie",
-    paySaveThis: "Enregistrer pour cette paie seulement",
-    paySaveAll: "Appliquer à toutes les paies",
+    paySaveThis: "Enregistrer pour cette paie",
+    paySaveAll: "Enregistrer pour toutes les paies",
     payReset: "Revenir au montant habituel",
     payModified: "modifié",
     payTapHint: "Touche une paie pour modifier son montant.",
@@ -986,7 +1047,7 @@ const TRANSLATIONS = {
     parentsP1: "Parent 1",
     parentsP2: "Parent 2",
     parentsAdd2: "Add a second parent",
-    parentsRemove2: "Remove second parent",
+    parentsRemove2: "Delete second parent",
     childrenTitle: "Your children",
     childrenHint: "In Canada, an RESP (registered education savings plan) is a dedicated savings account for children with government grants — you can create one here to track it.",
     childrenAddBtn: "Add this child",
@@ -1019,9 +1080,17 @@ const TRANSLATIONS = {
     currentBalanceLabel: "current balance",
     utilizedLabel: "of limit used",
     creditLimitOf: "Limit:",
-    purchaseAction: "Purchase",
+    purchaseAction: "Expense",
     paymentAction: "Payment",
-    revolvingMovementHint: "“Purchase” increases the balance (new charge), “Payment” reduces it.",
+    revolvingMovementHint: "“Expense” increases the balance, “Payment” reduces it.",
+    revSetTitle: "Update the balance",
+    revSetPlaceholder: "Card's current balance",
+    revSetBtn: "Update",
+    revSetHint: "Enter the balance shown by your bank: Serein works out the difference.",
+    revBalanceUpdated: "Balance updated: {amount}",
+    balanceUpdateAction: "Balance update",
+    creditAvailable: "Available credit: {amount}",
+    creditOver: "Limit exceeded by {amount}",
     fieldDebtTotal: "Total debt amount",
     fieldDebtRemaining: "Amount still owed today — leave blank if nothing has been repaid yet",
     fieldInterestRate: "Annual interest rate (%) — optional, e.g. credit card, mortgage",
@@ -1137,7 +1206,7 @@ const TRANSLATIONS = {
     concerns: "Applies to",
     common: "Shared",
     me: "Me",
-    saveChanges: "Save changes",
+    saveChanges: "Save",
     add: "Add",
     projectsTitle: "Your projects",
     projectsHint: "Wedding, vacation, purchase… short, medium, or long term.",
@@ -1277,10 +1346,19 @@ const TRANSLATIONS = {
     invModeOut: "Withdraw money",
     invAmountIn: "Amount added",
     invAmountOut: "Amount withdrawn",
-    invBtnIn: "+ Deposit",
-    invBtnOut: "− Withdraw",
-    invHintIn: "Added some of your own money? Use this: it adds to the current value.",
-    invHintOut: "Withdrew money (or crypto)? The account value goes down, but it is not counted as a loss: your gains stay accurate.",
+    invBtnIn: "Add",
+    invBtnOut: "Withdraw",
+    invHintIn: "Adds to the current value.",
+    invHintOut: "A withdrawal is not a loss: your gains stay accurate.",
+    amountPh: "Amount",
+    moneyAdd: "Add",
+    moneyWithdraw: "Withdraw",
+    debtCorrect: "Correction",
+    debtCorrectHint: "Typo? “Correction” removes this amount from the payments.",
+    projMoveHint: "“Withdraw” adjusts what is really set aside (e.g. a hotel paid in advance).",
+    invUpdateHint: "Market moved? Enter the current total value.",
+    invAmountPh: "Amount",
+    invNewValuePh: "New total value",
     invOverdraw: "The withdrawal exceeds the account's current value.",
     invWithdrawn: "Withdrawal of {amount} recorded",
     invAdded: "Deposit of {amount} added",
@@ -1292,7 +1370,7 @@ const TRANSLATIONS = {
     pickerAlready: "Already added",
     pickerNone: "No service found: just type the name below.",
     pickerMore: "See {n} more services",
-    pickerRemoveLogo: "Remove logo",
+    pickerRemoveLogo: "Delete logo",
     allocCardRecent: "Paycheck of {date} received: where to put the money?",
     allocCardNext: "Next paycheck on {date}: your split",
     allocTo: "To {account}",
@@ -1339,6 +1417,22 @@ const TRANSLATIONS = {
     cfOkTitle: "No overdraft expected",
     cfOkBody: "Low point over the next 2 months: {amount} on {date}.",
     cfStale: "Balance entered over a week ago: update it for a reliable forecast.",
+    heroLabel: "Available until your next paycheck",
+    heroLabelNoPay: "Available over the next 60 days",
+    heroPerDay: "≈ {amount} a day until your {date} paycheck",
+    heroShort: "You are {amount} short before your {date} paycheck",
+    heroShortNoPay: "Overdraft expected on {date}",
+    heroFoot: "After your bills and your expected everyday spending.",
+    heroChipOk: "All good",
+    heroChipTight: "A bit tight",
+    heroChipShort: "Needs attention",
+    heroEnterBalance: "Enter my balance",
+    allocRecentTitle: "Your paycheck is in 🎉",
+    allocCta: "Put my paycheck away",
+    allocAllDoneTitle: "Paycheck sorted, well done!",
+    allocAllDoneSub: "You have {amount} free until {date}.",
+    allocPayEdit: "Paycheck amount not right?",
+    allocTickGroup: "Tick this transfer",
     planTitle: "Plan by paycheck",
     planIntro: "To never be overdrawn: Serein replays your paychecks and payments day by day and shows, for each paycheck, what to set aside.",
     planBalanceLabel: "Account balance today",
@@ -1346,7 +1440,7 @@ const TRANSLATIONS = {
     planBalanceAsOf: "Balance saved on {date}. Update it from time to time.",
     planVariableLabel: "Groceries/leisure per month",
     planVariableHint: "What you spend day to day apart from bills and subscriptions (groceries, outings, fuel…). It is spread over each day.",
-    planSave: "Save and recalculate",
+    planSave: "Save",
     planAlertDetail: "With {culprit}, the account goes to {balance}. Lowest point: -{lowest}.",
     planNextPay: "Next paycheck on {date}",
     planFixTitle: "To avoid it:",
@@ -1398,8 +1492,8 @@ const TRANSLATIONS = {
     payDateLabel: "Paycheck of {date}",
     payUsualAmount: "Usual amount: {amount}",
     payThisAmount: "Amount of this paycheck",
-    paySaveThis: "Save for this paycheck only",
-    paySaveAll: "Apply to all paychecks",
+    paySaveThis: "Save for this paycheck",
+    paySaveAll: "Save for all paychecks",
     payReset: "Back to the usual amount",
     payModified: "edited",
     payTapHint: "Tap a paycheck to edit its amount.",
@@ -2665,6 +2759,7 @@ function QuickChips({ theme, items, lang, onPick, label }) {
 
 
 function ManageListSheet({ sheetTitle, theme, state, setState, field, StepComp, stepExtraProps, renderRow, onClose, startWithForm }) {
+  const lang = state.language || "fr";
   const [showForm, setShowForm] = useState(!!startWithForm);
   const [editing, setEditing] = useState(null);
   const [duplicating, setDuplicating] = useState(null);
@@ -2703,7 +2798,7 @@ function ManageListSheet({ sheetTitle, theme, state, setState, field, StepComp, 
             className="mb-3 flex items-center gap-1 text-sm font-medium px-3 py-2 rounded-lg text-white"
             style={{ backgroundColor: theme.primary }}
           >
-            <Plus size={16} /> Ajouter
+            <Plus size={16} /> {t(lang, "add")}
           </button>
           {items.length > 3 && (
             <div className="mb-3 space-y-2">
@@ -5363,7 +5458,7 @@ function buildPaycheckPlan(state, count = 6) {
     const lines = [];
     rows.forEach((r) => r.events.forEach((e) => {
       const amount = Math.abs(signedEventAmount(e, state));
-      if (e.kind === "paie") { incomes.push({ title: e.title, amount, date: r.date }); return; }
+      if (e.kind === "paie") { incomes.push({ title: e.title, amount, date: r.date, ev: e }); return; }
       if ((e.kind === "facture" || e.kind === "abonnement") && e.fund === "spread") return; // géré plus bas (étalé)
       lines.push({ key: `${e.kind}:${e.itemId}:${ymdOf(r.date)}`, kind: e.kind, itemId: e.itemId, title: e.title, amount, account: e.account || "", logo: e.logo || "", date: r.date, mode: "due" });
     }));
@@ -5414,7 +5509,7 @@ function accountNames(state) {
 }
 
 // Répartition d'une paie : où mettre l'argent, avec cases à cocher « fait »
-function AllocationSheet({ theme, state, setState, startKey, onClose }) {
+function AllocationSheet({ theme, state, setState, startKey, onClose, onEditPay }) {
   const lang = state.language || "fr";
   const cur = state.currency;
   const plan = useMemo(() => buildPaycheckPlan(state, 10), [state]);
@@ -5431,6 +5526,13 @@ function AllocationSheet({ theme, state, setState, startKey, onClose }) {
   const done = state.allocDone || {};
   const doneKey = (l) => `${p.key}|${l.key}`;
   const toggle = (l) => setState((s) => ({ ...s, allocDone: { ...(s.allocDone || {}), [doneKey(l)]: !(s.allocDone || {})[doneKey(l)] } }));
+  const toggleGroup = (g) => setState((s) => {
+    const cur0 = s.allocDone || {};
+    const allOn = g.lines.every((l) => cur0[`${p.key}|${l.key}`]);
+    const next = { ...cur0 };
+    g.lines.forEach((l) => { next[`${p.key}|${l.key}`] = !allOn; });
+    return { ...s, allocDone: next };
+  });
   const updateItem = (l, patch) => setState((s) => {
     const field = KIND_FIELD[l.kind];
     return { ...s, [field]: s[field].map((x) => (x.id === l.itemId ? { ...x, ...patch } : x)) };
@@ -5458,15 +5560,36 @@ function AllocationSheet({ theme, state, setState, startKey, onClose }) {
       </div>
       <p className="text-[11px] text-slate-400 mb-3 text-center">{t(lang, "planUntil").replace("{date}", shortDate(p.end, lang))}</p>
 
-      {p.lines.length > 0 && <p className="text-xs text-slate-500 mb-2">{t(lang, "allocProgress").replace("{n}", nDone).replace("{total}", p.lines.length)}</p>}
+      {onEditPay && p.incomes.length > 0 && (
+        <button onClick={() => onEditPay(p.incomes[0].ev)} className="block mx-auto text-[11px] underline mb-3" style={{ color: theme.primary }}>{t(lang, "allocPayEdit")}</button>
+      )}
+      {p.lines.length > 0 && nDone === p.lines.length && (
+        <div className="rounded-xl p-3 mb-3 text-center" style={{ backgroundColor: "#F0FDF4", color: "#166534" }}>
+          <p className="text-sm font-semibold">🎉 {t(lang, "allocAllDoneTitle")}</p>
+          <p className="text-xs mt-0.5">{t(lang, "allocAllDoneSub").replace("{amount}", money(Math.max(0, p.left), cur)).replace("{date}", shortDate(p.end, lang))}</p>
+        </div>
+      )}
+      {p.lines.length > 0 && (
+        <div className="mb-3">
+          <p className="text-xs text-slate-500 mb-1">{t(lang, "allocProgress").replace("{n}", nDone).replace("{total}", p.lines.length)}</p>
+          <div className="h-1.5 rounded-full bg-slate-100"><div className="h-1.5 rounded-full" style={{ width: `${Math.round((nDone / p.lines.length) * 100)}%`, backgroundColor: "#16A34A", transition: "width 0.2s" }} /></div>
+        </div>
+      )}
       {noAccountAtAll && !editing && <p className="text-xs rounded-lg p-2 mb-3" style={{ backgroundColor: theme.soft, color: theme.text }}>{t(lang, "allocTip")}</p>}
       <datalist id="serein-accounts-sheet">{names.map((n) => <option key={n} value={n} />)}</datalist>
 
       {groups.map((g) => (
         <div key={g.account || "_stay"} className="rounded-xl border border-slate-100 mb-3 overflow-hidden">
           <div className="flex items-center justify-between px-3 py-2" style={{ backgroundColor: theme.soft }}>
-            <span className="text-sm font-semibold" style={{ color: theme.text }}>
-              {g.account ? t(lang, "allocTo").replace("{account}", g.account) : t(lang, "allocStay")}
+            <span className="flex items-center gap-2 min-w-0">
+              {g.account && (
+                <button onClick={() => toggleGroup(g)} className="w-5 h-5 rounded-md border flex items-center justify-center shrink-0" style={{ borderColor: g.lines.every((l) => done[doneKey(l)]) ? "#16A34A" : "#94a3b8", backgroundColor: g.lines.every((l) => done[doneKey(l)]) ? "#16A34A" : "white" }} aria-label={t(lang, "allocTickGroup")}>
+                  {g.lines.every((l) => done[doneKey(l)]) && <Check size={12} color="white" />}
+                </button>
+              )}
+              <span className="text-sm font-semibold truncate" style={{ color: theme.text }}>
+                {g.account ? t(lang, "allocTo").replace("{account}", g.account) : t(lang, "allocStay")}
+              </span>
             </span>
             <span className="text-sm font-semibold" style={{ color: theme.text }}>{money(g.total, cur)}</span>
           </div>
@@ -5548,13 +5671,52 @@ function AllocationCard({ theme, state, onOpen }) {
   if (!plan.length || state.bills.length + state.subscriptions.length + state.debts.length + state.projects.length === 0) return null;
   const today = startOfToday();
   const curP = plan.find((x) => x.current);
-  const recent = curP && (today - curP.start) / DAY_MS <= 2;
+  const done = state.allocDone || {};
+  const doneCount = (pp) => pp.lines.filter((l) => done[`${pp.key}|${l.key}`]).length;
+  const sinceStart = curP ? (today - curP.start) / DAY_MS : 99;
+  // « Paie reçue » : les 2 premiers jours, puis tant que le rangement est commencé mais pas fini (7 jours max)
+  const recent = !!curP && curP.lines.length > 0 && (sinceStart <= 2 || (sinceStart <= 7 && doneCount(curP) > 0 && doneCount(curP) < curP.lines.length));
   const target = recent ? curP : plan.find((x) => x.start > today) || curP;
   if (!target || !target.lines.length) return null;
   const groups = groupLinesByAccount(target.lines);
-  const done = state.allocDone || {};
-  const nDone = target.lines.filter((l) => done[`${target.key}|${l.key}`]).length;
-  const title = (recent ? t(lang, "allocCardRecent") : t(lang, "allocCardNext")).replace("{date}", shortDate(target.start, lang));
+  const nDone = doneCount(target);
+  const total = target.lines.length;
+  const allDone = recent && nDone === total;
+
+  if (allDone) {
+    return (
+      <button onClick={() => onOpen(target.key)} className="w-full text-left rounded-xl shadow-sm p-4 mb-4" style={{ backgroundColor: "#F0FDF4", color: "#166534" }}>
+        <span className="flex items-center justify-between gap-2">
+          <span className="text-sm font-semibold">✅ {t(lang, "allocAllDoneTitle")}</span>
+          <ChevronRight size={16} />
+        </span>
+        <span className="block text-xs mt-1">{t(lang, "allocAllDoneSub").replace("{amount}", money(Math.max(0, target.left), cur)).replace("{date}", shortDate(target.end, lang))}</span>
+      </button>
+    );
+  }
+  if (recent) {
+    return (
+      <button onClick={() => onOpen(target.key)} className="w-full text-left rounded-xl shadow-sm p-4 mb-4 text-white" style={{ backgroundColor: theme.primary }}>
+        <span className="block text-sm font-semibold">{t(lang, "allocRecentTitle")}</span>
+        <span className="block text-xs opacity-90 mt-0.5">{t(lang, "allocProgress").replace("{n}", nDone).replace("{total}", total)}</span>
+        <span className="block h-1.5 rounded-full mt-2 mb-3" style={{ backgroundColor: "rgba(255,255,255,0.3)" }}>
+          <span className="block h-1.5 rounded-full bg-white" style={{ width: `${Math.round((nDone / total) * 100)}%` }} />
+        </span>
+        <span className="block space-y-1">
+          {groups.slice(0, 4).map((g) => (
+            <span key={g.account || "_stay"} className="flex justify-between text-xs">
+              <span className="truncate pr-2 opacity-90">{g.account ? t(lang, "allocTo").replace("{account}", g.account) : t(lang, "allocStay")}</span>
+              <span className="font-semibold">{money(g.total, cur)}</span>
+            </span>
+          ))}
+        </span>
+        <span className="mt-3 flex items-center justify-center gap-1 text-sm font-semibold rounded-lg py-2 bg-white" style={{ color: theme.primary }}>
+          {t(lang, "allocCta")} <ChevronRight size={14} />
+        </span>
+      </button>
+    );
+  }
+  const title = t(lang, "allocCardNext").replace("{date}", shortDate(target.start, lang));
   return (
     <button onClick={() => onOpen(target.key)} className="w-full text-left bg-white rounded-xl shadow-sm p-4 mb-4" style={{ border: `1.5px solid ${theme.primary}55` }}>
       <span className="flex items-center justify-between gap-2">
@@ -5573,41 +5735,54 @@ function AllocationCard({ theme, state, onOpen }) {
           <span className="font-medium">{target.left < -0.5 ? "-" : ""}{money(Math.abs(target.left), cur)}</span>
         </span>
       </span>
-      {recent && <span className="block text-[11px] text-slate-400 mt-1.5">{t(lang, "allocProgress").replace("{n}", nDone).replace("{total}", target.lines.length)}</span>}
     </button>
   );
 }
 
-function CashflowCard({ theme, state, onOpen }) {
+// Chiffre vedette de l'accueil : combien je peux dépenser d'ici ma prochaine paie sans tomber à découvert
+function HeroCard({ theme, state, onOpen }) {
   const lang = state.language || "fr";
+  const cur = state.currency;
   const cf = useMemo(() => projectCashflow(state, 60), [state]);
-  const hasPaydays = state.paydays.length > 0;
-  if (!hasPaydays) return null;
-  let tone = { bg: theme.soft, color: theme.text }, title, body;
+  if (!state.paydays.length) return null;
   if (!cf) {
-    title = t(lang, "cfNoBalanceTitle");
-    body = t(lang, "cfNoBalanceBody");
-  } else if (cf.firstNegative) {
-    tone = { bg: "#FEF2F2", color: "#991B1B" };
-    title = t(lang, "cfAlertTitle").replace("{date}", shortDate(cf.firstNegative.date, lang));
-    body = t(lang, "cfAlertBody").replace("{amount}", money(Math.abs(Math.round(cf.lowest.balance)), state.currency));
-  } else if (cf.lowest.balance < monthlyIncomeOf(state) * 0.05) {
-    tone = { bg: "#FEF9C3", color: "#854D0E" };
-    title = t(lang, "cfTightTitle");
-    body = t(lang, "cfTightBody").replace("{amount}", money(Math.round(cf.lowest.balance), state.currency)).replace("{date}", shortDate(cf.lowest.date, lang));
-  } else {
-    tone = { bg: "#F0FDF4", color: "#166534" };
-    title = t(lang, "cfOkTitle");
-    body = t(lang, "cfOkBody").replace("{amount}", money(Math.round(cf.lowest.balance), state.currency)).replace("{date}", shortDate(cf.lowest.date, lang));
+    return (
+      <button onClick={onOpen} className="w-full text-left bg-white rounded-xl shadow-sm p-4 mb-4" style={{ borderLeft: `4px solid ${theme.primary}` }}>
+        <span className="block text-sm font-semibold" style={{ color: theme.text }}>{t(lang, "cfNoBalanceTitle")}</span>
+        <span className="block text-xs text-slate-500 mt-1">{t(lang, "cfNoBalanceBody")}</span>
+        <span className="inline-block mt-3 text-xs font-semibold px-3 py-1.5 rounded-full text-white" style={{ backgroundColor: theme.primary }}>{t(lang, "heroEnterBalance")}</span>
+      </button>
+    );
+  }
+  const today = startOfToday();
+  const nextPay = cf.nextPay;
+  const windowDays = cf.days.filter((r) => !nextPay || r.date < nextPay);
+  const lowest = windowDays.reduce((m, r) => (!m || r.balance < m.balance ? r : m), null) || cf.days[0];
+  const margin = lowest ? lowest.balance : 0;
+  const daysLeft = nextPay ? Math.max(1, Math.round((nextPay - today) / DAY_MS)) : null;
+  const laterNegative = !!cf.firstNegative && margin >= 0;
+  const status = margin < 0 ? "short" : laterNegative || margin < monthlyIncomeOf(state) * 0.05 ? "tight" : "ok";
+  const tone = { ok: "#15803D", tight: "#B45309", short: "#DC2626" }[status];
+  const chip = { ok: t(lang, "heroChipOk"), tight: t(lang, "heroChipTight"), short: t(lang, "heroChipShort") }[status];
+  let sub = null;
+  if (status === "short") {
+    sub = nextPay
+      ? t(lang, "heroShort").replace("{amount}", money(Math.abs(Math.round(margin)), cur)).replace("{date}", shortDate(nextPay, lang))
+      : t(lang, "heroShortNoPay").replace("{date}", shortDate(cf.firstNegative ? cf.firstNegative.date : lowest.date, lang));
+  } else if (nextPay && margin > 0) {
+    sub = t(lang, "heroPerDay").replace("{amount}", money(Math.round(margin / daysLeft), cur)).replace("{date}", shortDate(nextPay, lang));
   }
   return (
-    <button onClick={onOpen} className="w-full text-left rounded-xl shadow-sm p-4 mb-4" style={{ backgroundColor: tone.bg, color: tone.color }}>
+    <button onClick={onOpen} className="w-full text-left bg-white rounded-xl shadow-sm p-4 mb-4" style={{ borderLeft: `4px solid ${tone}` }}>
       <span className="flex items-center justify-between gap-2">
-        <span className="text-sm font-semibold">{title}</span>
-        <ChevronRight size={16} />
+        <span className="text-xs text-slate-500">{nextPay ? t(lang, "heroLabel") : t(lang, "heroLabelNoPay")}</span>
+        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: tone }}>{chip}</span>
       </span>
-      <span className="block text-xs mt-1 opacity-90">{body}</span>
-      {cf && cf.stale && <span className="block text-[11px] mt-1 opacity-75">{t(lang, "cfStale")}</span>}
+      <span className="block text-4xl font-semibold mt-1" style={{ color: tone }}>{margin < 0 ? "-" : ""}{money(Math.abs(Math.round(margin)), cur)}</span>
+      {sub && <span className="block text-sm mt-0.5" style={{ color: theme.text }}>{sub}</span>}
+      {laterNegative && <span className="block text-xs mt-1" style={{ color: "#B45309" }}>⚠ {t(lang, "cfAlertTitle").replace("{date}", shortDate(cf.firstNegative.date, lang))}</span>}
+      <span className="block text-[11px] text-slate-400 mt-1.5">{t(lang, "heroFoot")}</span>
+      {cf.stale && <span className="block text-[11px] mt-1" style={{ color: "#B45309" }}>{t(lang, "cfStale")}</span>}
     </button>
   );
 }
@@ -5981,9 +6156,10 @@ function CalendarTab({ theme, state, setState, showToast }) {
 
   return (
     <div className="p-4 pb-24">
-      {allocKey && <AllocationSheet theme={theme} state={state} setState={setState} startKey={allocKey} onClose={() => setAllocKey(null)} />}
+      {allocKey && <AllocationSheet theme={theme} state={state} setState={setState} startKey={allocKey} onClose={() => setAllocKey(null)} onEditPay={(ev) => { setAllocKey(null); openPayEdit(ev); }} />}
       {showPlan && <PaycheckPlanSheet theme={theme} state={state} setState={setState} onClose={() => setShowPlan(false)} />}
       {state.setupGuide && <SetupGuide theme={theme} state={state} setState={setState} />}
+      <HeroCard theme={theme} state={state} onOpen={() => setShowPlan(true)} />
       <div className="rounded-xl shadow-sm p-4 mb-4" style={{ backgroundColor: theme.primary }}>
         <p className="text-xs text-white opacity-80">{t(lang, "netWorthLabel")}</p>
         <p className="text-3xl font-semibold text-white">{money(netWorth.net, state.currency)}</p>
@@ -6088,7 +6264,6 @@ function CalendarTab({ theme, state, setState, showToast }) {
       )}
 
       <AllocationCard theme={theme} state={state} onOpen={(k) => setAllocKey(k)} />
-      <CashflowCard theme={theme} state={state} onOpen={() => setShowPlan(true)} />
 
       <div className="grid grid-cols-7 gap-1 text-center text-xs text-slate-400 mb-1">
         {weekdaysFor(lang).map((j, i) => <div key={i}>{j}</div>)}
@@ -6405,6 +6580,29 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
     return { ...s, debts: newDebts, debtsHistory: pushHistoryPoint(s.debtsHistory, totalDebtRemaining(newDebts)) };
   });
 
+  // Crédit renouvelable : saisir directement le solde affiché par la banque (le plus simple quand il
+  // varie beaucoup) — on enregistre la différence dans l'historique.
+  const [balanceInput, setBalanceInput] = useState({});
+  const setRevolvingBalance = (id) => {
+    const raw = balanceInput[id];
+    if (raw === undefined || raw === "") return;
+    const val = Number(String(raw).replace(",", "."));
+    if (!Number.isFinite(val) || val < 0) return;
+    const previousState = state;
+    const target = state.debts.find((d) => d.id === id);
+    if (!target || Math.abs(val - target.amount) < 0.005) { setBalanceInput((b) => ({ ...b, [id]: "" })); return; }
+    setState((s) => {
+      const newDebts = s.debts.map((d) => {
+        if (d.id !== id) return d;
+        const entry = { date: getToday(), amount: Math.round((val - d.amount) * 100) / 100, balance: val, set: true };
+        return { ...d, amount: val, history: [...(d.history || []), entry] };
+      });
+      return { ...s, debts: newDebts, debtsHistory: pushHistoryPoint(s.debtsHistory, totalDebtRemaining(newDebts)) };
+    });
+    setBalanceInput((b) => ({ ...b, [id]: "" }));
+    if (showToast) showToast(t(lang, "revBalanceUpdated").replace("{amount}", money(val, target.currency || state.currency)), () => setState(previousState));
+  };
+
   const registerPayment = (id, direction = 1) => {
     const amt = Number(payInput[id]);
     if (!amt) return;
@@ -6589,6 +6787,11 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
                       <span>{money(d.amount, d.currency || state.currency)} {t(lang, "currentBalanceLabel")}</span>
                       <span>{Math.round(utilizationPct)}% {t(lang, "utilizedLabel")}</span>
                     </div>
+                    <p className="text-xs mt-0.5 text-slate-500">
+                      {d.amount > d.creditLimit
+                        ? <span style={{ color: theme.danger }}>{t(lang, "creditOver").replace("{amount}", money(d.amount - d.creditLimit, d.currency || state.currency))}</span>
+                        : t(lang, "creditAvailable").replace("{amount}", money(d.creditLimit - d.amount, d.currency || state.currency))}
+                    </p>
                   </>
                 ) : (
                   <p className="text-xs mt-1.5 text-slate-500">{t(lang, "currentBalanceLabel")} : {money(d.amount, d.currency || state.currency)}</p>
@@ -6623,7 +6826,7 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
                         return (
                           <li key={idx} className="flex justify-between text-xs px-2 py-1 rounded bg-slate-50">
                             <span className="text-slate-400">
-                              {h.date}{isRevolving && ` · ${h.amount >= 0 ? t(lang, "purchaseAction") : t(lang, "paymentAction")}`}
+                              {h.date}{isRevolving && ` · ${h.set ? t(lang, "balanceUpdateAction") : h.amount >= 0 ? t(lang, "purchaseAction") : t(lang, "paymentAction")}`}
                             </span>
                             <span className="font-medium" style={{ color: isGood ? "#16A34A" : theme.danger }}>
                               {h.amount >= 0 ? "+" : ""}{money(h.amount, d.currency || state.currency)}
@@ -6638,7 +6841,7 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
               <div className="flex gap-2 mt-3">
                 <input
                   type="number" step="any" inputMode="decimal"
-                  placeholder="Montant"
+                  placeholder={t(lang, "amountPh")}
                   className="flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
                   value={payInput[d.id] || ""}
                   onChange={(e) => setPayInput((p) => ({ ...p, [d.id]: e.target.value }))}
@@ -6647,15 +6850,15 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
                   <>
                     <button
                       onClick={() => registerPayment(d.id, 1)}
-                      className="text-xs font-medium px-3 py-1.5 rounded-lg border"
-                      style={{ borderColor: theme.danger, color: theme.danger }}
+                      className="text-xs font-semibold px-3 py-1.5 rounded-lg text-white whitespace-nowrap"
+                      style={{ backgroundColor: "#DC2626" }}
                     >
                       {t(lang, "purchaseAction")}
                     </button>
                     <button
                       onClick={() => registerPayment(d.id, -1)}
-                      className="text-xs font-medium px-3 py-1.5 rounded-lg text-white"
-                      style={{ backgroundColor: theme.accent }}
+                      className="text-xs font-semibold px-3 py-1.5 rounded-lg text-white whitespace-nowrap"
+                      style={{ backgroundColor: "#16A34A" }}
                     >
                       {t(lang, "paymentAction")}
                     </button>
@@ -6667,21 +6870,43 @@ function DebtsTab({ theme, state, setState, onGoToAide, showToast }) {
                       className="text-xs font-medium px-3 py-1.5 rounded-lg text-white"
                       style={{ backgroundColor: theme.accent }}
                     >
-                      Paiement
+                      {t(lang, "paymentAction")}
                     </button>
                     <button
                       onClick={() => registerPayment(d.id, -1)}
                       className="text-xs font-medium px-3 py-1.5 rounded-lg border"
                       style={{ borderColor: theme.accent, color: theme.accent }}
                     >
-                      Retirer
+                      {t(lang, "debtCorrect")}
                     </button>
                   </>
                 )}
               </div>
               <p className="text-[11px] text-slate-400 mt-1.5">
-                {isRevolving ? t(lang, "revolvingMovementHint") : "Erreur de saisie ou paiement annulé ? Utilise « Retirer » pour corriger le montant remboursé."}
+                {isRevolving ? t(lang, "revolvingMovementHint") : t(lang, "debtCorrectHint")}
               </p>
+              {isRevolving && (
+                <div className="mt-3 pt-3 border-t border-slate-100">
+                  <p className="text-xs font-medium text-slate-600 mb-1.5">{t(lang, "revSetTitle")}</p>
+                  <div className="flex gap-2">
+                    <input
+                      type="number" step="any" inputMode="decimal"
+                      placeholder={t(lang, "revSetPlaceholder")}
+                      className="flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
+                      value={balanceInput[d.id] ?? ""}
+                      onChange={(e) => setBalanceInput((b) => ({ ...b, [d.id]: e.target.value }))}
+                    />
+                    <button
+                      onClick={() => setRevolvingBalance(d.id)}
+                      className="text-xs font-medium px-3 py-1.5 rounded-lg text-white whitespace-nowrap"
+                      style={{ backgroundColor: theme.primary }}
+                    >
+                      {t(lang, "revSetBtn")}
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-1">{t(lang, "revSetHint")}</p>
+                </div>
+              )}
 
               {d.paymentMode === "recurrent" && (
                 <div className="mt-3 pt-3 border-t border-slate-100">
@@ -6924,7 +7149,7 @@ function ProjectsTab({ theme, state, setState, showToast }) {
               <div className="flex gap-2 mt-3">
                 <input
                   type="number" step="any" inputMode="decimal"
-                  placeholder="Montant"
+                  placeholder={t(lang, "amountPh")}
                   className="flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
                   value={saveInput[p.id] || ""}
                   onChange={(e) => setSaveInput((v) => ({ ...v, [p.id]: e.target.value }))}
@@ -6934,18 +7159,18 @@ function ProjectsTab({ theme, state, setState, showToast }) {
                   className="text-xs font-medium px-3 py-1.5 rounded-lg text-white"
                   style={{ backgroundColor: theme.secondary }}
                 >
-                  Épargner
+                  {t(lang, "moneyAdd")}
                 </button>
                 <button
                   onClick={() => registerSaving(p.id, -1)}
                   className="text-xs font-medium px-3 py-1.5 rounded-lg border"
                   style={{ borderColor: theme.secondary, color: theme.secondary }}
                 >
-                  Retirer
+                  {t(lang, "moneyWithdraw")}
                 </button>
               </div>
               <p className="text-[11px] text-slate-400 mt-1.5">
-                Utilisé une partie de l'épargne pour un achat lié à ce projet (ex. hôtel réservé à l'avance) ? Utilise « Retirer » pour ajuster le montant réel restant de côté.
+                {t(lang, "projMoveHint")}
               </p>
             </div>
           );
@@ -6992,7 +7217,6 @@ function InvestmentsTab({ theme, state, setState, showToast }) {
   const lang = state.language || "fr";
   const [updateInput, setUpdateInput] = useState({});
   const [contribInput, setContribInput] = useState({});
-  const [flowMode, setFlowMode] = useState({});
   const [childUpdateInput, setChildUpdateInput] = useState({});
   const [ownerFilter, setOwnerFilter] = useState("all");
   const [showAddInvestment, setShowAddInvestment] = useState(false);
@@ -7036,10 +7260,9 @@ function InvestmentsTab({ theme, state, setState, showToast }) {
   // Versement (j'ajoute de l'argent) ou retrait (je retire de l'argent) : ce n'est pas un gain/une
   // perte du marché — contrairement à "Mettre à jour". On garde les deux séparés pour calculer le
   // vrai gain (valeur actuelle − argent mis), jamais un mélange des deux.
-  const applyFlow = (id) => {
+  const applyFlow = (id, mode) => {
     const amt = Number(contribInput[id]);
     if (!(amt > 0)) return;
-    const mode = flowMode[id] === "out" ? "out" : "in";
     const inv = state.investments.find((i) => i.id === id);
     if (!inv) return;
     if (mode === "out" && amt > inv.value + 0.005) {
@@ -7217,57 +7440,48 @@ function InvestmentsTab({ theme, state, setState, showToast }) {
               <p className="text-[10px] text-slate-400 mt-0.5">{t(lang, "invChartLegend")}</p>
             )}
 
-            <div className="flex gap-1.5 mt-3 mb-2">
-              {["in", "out"].map((m) => {
-                const active = (flowMode[inv.id] || "in") === m;
-                return (
-                  <button
-                    key={m}
-                    type="button"
-                    onClick={() => setFlowMode((v) => ({ ...v, [inv.id]: m }))}
-                    className="flex-1 text-xs font-medium px-3 py-1.5 rounded-lg"
-                    style={{ backgroundColor: active ? (m === "in" ? theme.secondary : "#DC2626") : "white", color: active ? "white" : "#64748b", border: `1px solid ${active ? (m === "in" ? theme.secondary : "#DC2626") : "#e2e8f0"}` }}
-                  >
-                    {m === "in" ? t(lang, "invModeAdd") : t(lang, "invModeOut")}
-                  </button>
-                );
-              })}
-            </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 mt-3">
               <input
                 type="number" step="any" inputMode="decimal"
-                placeholder={`${(flowMode[inv.id] || "in") === "out" ? t(lang, "invAmountOut") : t(lang, "invAmountIn")} (${inv.currency || state.currency})`}
-                className="flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
+                placeholder={`${t(lang, "invAmountPh")} (${inv.currency || state.currency})`}
+                className="flex-1 min-w-0 rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
                 value={contribInput[inv.id] || ""}
                 onChange={(e) => setContribInput((v) => ({ ...v, [inv.id]: e.target.value }))}
               />
               <button
-                onClick={() => applyFlow(inv.id)}
-                className="text-xs font-medium px-3 py-1.5 rounded-lg text-white"
-                style={{ backgroundColor: (flowMode[inv.id] || "in") === "out" ? "#DC2626" : theme.secondary }}
+                onClick={() => applyFlow(inv.id, "in")}
+                className="text-xs font-semibold px-3 py-1.5 rounded-lg text-white whitespace-nowrap"
+                style={{ backgroundColor: theme.secondary }}
               >
-                {(flowMode[inv.id] || "in") === "out" ? t(lang, "invBtnOut") : t(lang, "invBtnIn")}
+                {t(lang, "invBtnIn")}
+              </button>
+              <button
+                onClick={() => applyFlow(inv.id, "out")}
+                className="text-xs font-semibold px-3 py-1.5 rounded-lg border whitespace-nowrap"
+                style={{ borderColor: "#DC2626", color: "#DC2626" }}
+              >
+                {t(lang, "invBtnOut")}
               </button>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1">{(flowMode[inv.id] || "in") === "out" ? t(lang, "invHintOut") : t(lang, "invHintIn")}</p>
+            <p className="text-[11px] text-slate-400 mt-1">{t(lang, "invHintOut")}</p>
 
             <div className="flex gap-2 mt-3">
               <input
                 type="number" step="any" inputMode="decimal"
-                placeholder={`Nouvelle valeur totale (${inv.currency || state.currency})`}
-                className="flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
+                placeholder={`${t(lang, "invNewValuePh")} (${inv.currency || state.currency})`}
+                className="flex-1 min-w-0 rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
                 value={updateInput[inv.id] || ""}
                 onChange={(e) => setUpdateInput((v) => ({ ...v, [inv.id]: e.target.value }))}
               />
               <button
                 onClick={() => updateValue(inv.id)}
-                className="text-xs font-medium px-3 py-1.5 rounded-lg text-white"
+                className="text-xs font-semibold px-3 py-1.5 rounded-lg text-white whitespace-nowrap"
                 style={{ backgroundColor: theme.accent }}
               >
-                Mettre à jour
+                {t(lang, "revSetBtn")}
               </button>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1">Le marché a bougé (gain ou perte) ? Entre la valeur totale actuelle de ton compte.</p>
+            <p className="text-[11px] text-slate-400 mt-1">{t(lang, "invUpdateHint")}</p>
           </div>
         ))}
       </div>
@@ -7379,7 +7593,7 @@ function InvestmentsTab({ theme, state, setState, showToast }) {
             className="mt-1 flex items-center gap-1 text-sm font-medium px-3 py-2 rounded-lg border disabled:opacity-40"
             style={{ borderColor: theme.primary, color: theme.primary }}
           >
-            <Plus size={16} /> Ajouter
+            <Plus size={16} /> {t(lang, "add")}
           </button>
         </BottomSheet>
       )}
